@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAIRAI POS SYSTEM</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root { --main: #0d124a; --bg: #f1f5f9; --accent: #facc15; --danger: #ef4444; }
+    body { background: var(--bg); color: #333; padding-bottom: 120px; font-family: sans-serif; }
+    
+    .sticky-top { background: #fff; border-bottom: 2px solid var(--main); padding: 10px 15px !important; z-index: 1020; }
+    .case-badge { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; background: white; cursor: pointer; min-width: 80px; margin-right: 5px; }
+    .case-badge.active { background: var(--main); color: white; border-color: var(--main); }
+    .case-badge .del-btn { color: #94a3b8; font-size: 1.1rem; padding-left: 5px; cursor: pointer; }
+    .case-badge.active .del-btn { color: #fff; opacity: 0.7; }
+
+    .search-area { background: #fff; padding: 10px 15px; border-bottom: 1px solid #e2e8f0; }
+    .filter-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 8px; }
+    .filter-btn { padding: 6px 0; font-size: 0.75rem; font-weight: bold; border-radius: 4px; border: 1px solid #ddd; background: #fff; text-align: center; }
+    .filter-btn.active { background: #64748b; color: white; }
+
+    .main-table-container { background: white; margin: 10px; border-radius: 10px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .main-table { width: 100%; min-width: 650px; border-collapse: collapse; }
+    .main-table th { background: #f8fafc; padding: 12px; font-size: 0.75rem; text-align: center; color: #64748b; }
+    .main-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .has-value-row { background-color: #fffbeb !important; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 15px; padding: 15px; }
+    .grid-item { background: white; border-radius: 12px; padding: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; min-height: 400px; }
+    .grid-item.has-value { border: 2px solid var(--main); background: #fffbeb; }
+    .grid-img { width: 100%; height: 130px; object-fit: contain; margin-bottom: 10px; background: #f8fafc; }
+    .grid-card-name { font-size: 0.75rem; font-weight: bold; height: 3em; overflow: hidden; margin-bottom: 10px; }
+    
+    .grid-ctrl-table { width: 100%; font-size: 0.75rem; }
+    .grid-ctrl-table td { padding: 4px 0; vertical-align: middle; }
+    .price-tag { color: var(--danger); font-weight: bold; font-size: 0.8rem; }
+
+    .qty-ctrl { display: inline-flex; align-items: center; border-radius: 4px; border: 1px solid #cbd5e1; overflow: hidden; background: #fff; }
+    .qty-ctrl.has-value { background: var(--main); color: white; border-color: var(--main); }
+    .qty-btn { border: none; background: transparent; color: inherit; width: 26px; height: 28px; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; }
+    .qty-num { width: 36px; border: none; text-align: center; background: transparent; font-weight: bold; font-size: 0.95rem; color: inherit; outline: none; padding: 0; }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+    .footer-bar { position: fixed; bottom: 0; width: 100%; background: var(--main); color: white; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1050; box-shadow: 0 -4px 10px rgba(0,0,0,0.2); }
+
+    .receipt-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; }
+    .table-receipt { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .table-receipt th, .table-receipt td { border: 1px solid #dee2e6; padding: 12px 15px; vertical-align: middle; }
+    .table-receipt th { background-color: #f8fafc; text-align: center; color: #64748b; font-size: 0.85rem; }
+    
+    @media print {
+      @page { size: A4; margin: 10mm; }
+      body { background: #fff !important; }
+      .no-print, #main-ui, .footer-bar { display: none !important; }
+      .print-only { display: table-cell !important; }
+      #receipt { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="main-ui" class="no-print">
+  <div class="sticky-top shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="fw-bold" style="color:var(--main);">RAIRAI POS SYSTEM</div>
+      <div class="btn-group">
+        <button id="btn-table" class="btn btn-sm btn-outline-dark" onclick="switchView('table')">リスト</button>
+        <button id="btn-grid" class="btn btn-sm btn-outline-dark active" onclick="switchView('grid')">タイル</button>
+      </div>
+    </div>
+    
+    <div class="d-flex align-items-center gap-2 overflow-auto pb-1">
+      <button class="btn btn-primary btn-sm fw-bold px-3" onclick="createNewCase()">新規</button>
+      <div id="case-list-area" class="d-flex gap-1"></div>
+      <div class="border-start ps-2 ms-1 d-flex align-items-center">
+        <select id="waiting-select" class="form-select form-select-sm fw-bold border-warning" style="min-width: 180px; background-color: #fffbeb;" onchange="handleWaitingSelect(this)">
+          <option value="">⏳ 待機中リスト...</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-area shadow-sm">
+    <div id="cancel-banner" style="display:none; background:var(--danger); color:white; padding:8px; text-align:center; font-weight:bold; margin-bottom:10px; border-radius:6px;">【⚠️ 満額以外返送希望案件 ⚠️】</div>
+    <div class="row g-2 mb-1">
+      <div class="col-4"><input type="text" id="cust-name" class="form-control form-control-sm fw-bold" placeholder="顧客名" oninput="autoUpdateCaseName()"></div>
+      <div class="col-5"><input type="text" id="search" class="form-control form-control-sm" placeholder="カード検索..." oninput="draw()"></div>
+      <div class="col-3"><button class="btn btn-dark btn-sm w-100 fw-bold" onclick="showReceipt()">明細確認</button></div>
+    </div>
+    <div id="filter-btns" class="filter-grid"></div>
+  </div>
+  <div id="display-container"></div>
+</div>
+
+<div id="receipt" style="display:none; background:white; min-height: 100vh;">
+  <div class="receipt-container">
+    <div class="text-center">
+      <h3 class="fw-bold receipt-title">買取査定明細書</h3>
+    </div>
+    <div id="receipt-meta" class="mb-3 mt-3 p-3 bg-light border rounded fw-bold"></div>
+    <table class="table-receipt">
+      <thead>
+        <tr>
+          <th style="width: 45%; text-align: left;">商品名 / ランク</th>
+          <th style="width: 15%; text-align: center;">単価</th>
+          <th style="width: 20%; text-align: center;" class="no-print">数量</th>
+          <th style="width: 15%; text-align: center;" class="print-only">数量</th>
+          <th style="width: 15%; text-align: right;">小計</th>
+          <th style="width: 5%; text-align: center;" class="no-print"></th>
+        </tr>
+      </thead>
+      <tbody id="r-body"></tbody>
+    </table>
+    <div class="mt-5 d-flex flex-column gap-3 no-print">
+      <button class="btn btn-success btn-lg fw-bold shadow" onclick="window.print()"><i class="bi bi-printer"></i> 印刷・PDF保存</button>
+      <button class="btn btn-primary btn-lg fw-bold shadow" id="btn-finalize" onclick="finalizeTrade()"><i class="bi bi-cloud-upload"></i> 買取確定・保存</button>
+      <button class="btn btn-outline-secondary py-3 fw-bold" onclick="hideReceipt()">編集に戻る</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer-bar no-print">
+  <div class="h3 m-0 fw-bold">¥<span id="t-amt">0</span> <small class="fs-6 opacity-75 ms-2"><span id="t-qty">0</span> 枚</small></div>
+  <button class="btn btn-outline-warning btn-sm px-4 rounded-pill fw-bold shadow-sm" onclick="resetAll()">全初期化</button>
+</div>
+
+<script>
+  /**
+   * ⚠️ 重要 ⚠️
+   * 先ほど作成したGASをデプロイし、発行された「ウェブアプリURL」をここに貼り付けてください。
+   */
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwi7tWn74PWL-HD59oj7p1DZDdfddMn4wdJRJCCZJKznuBSLZ6GA88W6Lp-g1RrFkkSOw/exec";
+
+  let cards = [], inputs = {}, activeCaseId = "default", cases = {}, currentFilter = "", currentView = "grid", waitingList = [];
+  const filterMap = {"あ":"^[あいうえおアイウエオｱｲｳｴｵ]","か":"^[かきくけこがぎぐげごカキクケコガギグゲゴｶｷｸｹｺｶﾞｷﾞｸﾞｹﾞｺﾞ]","さ":"^[さしすせそざじずぜぞサシスセソザジズゼゾｻｼｽｾｿｻﾞｼﾞｽﾞｾﾞｿﾞ]","た":"^[たちつてとだぢづでどタチツテトダヂヂヅデドﾀﾁﾂﾃﾄﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞ]","な":"^[なにぬねのナニヌネノﾅﾆヌネノ]","は":"^[はひふへほばびぶべぼぱぴぷぺぽハヒフヘホバビブベボパピプペポﾊﾋﾌﾍﾎﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ]","ま":"^[まみむめもマミムメモﾏﾐﾑメモ]","や":"^[やゆよヤユヨﾔﾕﾖ]","ら":"^[らりるれろラリルレロﾗﾘﾙﾚﾛ]","わ":"^[わをんワヲンﾜｦﾝ]"};
+
+  window.onload = async () => {
+    const fb = document.getElementById('filter-btns');
+    Object.keys(filterMap).forEach(l => {
+      const b = document.createElement('button'); b.className = "filter-btn"; b.innerText = l;
+      b.onclick = function() { 
+        document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active')); 
+        this.classList.add('active'); 
+        currentFilter = filterMap[l]; 
+        draw(); 
+      };
+      fb.appendChild(b);
+    });
+    
+    const saved = localStorage.getItem('rairai_pos_v29');
+    if (saved) { cases = JSON.parse(saved); activeCaseId = localStorage.getItem('rairai_pos_active_id') || Object.keys(cases)[0]; } 
+    else { createNewCase(); }
+    
+    if (GAS_URL.includes("macros")) {
+        try { 
+          const res = await fetch(GAS_URL); 
+          cards = await res.json(); 
+          draw(); 
+          loadCase(activeCaseId); 
+        } catch(e) { console.error("データ取得失敗", e); }
+        setInterval(refreshWaiting, 15000); refreshWaiting();
+    } else {
+        alert("GAS_URLが設定されていません。GASをデプロイしてURLを貼り付けてください。");
+    }
+  };
+
+  function switchView(v) { currentView = v; document.getElementById('btn-table').classList.toggle('active', v==='table'); document.getElementById('btn-grid').classList.toggle('active', v==='grid'); draw(); }
+  function calc() { let tq = 0, ta = 0; Object.values(inputs).forEach(i => { tq += i.q; ta += (i.q * i.p); }); document.getElementById('t-qty').innerText = tq; document.getElementById('t-amt').innerText = ta.toLocaleString(); }
+  
+  function updateQtyManually(name, type, price, val) {
+    const key = name + '-' + type;
+    let q = parseInt(val, 10);
+    if (isNaN(q) || q <= 0) { delete inputs[key]; } else { inputs[key] = { n: name, t: type, p: price, q: q }; }
+    saveCurrentCase(); calc(); draw();
+  }
+
+  function changeQty(name, type, price, delta) {
+    const key = name + '-' + type;
+    let q = (inputs[key]?.q || 0) + delta;
+    if (q <= 0) delete inputs[key]; else inputs[key] = { n: name, t: type, p: price, q: q };
+    saveCurrentCase(); calc(); draw();
+  }
+
+  function draw() {
+    const container = document.getElementById('display-container');
+    const sw = document.getElementById('search').value.toLowerCase();
+    const filtered = cards.filter(c => c.isFixed || (c.name.toLowerCase().includes(sw) && (currentFilter === "" || new RegExp(currentFilter).test(c.name))));
+    
+    if (currentView === 'table') {
+      let html = `<div class="main-table-container"><table class="main-table"><thead><tr><th style="width:35%">商品名</th><th>S</th><th>A</th><th>B</th><th>C</th><th>D</th></tr></thead><tbody>`;
+      html += filtered.map(c => {
+        const ctrls = ['S','A','B','C','D'].map(t => {
+          const q = inputs[c.name+'-'+t]?.q || 0; const p = c['price'+t] || 0;
+          return `<td><div class="qty-ctrl ${q>0?'has-value':''}"><button class="qty-btn" onclick="changeQty('${c.name}','${t}',${p},-1)">-</button><input type="number" class="qty-num" value="${q||''}" onchange="updateQtyManually('${c.name}','${t}',${p},this.value)" placeholder="0"><button class="qty-btn" onclick="changeQty('${c.name}','${t}',${p},1)">+</button></div><div class="text-center text-danger small mt-1">¥${p.toLocaleString()}</div></td>`;
+        }).join('');
+        return `<tr><td><div class="d-flex align-items-center gap-2"><img src="${c.image}" style="width:35px;height:49px;object-fit:contain"><span class="small fw-bold">${c.name}</span></div></td>${ctrls}</tr>`;
+      }).join('');
+      container.innerHTML = html + `</tbody></table></div>`;
+    } else {
+      let html = `<div class="card-grid">`;
+      html += filtered.map(c => {
+        const rows = ['S','A','B','C','D'].map(t => {
+          const q = inputs[c.name+'-'+t]?.q || 0; const p = c['price'+t] || 0;
+          return `<tr><td style="width:20px; font-weight:900">${t}</td><td class="price-tag">¥${p.toLocaleString()}</td><td class="text-end"><div class="qty-ctrl ${q>0?'has-value':''}"><button class="qty-btn" onclick="changeQty('${c.name}','${t}',${p},-1)">-</button><input type="number" class="qty-num" value="${q||''}" onchange="updateQtyManually('${c.name}','${t}',${p},this.value)" placeholder="0"><button class="qty-btn" onclick="changeQty('${c.name}','${t}',${p},1)">+</button></div></td></tr>`;
+        }).join('');
+        const hasV = ['S','A','B','C','D'].some(t => (inputs[c.name+'-'+t]?.q || 0) > 0);
+        return `<div class="grid-item ${hasV?'has-value':''}"><img src="${c.image}" class="grid-img"><div class="grid-card-name">${c.name}</div><table class="grid-ctrl-table">${rows}</table></div>`;
+      }).join('');
+      container.innerHTML = html + `</div>`;
+    }
+  }
+
+  function showReceipt() {
+    document.getElementById('main-ui').style.display='none'; 
+    document.getElementById('receipt').style.display='block';
+    const b = document.getElementById('r-body'); b.innerHTML = "";
+    let total = 0;
+    Object.keys(inputs).forEach(key => {
+      const i = inputs[key]; const sub = i.q * i.p; total += sub;
+      b.innerHTML += `<tr><td><div class="fw-bold">${i.n}</div><div class="small text-secondary">【${i.t}ランク】</div></td><td class="text-center">¥${i.p.toLocaleString()}</td><td class="text-center no-print">${i.q}</td><td class="text-center print-only">${i.q}</td><td class="text-end">¥${sub.toLocaleString()}</td><td class="no-print"><button class="btn-delete-row" onclick="deleteRow('${key}')"><i class="bi bi-trash3-fill"></i></button></td></tr>`;
+    });
+    b.innerHTML += `<tr class="table-dark"><td colspan="2" class="text-end fw-bold">合計査定額</td><td class="no-print"></td><td class="print-only"></td><td class="text-end fw-bold">¥${total.toLocaleString()}</td><td class="no-print"></td></tr>`;
+    document.getElementById('receipt-meta').innerHTML = `氏名: ${document.getElementById('cust-name').value || "未指定"} 様` + (cases[activeCaseId].cancelIfSubMax === "希望する" ? "<br><span class='text-danger'>【満額以外返送希望】</span>" : "");
+  }
+
+  function hideReceipt() { document.getElementById('receipt').style.display='none'; document.getElementById('main-ui').style.display='block'; }
+  function deleteRow(key) { delete inputs[key]; saveCurrentCase(); calc(); showReceipt(); }
+  function saveCurrentCase() { if(!cases[activeCaseId]) return; cases[activeCaseId].name = document.getElementById('cust-name').value || "新規"; cases[activeCaseId].data = inputs; localStorage.setItem('rairai_pos_v29', JSON.stringify(cases)); localStorage.setItem('rairai_pos_active_id', activeCaseId); }
+  function loadCase(id) { activeCaseId = id; inputs = cases[id].data || {}; document.getElementById('cust-name').value = cases[id].name === "新規" ? "" : cases[id].name; document.getElementById('cancel-banner').style.display = (cases[id].cancelIfSubMax === "希望する") ? "block" : "none"; calc(); draw(); updateCaseListUI(); }
+  function createNewCase() { const id = "c_" + Date.now(); cases[id] = { name: "新規", data: {}, cancelIfSubMax: "希望しない" }; loadCase(id); }
+  function autoUpdateCaseName() { saveCurrentCase(); updateCaseListUI(); }
+  function updateCaseListUI() { const area = document.getElementById('case-list-area'); area.innerHTML = ""; Object.keys(cases).forEach(id => { const b = document.createElement('div'); b.className = `case-badge ${id === activeCaseId ? 'active' : ''}`; b.onclick = () => loadCase(id); b.innerHTML = `<span>${cases[id].name}</span><i class="bi bi-x-circle-fill del-btn" onclick="deleteCase(event, '${id}')"></i>`; area.appendChild(b); }); }
+  function deleteCase(e, id) { e.stopPropagation(); if(Object.keys(cases).length <= 1) return; delete cases[id]; if(activeCaseId === id) activeCaseId = Object.keys(cases)[0]; saveCurrentCase(); loadCase(activeCaseId); }
+
+  async function finalizeTrade() {
+    if(!confirm("確定して保存しますか？")) return;
+    const btn = document.getElementById('btn-finalize'); btn.disabled = true;
+    const tradeData = { action: "log_trade", customerName: document.getElementById('cust-name').value, tel: cases[activeCaseId].tel || "", totalQty: document.getElementById('t-qty').innerText, totalAmount: document.getElementById('t-amt').innerText.replace(/,/g, ''), items: Object.values(inputs) };
+    try {
+      const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify(tradeData) });
+      const json = await res.json();
+      if(json.result === "SUCCESS") { alert("保存完了"); delete cases[activeCaseId]; if(Object.keys(cases).length===0) createNewCase(); else loadCase(Object.keys(cases)[0]); hideReceipt(); }
+    } catch(e) { alert("エラーが発生しました"); } finally { btn.disabled = false; }
+  }
+
+  async function refreshWaiting() {
+    try {
+      const res = await fetch(GAS_URL + "?action=getWaiting");
+      waitingList = await res.json();
+      const select = document.getElementById('waiting-select');
+      let options = `<option value="">⏳ 待機中 (${waitingList.length}名)...</option>`;
+      waitingList.forEach((c, i) => { options += `<option value="${i}">${c.name} 様</option>`; });
+      select.innerHTML = options;
+    } catch(e){}
+  }
+
+  async function handleWaitingSelect(selectObj) {
+    const idx = selectObj.value; if (idx === "") return;
+    const c = waitingList[idx];
+    if(!confirm(`${c.name} 様の査定を開始しますか？`)) { selectObj.value = ""; return; }
+    const id = "c_" + Date.now();
+    cases[id] = { name: c.name, tel: c.tel, cancelIfSubMax: c.cancelStatus, data: {} };
+    saveCurrentCase(); loadCase(id);
+    await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "update_status", customerName: c.name, newStatus: "査定中" }) });
+    refreshWaiting();
+  }
+
+  function resetAll() { if(confirm('全て消去しますか？')) { localStorage.clear(); location.reload(); } }
+</script>
+</body>
+</html>
