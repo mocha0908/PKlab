@@ -64,7 +64,7 @@
 <div id="main-ui" class="no-print">
   <div class="sticky-top shadow-sm">
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <div class="fw-bold" style="color:var(--main);">RAIRAI POS SYSTEM</div>
+      <div class="fw-bold" style="color:var(--main);">PKlab POS SYSTEM</div>
       <div class="btn-group">
         <button id="btn-table" class="btn btn-sm btn-outline-dark" onclick="switchView('table')">リスト</button>
         <button id="btn-grid" class="btn btn-sm btn-outline-dark active" onclick="switchView('grid')">タイル</button>
@@ -131,7 +131,7 @@
    * ⚠️ 重要 ⚠️
    * 先ほど作成したGASをデプロイし、発行された「ウェブアプリURL」をここに貼り付けてください。
    */
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwi7tWn74PWL-HD59oj7p1DZDdfddMn4wdJRJCCZJKznuBSLZ6GA88W6Lp-g1RrFkkSOw/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwaUcK4RJgWkea_Nqq4jUOwgJ6lokrqyKCUJ1a5SHAWWTxVx_5m2QfDhgmL54zTmaGhRw/exec";
 
   let cards = [], inputs = {}, activeCaseId = "default", cases = {}, currentFilter = "", currentView = "grid", waitingList = [];
   const filterMap = {"あ":"^[あいうえおアイウエオｱｲｳｴｵ]","か":"^[かきくけこがぎぐげごカキクケコガギグゲゴｶｷｸｹｺｶﾞｷﾞｸﾞｹﾞｺﾞ]","さ":"^[さしすせそざじずぜぞサシスセソザジズゼゾｻｼｽｾｿｻﾞｼﾞｽﾞｾﾞｿﾞ]","た":"^[たちつてとだぢづでどタチツテトダヂヂヅデドﾀﾁﾂﾃﾄﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞ]","な":"^[なにぬねのナニヌネノﾅﾆヌネノ]","は":"^[はひふへほばびぶべぼぱぴぷぺぽハヒフヘホバビブベボパピプペポﾊﾋﾌﾍﾎﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ]","ま":"^[まみむめもマミムメモﾏﾐﾑメモ]","や":"^[やゆよヤユヨﾔﾕﾖ]","ら":"^[らりるれろラリルレロﾗﾘﾙﾚﾛ]","わ":"^[わをんワヲンﾜｦﾝ]"};
