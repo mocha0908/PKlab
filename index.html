@@ -24,11 +24,6 @@
     .filter-btn.active { background: #64748b; color: white; border-color: #64748b; }
     .rarity-btn.active { background: var(--main); border-color: var(--main); }
 
-    .main-table-container { background: white; margin: 10px; border-radius: 10px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    .main-table { width: 100%; min-width: 650px; border-collapse: collapse; }
-    .main-table th { background: #f8fafc; padding: 12px; font-size: 0.75rem; text-align: center; color: #64748b; }
-    .main-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-    
     .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 15px; padding: 15px; }
     .grid-item { background: white; border-radius: 12px; padding: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; min-height: 380px; }
     .grid-item.has-value { border: 2px solid var(--main); background: #fffbeb; }
@@ -47,22 +42,32 @@
     .footer-bar { position: fixed; bottom: 0; width: 100%; background: var(--main); color: white; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1050; }
 
     /* --- 印刷・明細用設定 --- */
-    .receipt-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; }
-    .table-receipt { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .table-receipt th, .table-receipt td { border: 1px solid #dee2e6; padding: 6px 10px !important; vertical-align: middle; }
-    .table-receipt th { background-color: #f8fafc; text-align: center; color: #64748b; font-size: 0.8rem; }
+    .receipt-container { max-width: 850px; margin: 0 auto; background: #fff; padding: 10px; }
+    .table-receipt { width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed; }
+    .table-receipt th, .table-receipt td { 
+      border: 1px solid #333 !important; 
+      padding: 4px 8px !important; 
+      vertical-align: middle; 
+      line-height: 1.1 !important;
+      word-break: break-all;
+    }
+    .table-receipt th { background-color: #f8fafc; text-align: center; color: #333; font-size: 0.8rem; }
     
     @media print {
-      @page { size: A4; margin: 10mm; }
-      body { background: #fff !important; font-size: 10pt; }
+      @page { size: A4 portrait; margin: 0; }
+      body { 
+        width: 210mm; height: 296mm; margin: 0 !important; padding: 8mm !important; 
+        background: #fff !important; font-size: 9pt !important; overflow: hidden;
+      }
       .no-print { display: none !important; }
+      .print-only { display: table-cell !important; } /* 印刷時のみ数量(数字)を表示 */
       #receipt { display: block !important; width: 100%; }
       .receipt-container { padding: 0; width: 100%; max-width: 100%; }
-      .table-receipt { font-size: 9pt; width: 100%; }
-      .table-receipt td { padding: 4px 8px !important; }
-      .table-receipt .qty-ctrl { border: none; background: none; color: black; }
-      .table-receipt .qty-btn { display: none; }
+      .table-receipt { font-size: 8.5pt !important; width: 100%; border: 1px solid #000 !important; }
+      .table-receipt td { padding: 2px 6px !important; }
+      .table-light { page-break-inside: avoid !important; page-break-before: avoid !important; }
     }
+    .print-only { display: none; } /* 通常時は非表示 */
   </style>
 </head>
 <body>
@@ -104,27 +109,27 @@
   <div id="display-container"></div>
 </div>
 
-<div id="receipt" style="display:none; background:white; min-height: 100vh;">
+<div id="receipt" style="display:none; background:white;">
   <div class="receipt-container">
-    <div class="text-center"><h3 class="fw-bold">買取査定明細書</h3></div>
-    <div id="receipt-meta" class="mb-3 mt-3 p-3 bg-light border rounded fw-bold"></div>
+    <div class="text-center"><h4 class="fw-bold">買取査定明細書</h4></div>
+    <div id="receipt-meta" class="mb-2 mt-2 p-2 bg-light border rounded fw-bold" style="font-size:0.9rem;"></div>
     <table class="table-receipt">
       <thead>
         <tr>
-          <th style="width: 45%; text-align: left;">商品名 / ランク</th>
+          <th style="width: 50%; text-align: left;">商品名 / ランク</th>
           <th style="width: 15%; text-align: center;">単価</th>
           <th style="width: 20%; text-align: center;" class="no-print">数量</th>
-          <th style="width: 15%; text-align: center;" class="print-only">数量</th>
+          <th style="width: 10%; text-align: center;" class="print-only">数量</th>
           <th style="width: 15%; text-align: right;">小計</th>
           <th style="width: 5%; text-align: center;" class="no-print"></th>
         </tr>
       </thead>
       <tbody id="r-body"></tbody>
     </table>
-    <div class="mt-4 d-flex flex-column gap-3 no-print">
-      <button class="btn btn-success btn-lg fw-bold shadow" onclick="window.print()"><i class="bi bi-printer"></i> 印刷・PDF保存</button>
-      <button class="btn btn-primary btn-lg fw-bold shadow" id="btn-finalize" onclick="finalizeTrade()"><i class="bi bi-cloud-upload"></i> 買取確定・保存</button>
-      <button class="btn btn-outline-secondary py-3 fw-bold" onclick="hideReceipt()">編集に戻る</button>
+    <div class="mt-3 d-flex flex-column gap-2 no-print">
+      <button class="btn btn-success py-2 fw-bold shadow" onclick="window.print()"><i class="bi bi-printer"></i> 印刷・PDF保存</button>
+      <button class="btn btn-primary py-2 fw-bold shadow" id="btn-finalize" onclick="finalizeTrade()"><i class="bi bi-cloud-upload"></i> 買取確定・保存</button>
+      <button class="btn btn-outline-secondary py-2 fw-bold" onclick="hideReceipt()">編集に戻る</button>
     </div>
   </div>
 </div>
@@ -141,7 +146,7 @@
   const kanaMap = {"あ":"^[あいうえおアイウエオｱｲｳｴｵ]","か":"^[かきくけこがぎぐげごカキクケコガギグゲゴｶｷｸｹｺｶﾞｷﾞｸﾞｹﾞｺﾞ]","さ":"^[さしすせそざじずぜぞサシスセソザジズゼゾｻｼｽｾｿｻﾞｼﾞｽﾞｾﾞｿﾞ]","た":"^[たちつてとだぢづでどタチツテトダヂヂヅデドﾀﾁﾂﾃﾄﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞ]","な":"^[なにぬねのナニヌネノﾅﾆヌネノ]","は":"^[はひふへほばびぶべぼぱぴぷぺぽハヒフヘホバビブベボパピプペポﾊﾋﾌﾍﾎﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ]","ま":"^[まみむめもマミムメモﾏﾐﾑメモ]","や":"^[やゆよヤユヨﾔﾕﾖ]","ら":"^[らりるれろラリルレロﾗﾘﾙﾚﾛ]","わ":"^[わをんワヲンﾜｦﾝ]"};
 
   window.onload = async () => {
-    const saved = localStorage.getItem('rairai_pos_v29');
+    const saved = localStorage.getItem('rairai_pos_v30');
     if (saved) { cases = JSON.parse(saved); activeCaseId = localStorage.getItem('rairai_pos_active_id') || Object.keys(cases)[0]; } 
     else { createNewCase(); }
     try { 
@@ -260,6 +265,7 @@
             <div class="small text-secondary">【${i.t}ランク】</div>
           </td>
           <td class="text-center">¥${i.p.toLocaleString()}</td>
+          
           <td class="text-center no-print">
             <div class="qty-ctrl has-value" style="margin: auto;">
               <button class="qty-btn" onclick="changeQtyReceipt('${i.n}','${i.t}',${i.p},-1)">-</button>
@@ -267,7 +273,9 @@
               <button class="qty-btn" onclick="changeQtyReceipt('${i.n}','${i.t}',${i.p},1)">+</button>
             </div>
           </td>
+
           <td class="text-center print-only">${i.q}</td>
+
           <td class="text-end fw-bold">¥${sub.toLocaleString()}</td>
           <td class="no-print text-center">
             <button class="btn-delete-row" onclick="deleteRow('${key}')" style="color:red; border:none; background:none;"><i class="bi bi-trash3-fill"></i></button>
@@ -279,21 +287,21 @@
       <tr class="table-light">
         <td colspan="2" class="text-end fw-bold">合計査定額</td>
         <td class="no-print"></td>
-        <td class="print-only"></td>
-        <td class="text-end fw-bold text-danger" style="font-size: 1.2rem;">¥${total.toLocaleString()}</td>
+        <td class="print-only" style="text-align:center;">${Object.values(inputs).reduce((a, b) => a + b.q, 0)}</td>
+        <td class="text-end fw-bold text-danger" style="font-size: 1.1rem;">¥${total.toLocaleString()}</td>
         <td class="no-print"></td>
       </tr>`;
 
-    let metaHtml = `<div style="font-size:1.1rem;">氏名: ${document.getElementById('cust-name').value || "未指定"} 様</div>`;
+    let metaHtml = `<div style="font-size:1rem;">氏名: ${document.getElementById('cust-name').value || "未指定"} 様</div>`;
     if (cases[activeCaseId].cancelIfSubMax === "希望する") {
-      metaHtml += `<div class="text-danger fw-bold mt-1" style="font-size:1.2rem; border:2px solid red; padding:5px; text-align:center;">【！！満額査定以外返送希望！！】</div>`;
+      metaHtml += `<div class="text-danger fw-bold mt-1" style="font-size:1.1rem; border:2px solid red; padding:4px; text-align:center;">【！！満額査定以外返送希望！！】</div>`;
     }
     document.getElementById('receipt-meta').innerHTML = metaHtml;
   }
 
   function hideReceipt() { document.getElementById('receipt').style.display='none'; document.getElementById('main-ui').style.display='block'; draw(); }
   function deleteRow(key) { delete inputs[key]; saveCurrentCase(); calc(); showReceipt(); }
-  function saveCurrentCase() { if(!cases[activeCaseId]) return; cases[activeCaseId].name = document.getElementById('cust-name').value || "新規"; cases[activeCaseId].data = inputs; localStorage.setItem('rairai_pos_v29', JSON.stringify(cases)); localStorage.setItem('rairai_pos_active_id', activeCaseId); }
+  function saveCurrentCase() { if(!cases[activeCaseId]) return; cases[activeCaseId].name = document.getElementById('cust-name').value || "新規"; cases[activeCaseId].data = inputs; localStorage.setItem('rairai_pos_v30', JSON.stringify(cases)); localStorage.setItem('rairai_pos_active_id', activeCaseId); }
   
   function loadCase(id) { 
     if(!cases[id]) return; 
