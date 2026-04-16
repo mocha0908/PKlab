@@ -9,49 +9,39 @@
   <style>
     :root { --main: #0d124a; --bg: #f1f5f9; --accent: #facc15; --danger: #ef4444; }
     body { background: var(--bg); color: #333; padding-bottom: 120px; font-family: sans-serif; }
-    
     .sticky-top { background: #fff; border-bottom: 2px solid var(--main); padding: 10px 15px !important; z-index: 1020; }
     .case-badge { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; background: white; cursor: pointer; min-width: 80px; margin-right: 5px; }
     .case-badge.active { background: var(--main); color: white; border-color: var(--main); }
     .case-badge .del-btn { color: #94a3b8; font-size: 1.1rem; padding-left: 5px; cursor: pointer; }
     .case-badge.active .del-btn { color: #fff; opacity: 0.7; }
-
     .search-area { background: #fff; padding: 10px 15px; border-bottom: 1px solid #e2e8f0; }
-    .filter-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .filter-btn { padding: 4px 14px; font-size: 0.75rem; font-weight: bold; border-radius: 20px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
-    .filter-btn.active { background: var(--main); color: white; border-color: var(--main); }
-
+    .filter-section { margin-top: 8px; }
+    .filter-label { font-size: 0.65rem; font-weight: bold; color: #64748b; margin-bottom: 2px; }
+    .filter-grid { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+    .filter-btn { padding: 3px 10px; font-size: 0.7rem; font-weight: bold; border-radius: 4px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+    .filter-btn.active { background: #64748b; color: white; border-color: #64748b; }
+    .rarity-btn.active { background: var(--main); border-color: var(--main); }
     .main-table-container { background: white; margin: 10px; border-radius: 10px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
     .main-table { width: 100%; min-width: 650px; border-collapse: collapse; }
     .main-table th { background: #f8fafc; padding: 12px; font-size: 0.75rem; text-align: center; color: #64748b; }
     .main-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-    
     .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 15px; padding: 15px; }
     .grid-item { background: white; border-radius: 12px; padding: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; min-height: 380px; }
     .grid-item.has-value { border: 2px solid var(--main); background: #fffbeb; }
     .grid-img { width: 100%; height: 130px; object-fit: contain; margin-bottom: 10px; background: #f8fafc; }
     .grid-card-name { font-size: 0.75rem; font-weight: bold; height: 3.5em; overflow: hidden; margin-bottom: 10px; line-height: 1.2; }
-    
     .grid-ctrl-table { width: 100%; font-size: 0.75rem; }
     .grid-ctrl-table td { padding: 4px 0; vertical-align: middle; }
     .price-tag { color: var(--danger); font-weight: bold; font-size: 0.8rem; }
-
     .qty-ctrl { display: inline-flex; align-items: center; border-radius: 4px; border: 1px solid #cbd5e1; overflow: hidden; background: #fff; }
     .qty-ctrl.has-value { background: var(--main); color: white; border-color: var(--main); }
     .qty-btn { border: none; background: transparent; color: inherit; width: 26px; height: 28px; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .qty-num { width: 36px; border: none; text-align: center; background: transparent; font-weight: bold; font-size: 0.95rem; color: inherit; outline: none; }
-
     .footer-bar { position: fixed; bottom: 0; width: 100%; background: var(--main); color: white; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1050; }
-
     .receipt-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; }
     .table-receipt { width: 100%; border-collapse: collapse; margin-top: 15px; }
     .table-receipt th, .table-receipt td { border: 1px solid #dee2e6; padding: 12px 15px; vertical-align: middle; }
-    
-    @media print {
-      body { background: #fff !important; }
-      .no-print { display: none !important; }
-      #receipt { display: block !important; }
-    }
+    @media print { body { background: #fff !important; } .no-print { display: none !important; } #receipt { display: block !important; } }
   </style>
 </head>
 <body>
@@ -65,7 +55,6 @@
         <button id="btn-grid" class="btn btn-sm btn-outline-dark active" onclick="switchView('grid')">タイル</button>
       </div>
     </div>
-    
     <div class="d-flex align-items-center gap-2 overflow-auto pb-1">
       <button class="btn btn-primary btn-sm fw-bold px-3" onclick="createNewCase()">新規</button>
       <div id="case-list-area" class="d-flex gap-1"></div>
@@ -78,39 +67,32 @@
   </div>
 
   <div class="search-area shadow-sm">
-    <div id="cancel-banner" style="display:none; background:var(--danger); color:white; padding:8px; text-align:center; font-weight:bold; margin-bottom:10px; border-radius:6px;">【⚠️ 満額以外返送希望案件 ⚠️】</div>
     <div class="row g-2 mb-1">
       <div class="col-4"><input type="text" id="cust-name" class="form-control form-control-sm fw-bold" placeholder="顧客名" oninput="autoUpdateCaseName()"></div>
-      <div class="col-5"><input type="text" id="search" class="form-control form-control-sm" placeholder="カード名・型番検索..." oninput="draw()"></div>
+      <div class="col-5"><input type="text" id="search" class="form-control form-control-sm" placeholder="商品名・型番検索..." oninput="draw()"></div>
       <div class="col-3"><button class="btn btn-dark btn-sm w-100 fw-bold" onclick="showReceipt()">明細確認</button></div>
     </div>
-    <div id="filter-btns" class="filter-grid"></div>
+    <div class="filter-section">
+      <div class="filter-label">五十音</div>
+      <div id="kana-filters" class="filter-grid"></div>
+      <div class="filter-label">レアリティ</div>
+      <div id="rarity-filters" class="filter-grid"></div>
+    </div>
   </div>
   <div id="display-container"></div>
 </div>
 
 <div id="receipt" style="display:none; background:white; min-height: 100vh;">
   <div class="receipt-container">
-    <div class="text-center">
-      <h3 class="fw-bold">買取査定明細書</h3>
-    </div>
+    <div class="text-center"><h3 class="fw-bold">買取査定明細書</h3></div>
     <div id="receipt-meta" class="mb-3 mt-3 p-3 bg-light border rounded fw-bold"></div>
     <table class="table-receipt">
-      <thead>
-        <tr>
-          <th style="width: 45%; text-align: left;">商品名 / ランク</th>
-          <th style="width: 15%; text-align: center;">単価</th>
-          <th style="width: 20%; text-align: center;" class="no-print">数量</th>
-          <th style="width: 15%; text-align: center;" class="print-only">数量</th>
-          <th style="width: 15%; text-align: right;">小計</th>
-          <th style="width: 5%; text-align: center;" class="no-print"></th>
-        </tr>
-      </thead>
+      <thead><tr><th>商品名 / ランク</th><th>単価</th><th class="no-print">数量</th><th class="print-only">数量</th><th>小計</th><th class="no-print"></th></tr></thead>
       <tbody id="r-body"></tbody>
     </table>
     <div class="mt-5 d-flex flex-column gap-3 no-print">
-      <button class="btn btn-success btn-lg fw-bold shadow" onclick="window.print()"><i class="bi bi-printer"></i> 印刷・PDF保存</button>
-      <button class="btn btn-primary btn-lg fw-bold shadow" id="btn-finalize" onclick="finalizeTrade()"><i class="bi bi-cloud-upload"></i> 買取確定・保存</button>
+      <button class="btn btn-success btn-lg fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> 印刷・PDF保存</button>
+      <button class="btn btn-primary btn-lg fw-bold" id="btn-finalize" onclick="finalizeTrade()"><i class="bi bi-cloud-upload"></i> 買取確定</button>
       <button class="btn btn-outline-secondary py-3 fw-bold" onclick="hideReceipt()">編集に戻る</button>
     </div>
   </div>
@@ -118,23 +100,24 @@
 
 <div class="footer-bar no-print">
   <div class="h3 m-0 fw-bold">¥<span id="t-amt">0</span> <small class="fs-6 opacity-75 ms-2"><span id="t-qty">0</span> 枚</small></div>
-  <button class="btn btn-outline-warning btn-sm px-4 rounded-pill fw-bold shadow-sm" onclick="resetAll()">全初期化</button>
+  <button class="btn btn-outline-warning btn-sm px-4 rounded-pill fw-bold" onclick="resetAll()">全初期化</button>
 </div>
 
 <script>
-  // ⚠️ ここにデプロイ後のGAS URLを貼る ⚠️
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwaUcK4RJgWkea_Nqq4jUOwgJ6lokrqyKCUJ1a5SHAWWTxVx_5m2QfDhgmL54zTmaGhRw/exec";
+  // ⚠️ ここにデプロイ後のURLを貼る
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwi7tWn74PWL-HD59oj7p1DZDdfddMn4wdJRJCCZJKznuBSLZ6GA88W6Lp-g1RrFkkSOw/exec";
 
-  let cards = [], inputs = {}, activeCaseId = "default", cases = {}, currentRarity = "ALL", currentView = "grid", waitingList = [];
+  let cards = [], inputs = {}, activeCaseId = "default", cases = {}, currentRarity = "ALL", currentKana = "", currentView = "grid", waitingList = [];
+  const kanaMap = {"あ":"^[あいうえおアイウエオｱｲｳｴｵ]","か":"^[かきくけこがぎぐげごカキクケコガギグゲゴｶｷｸｹｺｶﾞｷﾞｸﾞｹﾞｺﾞ]","さ":"^[さしすせそざじずぜぞサシスセソザジズゼゾｻｼｽｾｿｻﾞｼﾞｽﾞｾﾞｿﾞ]","た":"^[たちつてとだぢづでどタチツテトダヂヂヅデドﾀﾁﾂﾃﾄﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞ]","な":"^[なにぬねのナニヌネノﾅﾆヌネノ]","は":"^[はひふへほばびぶべぼぱぴぷぺぽハヒフヘホバビブベボパピプペポﾊﾋﾌﾍﾎﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ]","ま":"^[まみむめもマミムメモﾏﾐﾑメモ]","や":"^[やゆよヤユヨﾔﾕﾖ]","ら":"^[らりるれろラリルレロﾗﾘﾙﾚﾛ]","わ":"^[わをんワヲンﾜｦﾝ]"};
 
   window.onload = async () => {
     const saved = localStorage.getItem('rairai_pos_v29');
     if (saved) { cases = JSON.parse(saved); activeCaseId = localStorage.getItem('rairai_pos_active_id') || Object.keys(cases)[0]; } 
     else { createNewCase(); }
-    
     try { 
       const res = await fetch(GAS_URL); 
       cards = await res.json(); 
+      createKanaFilters();
       createRarityFilters();
       draw(); 
       loadCase(activeCaseId); 
@@ -142,21 +125,37 @@
     setInterval(refreshWaiting, 15000); refreshWaiting();
   };
 
+  function createKanaFilters() {
+    const area = document.getElementById('kana-filters');
+    ["すべて", ...Object.keys(kanaMap)].forEach(k => {
+      const b = document.createElement('button');
+      b.className = `filter-btn ${k === "すべて" ? "active" : ""}`;
+      b.innerText = k;
+      b.onclick = function() {
+        document.querySelectorAll('#kana-filters .filter-btn').forEach(x => x.classList.remove('active'));
+        this.classList.add('active');
+        currentKana = k === "すべて" ? "" : kanaMap[k];
+        draw();
+      };
+      area.appendChild(b);
+    });
+  }
+
   function createRarityFilters() {
-    const fb = document.getElementById('filter-btns');
+    const area = document.getElementById('rarity-filters');
     const rarities = ["ALL", ...new Set(cards.map(c => c.rarity).filter(r => r))];
-    fb.innerHTML = "";
+    area.innerHTML = "";
     rarities.forEach(r => {
       const b = document.createElement('button');
-      b.className = `filter-btn ${r === "ALL" ? "active" : ""}`;
+      b.className = `filter-btn rarity-btn ${r === "ALL" ? "active" : ""}`;
       b.innerText = r;
       b.onclick = function() {
-        document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('#rarity-filters .filter-btn').forEach(x => x.classList.remove('active'));
         this.classList.add('active');
         currentRarity = r;
         draw();
       };
-      fb.appendChild(b);
+      area.appendChild(b);
     });
   }
 
@@ -167,7 +166,7 @@
     const key = name + '-' + type;
     let q = parseInt(val, 10);
     if (isNaN(q) || q <= 0) { delete inputs[key]; } else { inputs[key] = { n: name, t: type, p: price, q: q }; }
-    saveCurrentCase(); calc();
+    saveCurrentCase(); calc(); draw();
   }
 
   function changeQty(name, type, price, delta) {
@@ -181,9 +180,10 @@
     const container = document.getElementById('display-container');
     const sw = document.getElementById('search').value.toLowerCase();
     const filtered = cards.filter(c => {
-      const matchSearch = c.name.toLowerCase().includes(sw) || c.code.toLowerCase().includes(sw);
-      const matchRarity = (currentRarity === "ALL" || c.rarity === currentRarity);
-      return matchSearch && matchRarity;
+      const mS = c.name.toLowerCase().includes(sw) || c.code.toLowerCase().includes(sw);
+      const mR = (currentRarity === "ALL" || c.rarity === currentRarity);
+      const mK = (currentKana === "" || new RegExp(currentKana).test(c.name));
+      return mS && mR && mK;
     });
     
     if (currentView === 'table') {
@@ -208,6 +208,7 @@
       }).join('');
       container.innerHTML = html + `</div>`;
     }
+    calc();
   }
 
   function showReceipt() {
