@@ -41,33 +41,22 @@
 
     .footer-bar { position: fixed; bottom: 0; width: 100%; background: var(--main); color: white; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1050; }
 
-    /* --- 印刷・明細用設定 --- */
     .receipt-container { max-width: 850px; margin: 0 auto; background: #fff; padding: 10px; }
     .table-receipt { width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed; }
-    .table-receipt th, .table-receipt td { 
-      border: 1px solid #333 !important; 
-      padding: 4px 8px !important; 
-      vertical-align: middle; 
-      line-height: 1.1 !important;
-      word-break: break-all;
-    }
+    .table-receipt th, .table-receipt td { border: 1px solid #333 !important; padding: 4px 8px !important; vertical-align: middle; line-height: 1.1 !important; word-break: break-all; }
     .table-receipt th { background-color: #f8fafc; text-align: center; color: #333; font-size: 0.8rem; }
     
     @media print {
       @page { size: A4 portrait; margin: 0; }
-      body { 
-        width: 210mm; height: 296mm; margin: 0 !important; padding: 8mm !important; 
-        background: #fff !important; font-size: 9pt !important; overflow: hidden;
-      }
+      body { width: 210mm; height: 296mm; margin: 0 !important; padding: 8mm !important; background: #fff !important; font-size: 9pt !important; overflow: hidden; }
       .no-print { display: none !important; }
-      .print-only { display: table-cell !important; } /* 印刷時のみ数量(数字)を表示 */
+      .print-only { display: table-cell !important; }
       #receipt { display: block !important; width: 100%; }
       .receipt-container { padding: 0; width: 100%; max-width: 100%; }
       .table-receipt { font-size: 8.5pt !important; width: 100%; border: 1px solid #000 !important; }
       .table-receipt td { padding: 2px 6px !important; }
-      .table-light { page-break-inside: avoid !important; page-break-before: avoid !important; }
     }
-    .print-only { display: none; } /* 通常時は非表示 */
+    .print-only { display: none; }
   </style>
 </head>
 <body>
@@ -146,8 +135,8 @@
   const kanaMap = {"あ":"^[あいうえおアイウエオｱｲｳｴｵ]","か":"^[かきくけこがぎぐげごカキクケコガギグゲゴｶｷｸｹｺｶﾞｷﾞｸﾞｹﾞｺﾞ]","さ":"^[さしすせそざじずぜぞサシスセソザジズゼゾｻｼｽｾｿｻﾞｼﾞｽﾞｾﾞｿﾞ]","た":"^[たちつてとだぢづでどタチツテトダヂヂヅデドﾀﾁﾂﾃﾄﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞ]","な":"^[なにぬねのナニヌネノﾅﾆヌネノ]","は":"^[はひふへほばびぶべぼぱぴぷぺぽハヒフヘホバビブベボパピプペポﾊﾋﾌﾍﾎﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ]","ま":"^[まみむめもマミムメモﾏﾐﾑメモ]","や":"^[やゆよヤユヨﾔﾕﾖ]","ら":"^[らりるれろラリルレロﾗﾘﾙﾚﾛ]","わ":"^[わをんワヲンﾜｦﾝ]"};
 
   window.onload = async () => {
-    const saved = localStorage.getItem('rairai_pos_v30');
-    if (saved) { cases = JSON.parse(saved); activeCaseId = localStorage.getItem('rairai_pos_active_id') || Object.keys(cases)[0]; } 
+    const saved = localStorage.getItem('pk_pos_v30');
+    if (saved) { cases = JSON.parse(saved); activeCaseId = localStorage.getItem('pk_pos_active_id') || Object.keys(cases)[0]; } 
     else { createNewCase(); }
     try { 
       const res = await fetch(GAS_URL); 
@@ -211,10 +200,7 @@
     saveCurrentCase(); calc(); draw();
   }
 
-  function changeQtyReceipt(name, type, price, delta) {
-    changeQty(name, type, price, delta);
-    showReceipt();
-  }
+  function changeQtyReceipt(name, type, price, delta) { changeQty(name, type, price, delta); showReceipt(); }
 
   function draw() {
     const container = document.getElementById('display-container');
@@ -255,61 +241,26 @@
     document.getElementById('receipt').style.display='block';
     const b = document.getElementById('r-body'); b.innerHTML = "";
     let total = 0;
-    
     Object.keys(inputs).forEach(key => {
       const i = inputs[key]; const sub = i.q * i.p; total += sub;
-      b.innerHTML += `
-        <tr>
-          <td>
-            <div class="fw-bold">${i.n}</div>
-            <div class="small text-secondary">【${i.t}ランク】</div>
-          </td>
-          <td class="text-center">¥${i.p.toLocaleString()}</td>
-          
-          <td class="text-center no-print">
-            <div class="qty-ctrl has-value" style="margin: auto;">
-              <button class="qty-btn" onclick="changeQtyReceipt('${i.n}','${i.t}',${i.p},-1)">-</button>
-              <input type="number" class="qty-num" value="${i.q}" readonly>
-              <button class="qty-btn" onclick="changeQtyReceipt('${i.n}','${i.t}',${i.p},1)">+</button>
-            </div>
-          </td>
-
-          <td class="text-center print-only">${i.q}</td>
-
-          <td class="text-end fw-bold">¥${sub.toLocaleString()}</td>
-          <td class="no-print text-center">
-            <button class="btn-delete-row" onclick="deleteRow('${key}')" style="color:red; border:none; background:none;"><i class="bi bi-trash3-fill"></i></button>
-          </td>
-        </tr>`;
+      b.innerHTML += `<tr><td><div class="fw-bold">${i.n}</div><div class="small text-secondary">【${i.t}ランク】</div></td><td class="text-center">¥${i.p.toLocaleString()}</td><td class="text-center no-print"><div class="qty-ctrl has-value" style="margin: auto;"><button class="qty-btn" onclick="changeQtyReceipt('${i.n}','${i.t}',${i.p},-1)">-</button><input type="number" class="qty-num" value="${i.q}" readonly><button class="qty-btn" onclick="changeQtyReceipt('${i.n}','${i.t}',${i.p},1)">+</button></div></td><td class="text-center print-only">${i.q}</td><td class="text-end fw-bold">¥${sub.toLocaleString()}</td><td class="no-print text-center"><button onclick="deleteRow('${key}')" style="color:red; border:none; background:none;"><i class="bi bi-trash3-fill"></i></button></td></tr>`;
     });
-    
-    b.innerHTML += `
-      <tr class="table-light">
-        <td colspan="2" class="text-end fw-bold">合計査定額</td>
-        <td class="no-print"></td>
-        <td class="print-only" style="text-align:center;">${Object.values(inputs).reduce((a, b) => a + b.q, 0)}</td>
-        <td class="text-end fw-bold text-danger" style="font-size: 1.1rem;">¥${total.toLocaleString()}</td>
-        <td class="no-print"></td>
-      </tr>`;
-
+    b.innerHTML += `<tr class="table-light"><td colspan="2" class="text-end fw-bold">合計査定額</td><td class="no-print"></td><td class="print-only" style="text-align:center;">${Object.values(inputs).reduce((a, b) => a + b.q, 0)}</td><td class="text-end fw-bold text-danger" style="font-size: 1.1rem;">¥${total.toLocaleString()}</td><td class="no-print"></td></tr>`;
     let metaHtml = `<div style="font-size:1rem;">氏名: ${document.getElementById('cust-name').value || "未指定"} 様</div>`;
-    if (cases[activeCaseId].cancelIfSubMax === "希望する") {
-      metaHtml += `<div class="text-danger fw-bold mt-1" style="font-size:1.1rem; border:2px solid red; padding:4px; text-align:center;">【！！満額査定以外返送希望！！】</div>`;
-    }
+    if (cases[activeCaseId].cancelIfSubMax === "希望する") metaHtml += `<div class="text-danger fw-bold mt-1" style="font-size:1.1rem; border:2px solid red; padding:4px; text-align:center;">【！！満額査定以外返送希望！！】</div>`;
     document.getElementById('receipt-meta').innerHTML = metaHtml;
   }
 
   function hideReceipt() { document.getElementById('receipt').style.display='none'; document.getElementById('main-ui').style.display='block'; draw(); }
   function deleteRow(key) { delete inputs[key]; saveCurrentCase(); calc(); showReceipt(); }
-  function saveCurrentCase() { if(!cases[activeCaseId]) return; cases[activeCaseId].name = document.getElementById('cust-name').value || "新規"; cases[activeCaseId].data = inputs; localStorage.setItem('rairai_pos_v30', JSON.stringify(cases)); localStorage.setItem('rairai_pos_active_id', activeCaseId); }
+  function saveCurrentCase() { if(!cases[activeCaseId]) return; cases[activeCaseId].name = document.getElementById('cust-name').value || "新規"; cases[activeCaseId].data = inputs; localStorage.setItem('pk_pos_v30', JSON.stringify(cases)); localStorage.setItem('pk_pos_active_id', activeCaseId); }
   
   function loadCase(id) { 
     if(!cases[id]) return; 
     activeCaseId = id; 
     inputs = cases[id].data || {}; 
     document.getElementById('cust-name').value = cases[id].name === "新規" ? "" : cases[id].name; 
-    const banner = document.getElementById('cancel-banner');
-    banner.style.display = (cases[id].cancelIfSubMax === "希望する") ? "block" : "none";
+    document.getElementById('cancel-banner').style.display = (cases[id].cancelIfSubMax === "希望する") ? "block" : "none"; 
     calc(); draw(); updateCaseListUI(); 
   }
   
@@ -321,11 +272,29 @@
   async function finalizeTrade() {
     if(!confirm("確定して保存しますか？")) return;
     const btn = document.getElementById('btn-finalize'); btn.disabled = true;
-    const tradeData = { action: "log_trade", customerName: document.getElementById('cust-name').value, tel: cases[activeCaseId].tel || "", totalQty: document.getElementById('t-qty').innerText, totalAmount: document.getElementById('t-amt').innerText.replace(/,/g, ''), items: Object.values(inputs) };
+    const c = cases[activeCaseId];
+    const tradeData = { 
+      action: "log_trade", 
+      customerName: document.getElementById('cust-name').value, 
+      tel: c.tel || "", 
+      totalQty: document.getElementById('t-qty').innerText, 
+      totalAmount: document.getElementById('t-amt').innerText.replace(/,/g, ''), 
+      items: Object.values(inputs),
+      bankName: c.bankName || "",
+      bankBranch: c.bankBranch || "",
+      bankType: c.bankType || "",
+      bankNum: c.bankNum || "",
+      bankHolder: c.bankHolder || ""
+    };
     try {
       const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify(tradeData) });
       const json = await res.json();
-      if(json.result === "SUCCESS") { alert("保存完了"); delete cases[activeCaseId]; if(Object.keys(cases).length===0) createNewCase(); else loadCase(Object.keys(cases)[0]); hideReceipt(); }
+      if(json.result === "SUCCESS") { 
+        alert("保存完了"); 
+        delete cases[activeCaseId]; 
+        if(Object.keys(cases).length===0) createNewCase(); else loadCase(Object.keys(cases)[0]); 
+        hideReceipt(); 
+      }
     } catch(e) { alert("エラーが発生しました"); } finally { btn.disabled = false; }
   }
 
@@ -345,8 +314,18 @@
     const c = waitingList[idx];
     if(!confirm(`${c.name} 様の査定を開始しますか？`)) { selectObj.value = ""; return; }
     const id = "c_" + Date.now();
-    cases[id] = { name: c.name, tel: c.tel, cancelIfSubMax: c.cancelStatus, data: {} };
-    saveCurrentCase(); loadCase(id);
+    cases[id] = { 
+      name: c.name, 
+      tel: c.tel, 
+      cancelIfSubMax: c.cancelStatus, 
+      bankName: c.bankName,
+      bankBranch: c.bankBranch,
+      bankType: c.bankType,
+      bankNum: c.bankNum,
+      bankHolder: c.bankHolder,
+      data: {} 
+    };
+    saveCurrentCase(); loadCase(id); selectObj.value = "";
     await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "update_status", customerName: c.name, newStatus: "査定中" }) });
     refreshWaiting();
   }
