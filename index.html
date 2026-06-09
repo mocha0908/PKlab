@@ -40,7 +40,6 @@
     .btn-delete-row { color: #ef4444; border: none; background: none; font-size: 1.2rem; cursor: pointer; padding: 0; }
     .log-item { background: white; margin: 10px; padding: 15px; border-radius: 8px; border-left: 5px solid var(--main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-    /* ページネーションスタイル */
     .pagination-area { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
     .page-link-btn { padding: 4px 10px; font-size: 0.75rem; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; color: #333; cursor: pointer; }
     .page-link-btn.active { background: var(--main); color: #fff; border-color: var(--main); }
@@ -93,7 +92,7 @@
       <div class="filter-section">
         <div class="filter-label">五十音</div>
         <div id="kana-filters" class="filter-grid"></div>
-        <div class="filter-label">レアリティ</div>
+        <div class="filter-label">レアリティ (A列)</div>
         <div id="rarity-filters" class="filter-grid"></div>
       </div>
       
@@ -150,7 +149,6 @@
   let currentPage = 1;
   const itemsPerPage = 20;
 
-  // 五十音・カタカナ対応前方一致マップ
   const kanaMap = {
     "あ": "^[あいうえおアイウエオ]",
     "か": "^[かきくけこがぎぐげごカキクケコガギグゲゴ]",
@@ -194,7 +192,7 @@
 
   function createRarityFilters() {
     const area = document.getElementById('rarity-filters');
-    const rarities = ["ALL", ...new Set(cards.map(c => c.rarity).filter(r => r))];
+    const rarities = ["ALL", ...new Set(cards.map(c => c.rarity).filter(r => r && r !== "レアリティ"))];
     area.innerHTML = "";
     rarities.forEach(r => {
       const b = document.createElement('button'); b.className = `filter-btn ${r === "ALL" ? "active" : ""}`;
@@ -243,6 +241,7 @@
     const sw = document.getElementById('search').value.toLowerCase().trim();
     
     const filtered = cards.filter(c => {
+      // カード名、または型番(code)に検索キーワードが含まれるかチェック
       const mS = c.name.toLowerCase().includes(sw) || c.code.toLowerCase().includes(sw);
       const mR = (currentRarity === "ALL" || c.rarity === currentRarity);
       const mK = (currentKana === "" || new RegExp(currentKana).test(c.name));
@@ -270,13 +269,14 @@
       sliced = filtered.slice(startIndex, endIndex);
     }
 
+    // ★修正：c.code と c.rarity の表示部分をHTMLから完全に削除しました
     container.innerHTML = sliced.map(c => {
       const rows = ['A','B','C','D'].map(t => {
         const q = inputs[c.name+'-'+t]?.q || 0; const p = c['price'+t] || 0;
         return `<tr><td style="width:20px; font-weight:900">${t}</td><td class="text-danger fw-bold">¥${p.toLocaleString()}</td><td class="text-end"><div class="qty-ctrl ${q>0?'has-value':''}"><button class="qty-btn" onclick="changeQty('${c.name}','${t}',${p},-1)">-</button><input type="number" class="qty-num" value="${q||''}" onchange="updateQtyManually('${c.name}','${t}',${p},this.value)" placeholder="0"><button class="qty-btn" onclick="changeQty('${c.name}','${t}',${p},1)">+</button></div></td></tr>`;
       }).join('');
       const hasV = ['A','B','C','D'].some(t => inputs[c.name+'-'+t]?.q > 0);
-      return `<div class="grid-item ${hasV?'has-value':''}"><img src="${c.image}" class="grid-img"><div style="font-size:0.75rem; font-weight:bold; height:3em;">${c.name}<br><small class="text-secondary">${c.code} [${c.rarity}]</small></div><table style="width:100%; font-size:0.75rem;">${rows}</table></div>`;
+      return `<div class="grid-item ${hasV?'has-value':''}"><img src="${c.image}" class="grid-img"><div style="font-size:0.75rem; font-weight:bold; height:3em;">${c.name}</div><table style="width:100%; font-size:0.75rem;">${rows}</table></div>`;
     }).join('');
 
     let pageHtml = `<button class="page-link-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">前へ</button>`;
