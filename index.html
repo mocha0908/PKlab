@@ -40,6 +40,7 @@
     .btn-delete-row { color: #ef4444; border: none; background: none; font-size: 1.2rem; cursor: pointer; padding: 0; }
     .log-item { background: white; margin: 10px; padding: 15px; border-radius: 8px; border-left: 5px solid var(--main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
+    /* ページネーションスタイル */
     .pagination-area { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
     .page-link-btn { padding: 4px 10px; font-size: 0.75rem; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; color: #333; cursor: pointer; }
     .page-link-btn.active { background: var(--main); color: #fff; border-color: var(--main); }
@@ -149,14 +150,14 @@
   let currentPage = 1;
   const itemsPerPage = 20;
 
-  // ★修正：ひらがな・カタカナの両方を前方一致で検知できるように正規表現を変更
+  // 五十音・カタカナ対応前方一致マップ
   const kanaMap = {
     "あ": "^[あいうえおアイウエオ]",
     "か": "^[かきくけこがぎぐげごカキクケコガギグゲゴ]",
     "さ": "^[さしすせそざじずぜぞサシスセソザジズゼゾ]",
     "た": "^[たちつてとだぢづでどタチツテトダヂヅデド]",
     "な": "^[なにぬねのナニヌネノ]",
-    "は": "^[はひふheほばびぶべぼぱぴぷぺぽハヒフヘホバビブベボパピプペポ]",
+    "は": "^[はひふへほばびぶべぼぱぴぷぺぽハヒフヘホバビブベボパピプペポ]",
     "ま": "^[まみむめもマミムメモ]",
     "や": "^[やゆよヤユヨ]",
     "ら": "^[らりるれろラリルレロ]",
@@ -242,7 +243,6 @@
     const sw = document.getElementById('search').value.toLowerCase().trim();
     
     const filtered = cards.filter(c => {
-      if (c.isFixed) return true;
       const mS = c.name.toLowerCase().includes(sw) || c.code.toLowerCase().includes(sw);
       const mR = (currentRarity === "ALL" || c.rarity === currentRarity);
       const mK = (currentKana === "" || new RegExp(currentKana).test(c.name));
@@ -375,7 +375,7 @@
         return `<div class="log-item">
           <div class="d-flex justify-content-between align-items-center"><b>${l.name} 様 (${l.date})</b><span class="text-danger fw-bold h5 mb-0">¥${amount}</span></div>
           <div class="small text-secondary mb-2">${l.totalQty}枚 買取完了</div>
-          <button class="btn btn-sm btn-outline-dark" onclick='showLogDetail(${index}, ${JSON.stringify(l)})'>詳細を明細表で表示</button>
+          <button class="btn btn-sm btn-dark" onclick='showLogDetail(${index}, ${JSON.stringify(l)})'>詳細を明細表で表示</button>
         </div>`;
       }).join('');
     } catch(e) { container.innerHTML = "取得失敗。"; }
