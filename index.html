@@ -157,7 +157,7 @@
     "な": "^[なにぬねのナニヌネノ]",
     "は": "^[はひふへほばびぶべぼぱぴぷぺぽハヒフヘホバビブベボパピプペポ]",
     "ま": "^[まみむめもマミムメモ]",
-    "や": "^[やゆよヤユヨ]",
+    "я": "^[やゆよヤユヨ]",
     "ら": "^[らりるれろラリルレロ]",
     "わ": "^[わをんワヲン]"
   };
@@ -241,7 +241,6 @@
     const sw = document.getElementById('search').value.toLowerCase().trim();
     
     const filtered = cards.filter(c => {
-      // カード名、または型番(code)に検索キーワードが含まれるかチェック
       const mS = c.name.toLowerCase().includes(sw) || c.code.toLowerCase().includes(sw);
       const mR = (currentRarity === "ALL" || c.rarity === currentRarity);
       const mK = (currentKana === "" || new RegExp(currentKana).test(c.name));
@@ -269,13 +268,13 @@
       sliced = filtered.slice(startIndex, endIndex);
     }
 
-    // ★修正：c.code と c.rarity の表示部分をHTMLから完全に削除しました
     container.innerHTML = sliced.map(c => {
       const rows = ['A','B','C','D'].map(t => {
         const q = inputs[c.name+'-'+t]?.q || 0; const p = c['price'+t] || 0;
         return `<tr><td style="width:20px; font-weight:900">${t}</td><td class="text-danger fw-bold">¥${p.toLocaleString()}</td><td class="text-end"><div class="qty-ctrl ${q>0?'has-value':''}"><button class="qty-btn" onclick="changeQty('${c.name}','${t}',${p},-1)">-</button><input type="number" class="qty-num" value="${q||''}" onchange="updateQtyManually('${c.name}','${t}',${p},this.value)" placeholder="0"><button class="qty-btn" onclick="changeQty('${c.name}','${t}',${p},1)">+</button></div></td></tr>`;
       }).join('');
       const hasV = ['A','B','C','D'].some(t => inputs[c.name+'-'+t]?.q > 0);
+      // ★ 修正：カード名の下にあった型番とレアリティの <small> タグを完全に削除
       return `<div class="grid-item ${hasV?'has-value':''}"><img src="${c.image}" class="grid-img"><div style="font-size:0.75rem; font-weight:bold; height:3em;">${c.name}</div><table style="width:100%; font-size:0.75rem;">${rows}</table></div>`;
     }).join('');
 
@@ -403,7 +402,7 @@
     const idx = selectObj.value; if(idx === "") return;
     const c = waitingList[idx]; if(!confirm(`${c.name} 様の査定を開始しますか？`)) { selectObj.value = ""; return; }
     const id = "c_" + Date.now();
-    cases[id] = { name: c.name, tel: c.tel, cancelIfSubMax: c.cancelStatus, bankName: c.bankName, bankBranch: c.bankBranch, bankType: c.bankType, bankNum: c.bankNum, bankHolder: c.bankHolder, data: {} };
+    cases[id] = { name: c.name, tel: c.tel, cancelIfSubMax: c.cancelStatus, bankName: c.bankName, bankBranch: c.bankBranch, bankType: c.cancelStatus, bankNum: c.bankNum, bankHolder: c.bankHolder, data: {} };
     saveCurrentCase(); loadCase(id);
     await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "update_status", customerName: c.name, newStatus: "査定中" }) });
     refreshWaiting(); selectObj.value = "";
