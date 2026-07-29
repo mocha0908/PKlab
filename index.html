@@ -382,6 +382,92 @@
     }
     .receipt-cta:hover { background: #1b266a; }
 
+    .customer-panel {
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+    .customer-panel > summary {
+      min-height: 43px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 15px;
+      color: var(--main);
+      font-size: .73rem;
+      font-weight: 900;
+      cursor: pointer;
+      list-style: none;
+    }
+    .customer-panel > summary::-webkit-details-marker { display: none; }
+    .customer-summary {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      color: var(--muted);
+      text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: .65rem;
+      font-weight: 700;
+    }
+    .customer-panel > summary .summary-chevron { transition: transform .16s ease; }
+    .customer-panel[open] > summary .summary-chevron { transform: rotate(180deg); }
+    .customer-panel-body {
+      padding: 0 15px 14px;
+      border-top: 1px solid #eef1f5;
+    }
+    .customer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding-top: 12px;
+    }
+    .customer-grid .wide-field { grid-column: span 2; }
+    .customer-sync-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 11px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 8px 10px;
+      background: #fff;
+    }
+    .sync-status {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: .65rem;
+      font-weight: 750;
+    }
+    .sync-status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #a7b0bd;
+    }
+    .sync-status.synced::before { background: var(--success); box-shadow: 0 0 0 3px rgba(22, 132, 91, .1); }
+    .sync-status.syncing::before { background: #e5a300; animation: sync-pulse 1s infinite alternate; }
+    .sync-status.error::before { background: var(--danger); }
+    @keyframes sync-pulse { to { opacity: .35; } }
+    .sync-actions { display: flex; gap: 6px; }
+    .sync-btn {
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      padding: 6px 8px;
+      background: #fff;
+      color: #586579;
+      font-size: .63rem;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
     .filter-layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 230px;
@@ -536,6 +622,41 @@
       font-weight: 850;
     }
     .reset-filter-btn.visible { display: inline-flex; }
+
+    .price-change-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      border: 1px solid #e6bd31;
+      border-radius: var(--radius);
+      padding: 10px 13px;
+      background: var(--accent-soft);
+      color: #5d4a00;
+      box-shadow: var(--shadow-sm);
+    }
+    .price-change-banner.visible { display: flex; }
+    .price-change-copy { font-size: .72rem; font-weight: 850; }
+    .price-change-sub { margin-top: 2px; font-size: .62rem; font-weight: 650; opacity: .8; }
+    .price-change-open {
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 8px;
+      padding: 7px 10px;
+      background: #6c5600;
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 900;
+    }
+    .rank-price-change {
+      display: block;
+      margin-top: 2px;
+      color: #a16d00;
+      font-size: .56rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
 
     .pagination-area {
       display: flex;
@@ -916,6 +1037,8 @@
       white-space: nowrap;
     }
     .footer-btn.secondary { border: 1px solid rgba(255, 255, 255, .24); background: rgba(255, 255, 255, .08); color: #fff; }
+    .footer-btn.undo { border: 1px solid rgba(255, 255, 255, .3); background: rgba(255, 255, 255, .12); color: #fff; }
+    .footer-btn.drawer { border: 1px solid rgba(243, 198, 65, .5); background: rgba(243, 198, 65, .12); color: #ffe99b; }
     .footer-btn.save { border: 1px solid #2aa878; background: var(--success); color: #fff; }
     .footer-btn.primary { border: 1px solid var(--accent); background: var(--accent); color: #302700; }
     .footer-btn:disabled { opacity: .58; cursor: wait; }
@@ -1002,6 +1125,160 @@
     .receipt-action.print { border: 1px solid var(--success); background: var(--success); color: #fff; }
     .receipt-action.finalize { border: 1px solid var(--main); background: var(--main); color: #fff; }
     .receipt-action.back { grid-column: 1 / -1; border: 1px solid var(--line-strong); background: #fff; color: #586579; }
+    .receipt-item-memo {
+      display: block;
+      margin-top: 4px;
+      color: #826400;
+      font-size: .64rem;
+      font-weight: 750;
+    }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1500;
+      visibility: hidden;
+      background: rgba(12, 18, 42, .42);
+      opacity: 0;
+      transition: opacity .2s ease, visibility .2s ease;
+      backdrop-filter: blur(2px);
+    }
+    .drawer-backdrop.open { visibility: visible; opacity: 1; }
+    .selection-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1510;
+      width: min(460px, 100vw);
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      background: #f5f7fb;
+      box-shadow: -18px 0 45px rgba(17, 25, 77, .18);
+      transform: translateX(102%);
+      transition: transform .22s ease;
+    }
+    .selection-drawer.open { transform: translateX(0); }
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .drawer-title { color: var(--main); font-size: .95rem; font-weight: 950; }
+    .drawer-caption { margin-top: 3px; color: var(--muted); font-size: .64rem; }
+    .drawer-close {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+      color: #657187;
+    }
+    .drawer-list { overflow-y: auto; padding: 10px; }
+    .drawer-empty {
+      display: grid;
+      min-height: 240px;
+      place-items: center;
+      color: var(--muted);
+      text-align: center;
+      font-size: .72rem;
+    }
+    .drawer-item {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 11px;
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    .drawer-item + .drawer-item { margin-top: 8px; }
+    .drawer-item-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .drawer-item-name { color: var(--ink); font-size: .73rem; font-weight: 900; line-height: 1.4; }
+    .drawer-rank { color: var(--main-2); font-size: .64rem; font-weight: 900; }
+    .drawer-item-price { margin-top: 3px; color: var(--danger); font-size: .72rem; font-weight: 900; }
+    .drawer-item-actions { display: flex; align-items: center; gap: 7px; margin-top: 9px; }
+    .drawer-delete {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 8px;
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+    .drawer-memo {
+      width: 100%;
+      min-height: 36px;
+      margin-top: 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      padding: 7px 9px;
+      color: var(--ink);
+      font-size: .7rem;
+      resize: vertical;
+    }
+    .drawer-price-warning {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 8px;
+      border: 1px solid #efd370;
+      border-radius: 8px;
+      padding: 7px 8px;
+      background: var(--accent-soft);
+      color: #675100;
+      font-size: .62rem;
+      font-weight: 800;
+    }
+    .apply-price-btn {
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 7px;
+      padding: 5px 7px;
+      background: #6c5600;
+      color: #fff;
+      font-size: .6rem;
+      font-weight: 900;
+    }
+    .drawer-footer {
+      border-top: 1px solid var(--line);
+      padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+      background: #fff;
+    }
+    .drawer-total {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: .68rem;
+      font-weight: 750;
+    }
+    .drawer-total strong { color: var(--main); font-size: 1.08rem; font-variant-numeric: tabular-nums; }
+    .drawer-clear {
+      width: 100%;
+      min-height: 40px;
+      margin-top: 9px;
+      border: 1px solid #efb2b8;
+      border-radius: 9px;
+      background: var(--danger-soft);
+      color: var(--danger);
+      font-size: .72rem;
+      font-weight: 900;
+    }
+    .drawer-open { overflow: hidden; }
 
     .toast-container-custom {
       position: fixed;
@@ -1050,6 +1327,7 @@
       }
       .settings-label { display: none; }
       .list-view .product-body { grid-template-columns: minmax(130px, .7fr) minmax(300px, 1.5fr); }
+      .customer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 700px) {
@@ -1068,6 +1346,9 @@
       .waiting-select { width: 118px; }
       .app-shell { padding-top: 11px; padding-bottom: 18px; }
       .primary-fields { grid-template-columns: 1fr; gap: 9px; }
+      .customer-grid { grid-template-columns: 1fr; }
+      .customer-grid .wide-field { grid-column: auto; }
+      .customer-sync-row { align-items: flex-start; flex-direction: column; }
       .field-label { margin-bottom: 4px; }
       .filter-layout { padding: 12px; }
       .filter-row { grid-template-columns: 1fr; gap: 5px; }
@@ -1100,6 +1381,7 @@
       .footer-actions { gap: 5px; }
       .footer-btn { min-height: 39px; padding: 7px 10px; }
       .footer-btn.secondary { display: none; }
+      .footer-btn.undo { display: inline-flex; }
       .footer-btn span { display: none; }
       .footer-btn.primary span { display: inline; }
       #receipt { padding: 18px 10px 30px; }
@@ -1110,6 +1392,7 @@
       .receipt-action.back { grid-column: auto; }
       .log-item { grid-template-columns: 1fr; }
       .log-side { justify-content: space-between; }
+      .price-change-banner { align-items: flex-start; }
     }
 
     @media (max-width: 410px) {
@@ -1258,6 +1541,68 @@
             </div>
           </div>
 
+          <details id="customer-info-panel" class="customer-panel">
+            <summary>
+              <span><i class="bi bi-person-vcard me-1" aria-hidden="true"></i>顧客情報・振込情報</span>
+              <span id="customer-summary" class="customer-summary">電話番号・振込情報を確認</span>
+              <i class="bi bi-chevron-down summary-chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="customer-panel-body">
+              <div class="customer-grid">
+                <div>
+                  <label class="field-label" for="cust-tel">電話番号</label>
+                  <input id="cust-tel" class="control-input" type="tel" inputmode="tel" placeholder="電話番号" data-case-field="tel">
+                </div>
+                <div>
+                  <label class="field-label" for="cust-cancel-status">満額以外の返送</label>
+                  <select id="cust-cancel-status" class="control-input" data-case-field="cancelIfSubMax">
+                    <option value="希望しない">希望しない</option>
+                    <option value="希望する">希望する</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="field-label" for="cust-bank-name">金融機関名</label>
+                  <input id="cust-bank-name" class="control-input" type="text" placeholder="銀行名" data-case-field="bankName">
+                </div>
+                <div>
+                  <label class="field-label" for="cust-bank-branch">支店名</label>
+                  <input id="cust-bank-branch" class="control-input" type="text" placeholder="支店名" data-case-field="bankBranch">
+                </div>
+                <div>
+                  <label class="field-label" for="cust-bank-type">口座種別</label>
+                  <select id="cust-bank-type" class="control-input" data-case-field="bankType">
+                    <option value="">未選択</option>
+                    <option value="普通">普通</option>
+                    <option value="当座">当座</option>
+                    <option value="貯蓄">貯蓄</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="field-label" for="cust-bank-num">口座番号</label>
+                  <input id="cust-bank-num" class="control-input" type="text" inputmode="numeric" placeholder="口座番号" data-case-field="bankNum">
+                </div>
+                <div class="wide-field">
+                  <label class="field-label" for="cust-bank-holder">口座名義</label>
+                  <input id="cust-bank-holder" class="control-input" type="text" placeholder="口座名義（カナ）" data-case-field="bankHolder">
+                </div>
+              </div>
+              <div class="customer-sync-row">
+                <div id="sync-status" class="sync-status">端末保存のみ・サーバー同期を確認中</div>
+                <div class="sync-actions">
+                  <button class="sync-btn" type="button" onclick="backupCasesToServer(true)">
+                    <i class="bi bi-cloud-arrow-up me-1" aria-hidden="true"></i>今すぐ保存
+                  </button>
+                  <button class="sync-btn" type="button" onclick="restoreServerBackup(true)">
+                    <i class="bi bi-cloud-arrow-down me-1" aria-hidden="true"></i>復元
+                  </button>
+                  <button class="sync-btn" type="button" onclick="copyGasBackupCode()">
+                    <i class="bi bi-code-slash me-1" aria-hidden="true"></i>GASコード
+                  </button>
+                </div>
+              </div>
+            </div>
+          </details>
+
           <div class="filter-layout">
             <div class="filter-groups">
               <div class="filter-row">
@@ -1306,6 +1651,14 @@
             <div id="pagination-container-top" class="pagination-area pagination-top"></div>
           </div>
         </section>
+
+        <div id="price-change-banner" class="price-change-banner" role="status">
+          <div>
+            <div id="price-change-copy" class="price-change-copy">選択後に価格が変更された商品があります</div>
+            <div class="price-change-sub">査定額は自動変更されません。内容を確認してから最新価格を適用してください。</div>
+          </div>
+          <button class="price-change-open" type="button" onclick="openSelectionDrawer()">変更を確認</button>
+        </div>
 
         <div id="loading-state" class="loading-grid" aria-label="商品データを読み込み中">
           <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
@@ -1379,8 +1732,14 @@
       <div class="total-qty"><span id="t-types">0</span>種類・合計<span id="t-qty">0</span>枚</div>
     </div>
     <div class="footer-actions">
-      <button class="footer-btn secondary" type="button" onclick="resetAll()">
-        <i class="bi bi-arrow-repeat" aria-hidden="true"></i><span>全初期化</span>
+      <button id="btn-undo" class="footer-btn undo" type="button" onclick="undoLastAction()" disabled>
+        <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i><span>1つ戻す</span>
+      </button>
+      <button class="footer-btn secondary" type="button" onclick="clearCurrentCase()">
+        <i class="bi bi-eraser" aria-hidden="true"></i><span>査定を空に</span>
+      </button>
+      <button class="footer-btn drawer" type="button" onclick="openSelectionDrawer()">
+        <i class="bi bi-card-checklist" aria-hidden="true"></i><span>選択一覧</span>
       </button>
       <button id="btn-save-temp" class="footer-btn save" type="button" onclick="saveTemp()">
         <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i><span>一時保存</span>
@@ -1390,6 +1749,29 @@
       </button>
     </div>
   </footer>
+
+  <div id="drawer-backdrop" class="drawer-backdrop no-print" onclick="closeSelectionDrawer()"></div>
+  <aside id="selection-drawer" class="selection-drawer no-print" aria-hidden="true" aria-label="選択中の商品">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title">選択中の商品</div>
+        <div id="drawer-caption" class="drawer-caption">商品・数量・メモをまとめて編集</div>
+      </div>
+      <button class="drawer-close" type="button" onclick="closeSelectionDrawer()" aria-label="選択一覧を閉じる">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div id="selected-drawer-list" class="drawer-list"></div>
+    <div class="drawer-footer">
+      <div class="drawer-total">
+        <span id="drawer-total-qty">0種類・0枚</span>
+        <strong>¥<span id="drawer-total-amount">0</span></strong>
+      </div>
+      <button class="drawer-clear" type="button" onclick="clearCurrentCase()">
+        <i class="bi bi-eraser me-1" aria-hidden="true"></i>現在の査定内容を空にする
+      </button>
+    </div>
+  </aside>
 
   <div id="toast-container" class="toast-container-custom" aria-live="polite" aria-atomic="true"></div>
 
@@ -1402,6 +1784,9 @@
     const ACTIVE_CASE_KEY = "pk_pos_active_id";
     const VIEW_MODE_KEY = "pk_pos_view_mode";
     const PER_PAGE_KEY = "pk_pos_per_page";
+    const LOCAL_UPDATED_KEY = "pk_pos_local_updated_at";
+    const SERVER_BACKUP_SCOPE = "pklab-pos-shared";
+    const DATA_REFRESH_INTERVAL = 5 * 60 * 1000;
 
     let cards = [];
     let inputs = {};
@@ -1420,6 +1805,12 @@
     let cardsLoading = true;
     let cardsLoadError = false;
     let waitingTimer = null;
+    let dataRefreshTimer = null;
+    let backupTimer = null;
+    let undoStacks = {};
+    let syncSupported = null;
+    let isInitializing = true;
+    let lastDataLoadedAt = 0;
 
     const kanaMap = {
       "あ": "^[あいうえおアイウエオ]",
@@ -1444,8 +1835,11 @@
       updateCaseListUI();
       calc();
       await loadCardData();
+      await restoreServerBackup(false);
+      isInitializing = false;
       refreshWaiting();
       waitingTimer = window.setInterval(refreshWaiting, 15000);
+      dataRefreshTimer = window.setInterval(() => loadCardData({ silent: true }), DATA_REFRESH_INTERVAL);
     }
 
     function bindStaticEvents() {
@@ -1458,8 +1852,12 @@
       const receiptBody = document.getElementById("r-body");
       const caseList = document.getElementById("case-list-area");
       const logs = document.getElementById("logs-container");
+      const drawerList = document.getElementById("selected-drawer-list");
 
       customer.addEventListener("input", autoUpdateCaseName);
+      document.querySelectorAll("[data-case-field]").forEach(field => {
+        field.addEventListener(field.tagName === "SELECT" ? "change" : "input", updateCustomerField);
+      });
       search.addEventListener("input", () => {
         clear.classList.toggle("visible", search.value.length > 0);
         resetPageAndDraw();
@@ -1544,6 +1942,35 @@
         if (button) showLogDetail(Number(button.dataset.logIndex));
       });
 
+      drawerList.addEventListener("click", event => {
+        const button = event.target.closest("[data-drawer-action]");
+        if (!button) return;
+        const key = decodeURIComponent(button.dataset.key || "");
+        const item = inputs[key];
+        if (!item) return;
+        const action = button.dataset.drawerAction;
+        if (action === "delete") {
+          pushUndo("商品削除");
+          delete inputs[key];
+          afterQuantityChange();
+        } else if (action === "increase" || action === "decrease") {
+          changeQty(item.n, item.t, item.p, action === "increase" ? 1 : -1);
+        } else if (action === "apply-price") {
+          applyLatestPrice(key);
+        }
+      });
+      drawerList.addEventListener("change", event => {
+        const quantityInput = event.target.closest("[data-drawer-qty]");
+        if (quantityInput) {
+          const key = decodeURIComponent(quantityInput.dataset.key || "");
+          const item = inputs[key];
+          if (item) updateQtyManually(item.n, item.t, item.p, quantityInput.value);
+          return;
+        }
+        const memoInput = event.target.closest("[data-item-memo]");
+        if (memoInput) updateItemMemo(decodeURIComponent(memoInput.dataset.key || ""), memoInput.value);
+      });
+
       document.addEventListener("click", event => {
         const pageButton = event.target.closest("[data-page]");
         if (pageButton && !pageButton.disabled) changePage(Number(pageButton.dataset.page));
@@ -1561,7 +1988,15 @@
         }
       });
       document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible") refreshWaiting();
+        if (document.visibilityState === "visible") {
+          refreshWaiting();
+          if (Date.now() - lastDataLoadedAt > 60000) loadCardData({ silent: true });
+        }
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && document.getElementById("selection-drawer").classList.contains("open")) {
+          closeSelectionDrawer();
+        }
       });
     }
 
@@ -1591,11 +2026,16 @@
       }
     }
 
-    async function loadCardData() {
-      cardsLoading = true;
-      cardsLoadError = false;
-      renderCards();
-      setDataStatus("商品データ読込中", "");
+    async function loadCardData(options = {}) {
+      const silent = Boolean(options.silent && cards.length);
+      if (!silent) {
+        cardsLoading = true;
+        cardsLoadError = false;
+        renderCards();
+        setDataStatus("商品データ読込中", "");
+      } else {
+        setDataStatus("価格データ更新中", "");
+      }
 
       try {
         const payload = await fetchJson(DATA_JSON_URL, {}, 20000);
@@ -1618,19 +2058,30 @@
           }));
 
         cardsLoading = false;
+        cardsLoadError = false;
+        lastDataLoadedAt = Date.now();
         createKanaFilters();
         createRarityFilters();
-        loadCase(activeCaseId);
+        if (silent) {
+          draw();
+          calc();
+        } else {
+          loadCase(activeCaseId);
+        }
         const loadedAt = new Intl.DateTimeFormat("ja-JP", { hour: "2-digit", minute: "2-digit" }).format(new Date());
         setDataStatus(`${cards.length.toLocaleString()}件・${loadedAt}読込`, "ready");
       } catch (error) {
         console.error("商品データの読み込みに失敗しました。", error);
-        cardsLoading = false;
-        cardsLoadError = true;
-        createKanaFilters();
-        createRarityFilters();
-        renderCards();
-        setDataStatus("商品データ取得失敗", "error");
+        if (silent && cards.length) {
+          setDataStatus("価格データ更新失敗", "error");
+        } else {
+          cardsLoading = false;
+          cardsLoadError = true;
+          createKanaFilters();
+          createRarityFilters();
+          renderCards();
+          setDataStatus("商品データ取得失敗", "error");
+        }
       }
     }
 
@@ -1834,10 +2285,15 @@
         const key = `${card.name}-${rank}`;
         const quantity = Number(inputs[key]?.q) || 0;
         const price = Number(card[`price${rank}`]) || 0;
+        const selectedPrice = Number(inputs[key]?.p) || 0;
+        const hasPriceChange = quantity > 0 && selectedPrice !== price;
         return `
           <tr>
             <td class="rank-label">${rank}</td>
-            <td class="rank-price">¥${formatNumber(price)}</td>
+            <td class="rank-price">
+              ¥${formatNumber(price)}
+              ${hasPriceChange ? `<span class="rank-price-change">選択時 ¥${formatNumber(selectedPrice)}</span>` : ""}
+            </td>
             <td class="rank-control-cell">
               <div class="qty-ctrl ${quantity > 0 ? "has-value" : ""}">
                 <button class="qty-btn" type="button" data-qty-action="decrease" data-card-index="${card._index}" data-rank="${rank}" data-price="${price}" aria-label="${escapeHtml(card.name)} ランク${rank}を1枚減らす">−</button>
@@ -1960,11 +2416,20 @@
     function changeQty(name, type, price, delta) {
       if (isViewingLog) return;
       const key = `${name}-${type}`;
-      const quantity = (Number(inputs[key]?.q) || 0) + delta;
+      const previous = inputs[key];
+      const quantity = (Number(previous?.q) || 0) + delta;
+      if (quantity === (Number(previous?.q) || 0)) return;
+      pushUndo(delta > 0 ? "数量追加" : "数量変更");
       if (quantity <= 0) {
         delete inputs[key];
       } else {
-        inputs[key] = { n: name, t: type, p: Number(price) || 0, q: Math.min(quantity, 999) };
+        inputs[key] = {
+          n: name,
+          t: type,
+          p: previous ? Number(previous.p) || 0 : Number(price) || 0,
+          q: Math.min(quantity, 999),
+          memo: previous?.memo || ""
+        };
       }
       afterQuantityChange();
     }
@@ -1973,10 +2438,19 @@
       if (isViewingLog) return;
       const key = `${name}-${type}`;
       const quantity = Math.min(Math.max(parseInt(value, 10) || 0, 0), 999);
+      const previous = inputs[key];
+      if (quantity === (Number(previous?.q) || 0)) return;
+      pushUndo("数量直接入力");
       if (quantity <= 0) {
         delete inputs[key];
       } else {
-        inputs[key] = { n: name, t: type, p: Number(price) || 0, q: quantity };
+        inputs[key] = {
+          n: name,
+          t: type,
+          p: previous ? Number(previous.p) || 0 : Number(price) || 0,
+          q: quantity,
+          memo: previous?.memo || ""
+        };
       }
       afterQuantityChange();
     }
@@ -1997,6 +2471,9 @@
       document.getElementById("t-types").textContent = String(summary.types);
       document.getElementById("t-amt").textContent = formatNumber(summary.amount);
       updateCaseListUI();
+      renderSelectionDrawer();
+      updatePriceChangeBanner();
+      updateUndoButton();
     }
 
     function getInputSummary(data) {
@@ -2009,6 +2486,168 @@
         }
         return result;
       }, { types: 0, quantity: 0, amount: 0 });
+    }
+
+    function cloneInputs(data = inputs) {
+      return JSON.parse(JSON.stringify(data || {}));
+    }
+
+    function pushUndo(label) {
+      if (!activeCaseId || isViewingLog) return;
+      if (!undoStacks[activeCaseId]) undoStacks[activeCaseId] = [];
+      undoStacks[activeCaseId].push({ label, data: cloneInputs() });
+      if (undoStacks[activeCaseId].length > 30) undoStacks[activeCaseId].shift();
+      updateUndoButton();
+    }
+
+    function undoLastAction() {
+      const stack = undoStacks[activeCaseId] || [];
+      const snapshot = stack.pop();
+      if (!snapshot) return;
+      inputs = cloneInputs(snapshot.data);
+      cases[activeCaseId].data = inputs;
+      saveCurrentCase();
+      calc();
+      draw();
+      if (document.getElementById("receipt").style.display === "block") showReceipt();
+      showToast(`「${snapshot.label}」を元に戻しました`);
+    }
+
+    function updateUndoButton() {
+      const button = document.getElementById("btn-undo");
+      if (!button) return;
+      const stack = undoStacks[activeCaseId] || [];
+      button.disabled = stack.length === 0;
+      button.title = stack.length ? `${stack[stack.length - 1].label}を元に戻す` : "戻せる操作はありません";
+    }
+
+    function clearCurrentCase() {
+      const summary = getInputSummary(inputs);
+      if (!summary.quantity) {
+        showToast("現在の査定内容は空です", "error");
+        return;
+      }
+      if (!window.confirm(`現在の査定内容 ${summary.types}種類・${summary.quantity}枚を空にしますか？\n「1つ戻す」で復元できます。`)) return;
+      pushUndo("査定内容のクリア");
+      inputs = {};
+      cases[activeCaseId].data = inputs;
+      saveCurrentCase();
+      calc();
+      draw();
+      closeSelectionDrawer();
+      showToast("現在の査定内容を空にしました");
+    }
+
+    function getLatestPriceForItem(item) {
+      const card = cards.find(candidate => candidate.name === item.n);
+      if (!card) return null;
+      const price = Number(card[`price${item.t}`]);
+      return Number.isFinite(price) ? price : null;
+    }
+
+    function getPriceChanges() {
+      return Object.entries(inputs)
+        .filter(([, item]) => Number(item.q) > 0)
+        .map(([key, item]) => ({ key, item, latestPrice: getLatestPriceForItem(item) }))
+        .filter(entry => entry.latestPrice !== null && Number(entry.item.p) !== entry.latestPrice);
+    }
+
+    function updatePriceChangeBanner() {
+      const changes = getPriceChanges();
+      const banner = document.getElementById("price-change-banner");
+      banner.classList.toggle("visible", changes.length > 0);
+      document.getElementById("price-change-copy").textContent = changes.length
+        ? `選択後に価格が変更された商品が${changes.length}件あります`
+        : "選択後に価格が変更された商品があります";
+    }
+
+    function applyLatestPrice(key) {
+      const item = inputs[key];
+      if (!item) return;
+      const latestPrice = getLatestPriceForItem(item);
+      if (latestPrice === null || Number(item.p) === latestPrice) return;
+      pushUndo("最新価格の適用");
+      item.p = latestPrice;
+      saveCurrentCase();
+      calc();
+      draw();
+      showToast(`${item.n} ランク${item.t}に最新価格を適用しました`);
+    }
+
+    function updateItemMemo(key, value) {
+      const item = inputs[key];
+      if (!item) return;
+      const memo = String(value || "").trim();
+      if ((item.memo || "") === memo) return;
+      pushUndo("商品メモ変更");
+      item.memo = memo;
+      saveCurrentCase();
+      if (document.getElementById("receipt").style.display === "block") showReceipt();
+      showToast("商品メモを保存しました");
+    }
+
+    function openSelectionDrawer() {
+      renderSelectionDrawer();
+      document.getElementById("selection-drawer").classList.add("open");
+      document.getElementById("selection-drawer").setAttribute("aria-hidden", "false");
+      document.getElementById("drawer-backdrop").classList.add("open");
+      document.body.classList.add("drawer-open");
+    }
+
+    function closeSelectionDrawer() {
+      document.getElementById("selection-drawer").classList.remove("open");
+      document.getElementById("selection-drawer").setAttribute("aria-hidden", "true");
+      document.getElementById("drawer-backdrop").classList.remove("open");
+      document.body.classList.remove("drawer-open");
+    }
+
+    function renderSelectionDrawer() {
+      const list = document.getElementById("selected-drawer-list");
+      if (!list) return;
+      const entries = Object.entries(inputs).filter(([, item]) => Number(item.q) > 0);
+      const summary = getInputSummary(inputs);
+      document.getElementById("drawer-total-qty").textContent = `${summary.types}種類・${summary.quantity}枚`;
+      document.getElementById("drawer-total-amount").textContent = formatNumber(summary.amount);
+      document.getElementById("drawer-caption").textContent = entries.length
+        ? `${summary.types}種類・合計${summary.quantity}枚を編集中`
+        : "商品・数量・メモをまとめて編集";
+
+      if (!entries.length) {
+        list.innerHTML = `<div class="drawer-empty"><div><i class="bi bi-inbox fs-3 d-block mb-2" aria-hidden="true"></i>商品がまだ選択されていません</div></div>`;
+        return;
+      }
+
+      list.innerHTML = entries.map(([key, item]) => {
+        const encodedKey = encodeURIComponent(key);
+        const latestPrice = getLatestPriceForItem(item);
+        const changed = latestPrice !== null && Number(item.p) !== latestPrice;
+        return `
+          <article class="drawer-item">
+            <div class="drawer-item-head">
+              <div>
+                <div class="drawer-item-name">${escapeHtml(item.n)}</div>
+                <div class="drawer-rank">ランク ${escapeHtml(item.t)}</div>
+                <div class="drawer-item-price">¥${formatNumber(item.p)} × ${Number(item.q)}枚</div>
+              </div>
+              <button class="drawer-delete" type="button" data-drawer-action="delete" data-key="${encodedKey}" aria-label="${escapeHtml(item.n)}を削除">
+                <i class="bi bi-trash3" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="drawer-item-actions">
+              <div class="qty-ctrl has-value">
+                <button class="qty-btn" type="button" data-drawer-action="decrease" data-key="${encodedKey}" aria-label="1枚減らす">−</button>
+                <input class="qty-num" type="number" min="0" max="999" inputmode="numeric" value="${Number(item.q)}" data-drawer-qty data-key="${encodedKey}" aria-label="数量">
+                <button class="qty-btn" type="button" data-drawer-action="increase" data-key="${encodedKey}" aria-label="1枚増やす">＋</button>
+              </div>
+            </div>
+            ${changed ? `
+              <div class="drawer-price-warning">
+                <span>選択時 ¥${formatNumber(item.p)} → 最新 ¥${formatNumber(latestPrice)}</span>
+                <button class="apply-price-btn" type="button" data-drawer-action="apply-price" data-key="${encodedKey}">最新価格を適用</button>
+              </div>` : ""}
+            <textarea class="drawer-memo" rows="2" maxlength="200" placeholder="傷・確認事項などの内部メモ" data-item-memo data-key="${encodedKey}">${escapeHtml(item.memo || "")}</textarea>
+          </article>`;
+      }).join("");
     }
 
     function showReceipt() {
@@ -2042,7 +2681,10 @@
           const encodedKey = encodeURIComponent(key);
           return `
             <tr>
-              <td class="print-compress-text"><b>${escapeHtml(item.n)}</b><br><small>ランク：${escapeHtml(item.t)}</small></td>
+              <td class="print-compress-text">
+                <b>${escapeHtml(item.n)}</b><br><small>ランク：${escapeHtml(item.t)}</small>
+                ${item.memo ? `<span class="receipt-item-memo no-print">内部メモ：${escapeHtml(item.memo)}</span>` : ""}
+              </td>
               <td style="text-align:center;">¥${formatNumber(item.p)}</td>
               <td style="text-align:center;">
                 ${readonly ? `<b>${Number(item.q)}</b>` : `
@@ -2103,6 +2745,7 @@
 
     function deleteRow(key) {
       if (isViewingLog) return;
+      pushUndo("商品削除");
       delete inputs[key];
       saveCurrentCase();
       calc();
@@ -2121,6 +2764,8 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
         if (activeCaseId) localStorage.setItem(ACTIVE_CASE_KEY, activeCaseId);
+        localStorage.setItem(LOCAL_UPDATED_KEY, new Date().toISOString());
+        if (!isInitializing) scheduleServerBackup();
       } catch (error) {
         console.error("端末への保存に失敗しました。", error);
         showToast("端末への自動保存に失敗しました", "error");
@@ -2144,7 +2789,11 @@
       inputs = cases[id].data && typeof cases[id].data === "object" ? cases[id].data : {};
       localStorage.setItem(ACTIVE_CASE_KEY, id);
       document.getElementById("cust-name").value = cases[id].name === "新規" ? "" : (cases[id].name || "");
+      document.querySelectorAll("[data-case-field]").forEach(field => {
+        field.value = cases[id][field.dataset.caseField] || (field.dataset.caseField === "cancelIfSubMax" ? "希望しない" : "");
+      });
       document.getElementById("cancel-banner").classList.toggle("visible", cases[id].cancelIfSubMax === "希望する");
+      updateCustomerSummary();
       currentPage = 1;
       calc();
       draw();
@@ -2174,6 +2823,32 @@
     function autoUpdateCaseName() {
       saveCurrentCase();
       updateCaseListUI();
+      updateCustomerSummary();
+    }
+
+    function updateCustomerField(event) {
+      if (!activeCaseId || !cases[activeCaseId]) return;
+      const field = event.currentTarget;
+      const key = field.dataset.caseField;
+      cases[activeCaseId][key] = field.value.trim();
+      if (key === "cancelIfSubMax") {
+        document.getElementById("cancel-banner").classList.toggle("visible", field.value === "希望する");
+      }
+      persistCases();
+      markSaved();
+      updateCustomerSummary();
+    }
+
+    function updateCustomerSummary() {
+      const activeCase = cases[activeCaseId] || {};
+      const parts = [];
+      if (activeCase.tel) parts.push(activeCase.tel);
+      if (activeCase.bankName) parts.push(activeCase.bankName);
+      if (activeCase.bankType) parts.push(activeCase.bankType);
+      if (activeCase.cancelIfSubMax === "希望する") parts.push("満額以外返送");
+      document.getElementById("customer-summary").textContent = parts.length
+        ? parts.join("・")
+        : "電話番号・振込情報を確認";
     }
 
     function updateCaseListUI() {
@@ -2359,7 +3034,8 @@
             n: String(item.n),
             t: String(item.t),
             p: toNonNegativeNumber(item.p),
-            q: toNonNegativeNumber(item.q)
+            q: toNonNegativeNumber(item.q),
+            memo: String(item.memo || "")
           };
         });
         isViewingLog = true;
@@ -2444,27 +3120,116 @@
       }
     }
 
-    function resetAll() {
-      const message = "この端末に保存されている全ての査定中データを削除しますか？\n確定済みの買取履歴は削除されません。";
-      if (!window.confirm(message)) return;
-      [STORAGE_KEY, ACTIVE_CASE_KEY, VIEW_MODE_KEY, PER_PAGE_KEY].forEach(key => localStorage.removeItem(key));
-      cases = {};
-      inputs = {};
-      activeCaseId = "";
-      currentRarity = "ALL";
-      currentKana = "";
-      selectedOnly = false;
-      viewMode = "grid";
-      itemsPerPage = 20;
-      document.getElementById("search").value = "";
-      document.getElementById("selected-only").checked = false;
-      document.getElementById("per-page").value = "20";
-      createNewCase({ focusName: false, notify: false });
-      renderViewControls();
-      createKanaFilters();
-      createRarityFilters();
-      draw();
-      showToast("端末の査定中データを初期化しました");
+    function scheduleServerBackup() {
+      if (syncSupported === false) return;
+      window.clearTimeout(backupTimer);
+      backupTimer = window.setTimeout(() => backupCasesToServer(false), 2500);
+    }
+
+    function setSyncStatus(text, state = "") {
+      const status = document.getElementById("sync-status");
+      status.textContent = text;
+      status.className = `sync-status ${state}`.trim();
+    }
+
+    async function backupCasesToServer(manual = false) {
+      if (manual) syncSupported = null;
+      setSyncStatus("サーバーへ保存中", "syncing");
+      const updatedAt = new Date().toISOString();
+      const payload = {
+        action: "backup_cases",
+        scope: SERVER_BACKUP_SCOPE,
+        updatedAt,
+        cases,
+        activeCaseId
+      };
+      try {
+        const result = await fetchJson(GAS_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        }, 20000);
+        if (result?.result !== "SUCCESS" || result?.action !== "backup_cases") {
+          throw new Error("GAS_BACKUP_ACTION_NOT_INSTALLED");
+        }
+        syncSupported = true;
+        const time = new Intl.DateTimeFormat("ja-JP", { hour: "2-digit", minute: "2-digit" }).format(new Date());
+        setSyncStatus(`サーバー保存済み ${time}`, "synced");
+        if (manual) showToast("査定中データをサーバーへ保存しました");
+      } catch (error) {
+        syncSupported = false;
+        setSyncStatus("GAS側のバックアップ機能が未設定です", "error");
+        if (manual) showToast("サーバー保存にはGAS追加コードの反映が必要です", "error");
+      }
+    }
+
+    async function restoreServerBackup(manual = false) {
+      if (manual) syncSupported = null;
+      setSyncStatus("サーバーバックアップを確認中", "syncing");
+      try {
+        const result = await fetchJson(
+          `${GAS_URL}?action=get_case_backup&scope=${encodeURIComponent(SERVER_BACKUP_SCOPE)}`,
+          {},
+          15000
+        );
+        if (result?.result !== "SUCCESS" || result?.action !== "get_case_backup") {
+          throw new Error("GAS_BACKUP_ACTION_NOT_INSTALLED");
+        }
+        syncSupported = true;
+        const serverPayload = result.payload;
+        if (!serverPayload?.cases || typeof serverPayload.cases !== "object") {
+          setSyncStatus("サーバー保存を利用できます", "synced");
+          if (manual) showToast("復元できるバックアップはありません", "error");
+          return;
+        }
+
+        const localUpdatedAt = Date.parse(localStorage.getItem(LOCAL_UPDATED_KEY) || "") || 0;
+        const serverUpdatedAt = Date.parse(serverPayload.updatedAt || "") || 0;
+        const localHasData = Object.values(cases).some(caseItem => getInputSummary(caseItem.data || {}).quantity > 0 || (caseItem.name && caseItem.name !== "新規"));
+        const shouldRestore = manual
+          ? window.confirm("サーバーに保存された査定中データで、この端末の査定中データを置き換えますか？")
+          : (!localHasData && serverUpdatedAt > localUpdatedAt);
+
+        if (shouldRestore) {
+          cases = serverPayload.cases;
+          activeCaseId = serverPayload.activeCaseId && cases[serverPayload.activeCaseId]
+            ? serverPayload.activeCaseId
+            : Object.keys(cases)[0] || "";
+          if (!activeCaseId) createNewCase({ focusName: false, notify: false });
+          else loadCase(activeCaseId);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
+          localStorage.setItem(ACTIVE_CASE_KEY, activeCaseId);
+          localStorage.setItem(LOCAL_UPDATED_KEY, serverPayload.updatedAt || new Date().toISOString());
+          setSyncStatus("サーバーバックアップを復元済み", "synced");
+          if (manual) showToast("サーバーバックアップを復元しました");
+        } else if (!manual && serverUpdatedAt > localUpdatedAt) {
+          setSyncStatus("サーバーに新しいバックアップがあります・復元で確認", "synced");
+        } else {
+          setSyncStatus("サーバー同期を利用できます", "synced");
+          if (manual) showToast("端末の査定中データを維持しました");
+        }
+      } catch (error) {
+        syncSupported = false;
+        setSyncStatus("GAS側のバックアップ機能が未設定です", "error");
+        if (manual) showToast("サーバー復元にはGAS追加コードの反映が必要です", "error");
+      }
+    }
+
+    async function copyGasBackupCode() {
+      const code = document.getElementById("gas-backup-code")?.textContent.trim() || "";
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code);
+      } catch (error) {
+        const textarea = document.createElement("textarea");
+        textarea.value = code;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+      showToast("GAS追加コードをコピーしました");
     }
 
     function statePanel(icon, title, text, actionLabel = "", action = "") {
@@ -2514,6 +3279,72 @@
     function formatNumber(value) {
       return toNonNegativeNumber(value).toLocaleString("ja-JP");
     }
+  </script>
+
+  <script type="text/plain" id="gas-backup-code">
+// 既存の doGet(e) の先頭に追加：
+// const backupResponse = handlePosBackupGet_(e);
+// if (backupResponse) return backupResponse;
+
+// 既存の doPost(e) でJSONを解析した直後に追加：
+// const backupResponse = handlePosBackupPost_(data);
+// if (backupResponse) return backupResponse;
+
+function handlePosBackupGet_(e) {
+      if (!e || e.parameter.action !== 'get_case_backup') return null;
+      const scope = String(e.parameter.scope || 'pklab-pos-shared');
+      const file = getPosBackupFile_(scope);
+      const payload = file ? JSON.parse(file.getBlob().getDataAsString('UTF-8')) : null;
+      return posJson_({
+        result: 'SUCCESS',
+        action: 'get_case_backup',
+        payload: payload
+      });
+}
+
+function handlePosBackupPost_(data) {
+      if (!data || data.action !== 'backup_cases') return null;
+      const scope = String(data.scope || 'pklab-pos-shared');
+      const lock = LockService.getScriptLock();
+      lock.waitLock(10000);
+      try {
+        const payload = {
+          updatedAt: data.updatedAt || new Date().toISOString(),
+          activeCaseId: data.activeCaseId || '',
+          cases: data.cases || {}
+        };
+        const content = JSON.stringify(payload);
+        const file = getPosBackupFile_(scope);
+        if (file) {
+          file.setContent(content);
+        } else {
+          DriveApp.createFile(posBackupFileName_(scope), content, MimeType.PLAIN_TEXT);
+        }
+        return posJson_({
+          result: 'SUCCESS',
+          action: 'backup_cases',
+          updatedAt: payload.updatedAt
+        });
+      } finally {
+        lock.releaseLock();
+      }
+}
+
+function getPosBackupFile_(scope) {
+      const files = DriveApp.getFilesByName(posBackupFileName_(scope));
+      return files.hasNext() ? files.next() : null;
+}
+
+function posBackupFileName_(scope) {
+      const safeScope = String(scope).replace(/[^a-zA-Z0-9_-]/g, '_');
+      return 'PKLAB_POS_BACKUP_' + safeScope + '.json';
+}
+
+function posJson_(value) {
+      return ContentService
+        .createTextOutput(JSON.stringify(value))
+        .setMimeType(ContentService.MimeType.JSON);
+}
   </script>
 </body>
 </html>
