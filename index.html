@@ -1643,7 +1643,7 @@
           <div class="results-toolbar">
             <div class="results-copy">
               <div id="results-summary" class="results-summary" aria-live="polite">商品データを読み込んでいます</div>
-              <div id="results-hint" class="results-hint">選択した商品は先頭に表示されます</div>
+              <div id="results-hint" class="results-hint">商品は元データの並び順で表示されます</div>
             </div>
             <button id="reset-filter-btn" class="reset-filter-btn" type="button" onclick="resetFilters()">
               <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>絞り込み解除
@@ -2221,8 +2221,7 @@
           .map(item => item.n)
       );
 
-      return cards
-        .filter(card => {
+      return cards.filter(card => {
           if (selectedOnly && !selectedNames.has(card.name)) return false;
           if (currentRarity !== "ALL" && card.rarity !== currentRarity) return false;
           if (currentKana && !new RegExp(kanaMap[currentKana]).test(card.name)) return false;
@@ -2236,11 +2235,6 @@
           ].join(" ");
 
           return tokens.every(variants => variants.some(token => haystack.includes(token)));
-        })
-        .sort((a, b) => {
-          const aSelected = selectedNames.has(a.name) ? 1 : 0;
-          const bSelected = selectedNames.has(b.name) ? 1 : 0;
-          return bSelected - aSelected || a._index - b._index;
         });
     }
 
@@ -2356,7 +2350,7 @@
         ? `${conditions.join("・")}：${totalItems.toLocaleString()}件`
         : `全${totalItems.toLocaleString()}件`;
       hint.textContent = totalItems
-        ? `${startIndex + 1}〜${endIndex}件を表示・選択した商品は先頭に表示`
+        ? `${startIndex + 1}〜${endIndex}件を表示`
         : "条件を変更して再検索してください";
     }
 
