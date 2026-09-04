@@ -59,6 +59,87 @@
     }
 
     .print-only { display: none; }
+    .create-product-btn {
+      height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border: 1px solid var(--main);
+      border-radius: 10px;
+      padding: 0 15px;
+      background: var(--main-soft);
+      color: var(--main);
+      font-size: .78rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .create-product-btn:hover { background: #e1e5ff; }
+    .custom-product-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 5px;
+      border-radius: 999px;
+      padding: 3px 7px;
+      background: var(--accent-soft);
+      color: #745b00;
+      font-size: .61rem;
+      font-weight: 900;
+    }
+    .custom-product-edit {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 3;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 5px 8px;
+      background: rgba(255,255,255,.94);
+      color: var(--main);
+      font-size: .66rem;
+      font-weight: 900;
+      box-shadow: var(--shadow-sm);
+    }
+    .product-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(10, 15, 40, .56);
+      backdrop-filter: blur(5px);
+    }
+    .product-modal-backdrop.open { display: flex; }
+    .product-modal {
+      width: min(680px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 24px 70px rgba(10, 15, 40, .3);
+    }
+    .product-modal-head, .product-modal-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 20px; }
+    .product-modal-head { border-bottom: 1px solid var(--line); }
+    .product-modal-title { margin:0; color:var(--main); font-size:1.05rem; font-weight:900; }
+    .product-modal-close { border:0; background:transparent; color:var(--muted); font-size:1.1rem; }
+    .product-modal-body { padding:20px; }
+    .product-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .product-form-grid .wide { grid-column:1/-1; }
+    .product-price-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+    .product-modal-help { margin-top:6px; color:var(--muted); font-size:.7rem; }
+    .product-modal-actions { border-top:1px solid var(--line); justify-content:flex-end; }
+    .product-modal-actions button { border-radius:9px; padding:9px 15px; font-size:.78rem; font-weight:900; }
+    .product-delete-btn { margin-right:auto; border:1px solid #f1b8be; background:var(--danger-soft); color:var(--danger); }
+    .product-cancel-btn { border:1px solid var(--line); background:#fff; color:var(--ink); }
+    .product-save-btn { border:1px solid var(--main); background:var(--main); color:#fff; }
+    @media (max-width: 620px) {
+      .product-form-grid { grid-template-columns:1fr; }
+      .product-form-grid .wide { grid-column:auto; }
+      .product-price-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
     .app-header {
       position: sticky;
       top: 0;
@@ -1535,6 +1616,9 @@
               </div>
             </div>
             <div class="receipt-cta-wrap">
+              <button class="create-product-btn" type="button" onclick="openProductModal()">
+                <i class="bi bi-plus-square" aria-hidden="true"></i>商品を作成
+              </button>
               <button class="receipt-cta" type="button" onclick="showReceipt()">
                 <i class="bi bi-receipt" aria-hidden="true"></i>明細を確認
               </button>
@@ -1773,6 +1857,51 @@
     </div>
   </aside>
 
+  <div id="product-modal-backdrop" class="product-modal-backdrop no-print" role="dialog" aria-modal="true" aria-labelledby="product-modal-title" onclick="handleProductModalBackdrop(event)">
+    <form id="product-form" class="product-modal" onsubmit="saveCustomProduct(event)">
+      <div class="product-modal-head">
+        <h2 id="product-modal-title" class="product-modal-title">マスタ未登録の商品を作成</h2>
+        <button class="product-modal-close" type="button" onclick="closeProductModal()" aria-label="閉じる"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="product-modal-body">
+        <input id="product-edit-id" type="hidden">
+        <div class="product-form-grid">
+          <div class="wide">
+            <label class="field-label" for="product-name">商品名 <span class="text-danger">必須</span></label>
+            <input id="product-name" class="control-input" type="text" maxlength="200" placeholder="カード名・収録・型番など、重複しない名称" required autocomplete="off">
+          </div>
+          <div>
+            <label class="field-label" for="product-code">型番</label>
+            <input id="product-code" class="control-input" type="text" maxlength="80" placeholder="例：123/190" autocomplete="off">
+          </div>
+          <div>
+            <label class="field-label" for="product-rarity">レアリティ</label>
+            <input id="product-rarity" class="control-input" type="text" maxlength="40" placeholder="例：SAR" autocomplete="off">
+          </div>
+          <div class="wide">
+            <label class="field-label" for="product-image">画像URL</label>
+            <input id="product-image" class="control-input" type="url" placeholder="https://..." autocomplete="off">
+            <div class="product-modal-help">空欄でも作成できます。商品はこの端末に保存され、通常の商品と同じように検索・査定できます。</div>
+          </div>
+          <div class="wide">
+            <div class="field-label">ランク別買取価格</div>
+            <div class="product-price-grid">
+              <div><label class="field-label" for="product-price-a">A</label><input id="product-price-a" class="control-input" type="number" min="0" step="1" inputmode="numeric" value="0"></div>
+              <div><label class="field-label" for="product-price-b">B</label><input id="product-price-b" class="control-input" type="number" min="0" step="1" inputmode="numeric" value="0"></div>
+              <div><label class="field-label" for="product-price-c">C</label><input id="product-price-c" class="control-input" type="number" min="0" step="1" inputmode="numeric" value="0"></div>
+              <div><label class="field-label" for="product-price-d">D</label><input id="product-price-d" class="control-input" type="number" min="0" step="1" inputmode="numeric" value="0"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-modal-actions">
+        <button id="product-delete-btn" class="product-delete-btn" type="button" onclick="deleteCustomProduct()" style="display:none">削除</button>
+        <button class="product-cancel-btn" type="button" onclick="closeProductModal()">キャンセル</button>
+        <button class="product-save-btn" type="submit"><i class="bi bi-check-lg me-1"></i>保存して表示</button>
+      </div>
+    </form>
+  </div>
+
   <div id="toast-container" class="toast-container-custom" aria-live="polite" aria-atomic="true"></div>
 
   <script>
@@ -1785,10 +1914,13 @@
     const VIEW_MODE_KEY = "pk_pos_view_mode";
     const PER_PAGE_KEY = "pk_pos_per_page";
     const LOCAL_UPDATED_KEY = "pk_pos_local_updated_at";
+    const CUSTOM_PRODUCTS_KEY = "pk_pos_custom_products_v1";
     const SERVER_BACKUP_SCOPE = "pklab-pos-shared";
     const DATA_REFRESH_INTERVAL = 5 * 60 * 1000;
 
     let cards = [];
+    let masterCards = [];
+    let customProducts = [];
     let inputs = {};
     let activeCaseId = "";
     let cases = {};
@@ -1830,6 +1962,7 @@
     async function initialize() {
       bindStaticEvents();
       loadPreferences();
+      loadCustomProducts();
       loadLocalCases();
       renderViewControls();
       updateCaseListUI();
@@ -1880,6 +2013,11 @@
       });
 
       display.addEventListener("click", event => {
+        const editButton = event.target.closest("[data-custom-edit]");
+        if (editButton) {
+          openProductModal(editButton.dataset.customEdit);
+          return;
+        }
         const button = event.target.closest("[data-qty-action]");
         if (!button) return;
         const cardIndex = Number(button.dataset.cardIndex);
@@ -1997,7 +2135,27 @@
         if (event.key === "Escape" && document.getElementById("selection-drawer").classList.contains("open")) {
           closeSelectionDrawer();
         }
+        if (event.key === "Escape" && document.getElementById("product-modal-backdrop").classList.contains("open")) closeProductModal();
       });
+    }
+
+    function loadCustomProducts() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(CUSTOM_PRODUCTS_KEY) || "[]");
+        customProducts = Array.isArray(saved) ? saved.filter(item => item && item.id && item.name) : [];
+      } catch (error) {
+        console.warn("作成商品の読み込みに失敗しました。", error);
+        customProducts = [];
+      }
+    }
+
+    function persistCustomProducts() {
+      localStorage.setItem(CUSTOM_PRODUCTS_KEY, JSON.stringify(customProducts));
+    }
+
+    function rebuildCards() {
+      const customCards = customProducts.map(item => ({ ...item, _custom: true, _customId: item.id }));
+      cards = [...customCards, ...masterCards].map((card, index) => ({ ...card, _index: index }));
     }
 
     function loadPreferences() {
@@ -2042,7 +2200,7 @@
         const rawCards = Array.isArray(payload) ? payload : (payload.cards || payload.data || []);
         if (!Array.isArray(rawCards)) throw new Error("商品データの形式が正しくありません");
 
-        cards = rawCards
+        masterCards = rawCards
           .filter(card => card && card.name)
           .map((card, index) => ({
             ...card,
@@ -2056,6 +2214,7 @@
             priceC: toNonNegativeNumber(card.priceC),
             priceD: toNonNegativeNumber(card.priceD)
           }));
+        rebuildCards();
 
         cardsLoading = false;
         cardsLoadError = false;
@@ -2075,12 +2234,14 @@
         if (silent && cards.length) {
           setDataStatus("価格データ更新失敗", "error");
         } else {
+          masterCards = [];
+          rebuildCards();
           cardsLoading = false;
-          cardsLoadError = true;
+          cardsLoadError = customProducts.length === 0;
           createKanaFilters();
           createRarityFilters();
           renderCards();
-          setDataStatus("商品データ取得失敗", "error");
+          setDataStatus(customProducts.length ? `作成商品 ${customProducts.length}件のみ` : "商品データ取得失敗", customProducts.length ? "ready" : "error");
         }
       }
     }
@@ -2300,12 +2461,14 @@
 
       return `
         <article class="product-card ${hasValue ? "has-value" : ""}">
+          ${card._custom ? `<button class="custom-product-edit" type="button" data-custom-edit="${escapeHtml(card._customId)}"><i class="bi bi-pencil-square me-1"></i>編集</button>` : ""}
           <span class="selected-mark"><i class="bi bi-check-lg" aria-hidden="true"></i>選択中</span>
           <div class="product-image-wrap ${imageUrl ? "" : "image-error"}">
             ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(card.name)}" class="product-image" loading="lazy" onerror="this.parentElement.classList.add('image-error')">` : ""}
             <div class="image-fallback"><i class="bi bi-image" aria-hidden="true"></i><span>画像なし</span></div>
           </div>
           <div class="product-body">
+            ${card._custom ? `<div class="custom-product-badge"><i class="bi bi-device-ssd"></i>この端末で作成</div>` : ""}
             <div class="product-name" title="${escapeHtml(card.name)}">${escapeHtml(card.name)}</div>
             <table class="rank-table" aria-label="${escapeHtml(card.name)}のランク別価格"><tbody>${rows}</tbody></table>
           </div>
@@ -3263,6 +3426,94 @@
     function safeImageUrl(value) {
       const url = String(value || "").trim();
       return /^(https?:\/\/|data:image\/)/i.test(url) ? url : "";
+    }
+
+    function openProductModal(productId = "") {
+      const product = customProducts.find(item => item.id === productId);
+      document.getElementById("product-form").reset();
+      document.getElementById("product-edit-id").value = product?.id || "";
+      document.getElementById("product-name").value = product?.name || document.getElementById("search").value.trim();
+      document.getElementById("product-code").value = product?.code || "";
+      document.getElementById("product-rarity").value = product?.rarity || "";
+      document.getElementById("product-image").value = product?.image || "";
+      ["A", "B", "C", "D"].forEach(rank => {
+        document.getElementById(`product-price-${rank.toLowerCase()}`).value = product ? toNonNegativeNumber(product[`price${rank}`]) : 0;
+      });
+      document.getElementById("product-modal-title").textContent = product ? "作成した商品を編集" : "マスタ未登録の商品を作成";
+      document.getElementById("product-delete-btn").style.display = product ? "inline-flex" : "none";
+      document.getElementById("product-modal-backdrop").classList.add("open");
+      window.setTimeout(() => document.getElementById("product-name").focus(), 0);
+    }
+
+    function closeProductModal() {
+      document.getElementById("product-modal-backdrop").classList.remove("open");
+    }
+
+    function handleProductModalBackdrop(event) {
+      if (event.target.id === "product-modal-backdrop") closeProductModal();
+    }
+
+    function saveCustomProduct(event) {
+      event.preventDefault();
+      const editingId = document.getElementById("product-edit-id").value;
+      const oldProduct = customProducts.find(item => item.id === editingId);
+      const product = {
+        id: editingId || (window.crypto?.randomUUID?.() || `custom-${Date.now()}-${Math.random().toString(16).slice(2)}`),
+        name: document.getElementById("product-name").value.trim(),
+        code: document.getElementById("product-code").value.trim(),
+        rarity: document.getElementById("product-rarity").value.trim(),
+        image: safeImageUrl(document.getElementById("product-image").value),
+        priceA: toNonNegativeNumber(document.getElementById("product-price-a").value),
+        priceB: toNonNegativeNumber(document.getElementById("product-price-b").value),
+        priceC: toNonNegativeNumber(document.getElementById("product-price-c").value),
+        priceD: toNonNegativeNumber(document.getElementById("product-price-d").value),
+        updatedAt: new Date().toISOString()
+      };
+      if (!product.name) return showToast("商品名を入力してください", "error");
+      if (![product.priceA, product.priceB, product.priceC, product.priceD].some(price => price > 0)) {
+        return showToast("いずれかのランクに買取価格を入力してください", "error");
+      }
+      const duplicate = [...masterCards, ...customProducts].find(item => item.id !== editingId && normalizeSearchText(item.name) === normalizeSearchText(product.name));
+      if (duplicate) return showToast("同じ商品名がすでにあります。型番などを商品名に追加してください", "error");
+
+      if (oldProduct && oldProduct.name !== product.name) {
+        ["A", "B", "C", "D"].forEach(rank => {
+          const oldKey = `${oldProduct.name}-${rank}`;
+          if (!inputs[oldKey]) return;
+          const newKey = `${product.name}-${rank}`;
+          inputs[newKey] = { ...inputs[oldKey], n: product.name };
+          delete inputs[oldKey];
+        });
+      }
+      const index = customProducts.findIndex(item => item.id === product.id);
+      if (index >= 0) customProducts[index] = product;
+      else customProducts.unshift(product);
+      persistCustomProducts();
+      rebuildCards();
+      createKanaFilters();
+      createRarityFilters();
+      document.getElementById("search").value = product.name;
+      document.getElementById("search-clear").classList.add("visible");
+      currentPage = 1;
+      saveCurrentCase();
+      draw();
+      calc();
+      closeProductModal();
+      showToast(index >= 0 ? "商品を更新しました" : "商品を作成しました");
+    }
+
+    function deleteCustomProduct() {
+      const id = document.getElementById("product-edit-id").value;
+      const product = customProducts.find(item => item.id === id);
+      if (!product || !window.confirm(`「${product.name}」をこの端末の商品一覧から削除しますか？\n査定へ追加済みの明細は残ります。`)) return;
+      customProducts = customProducts.filter(item => item.id !== id);
+      persistCustomProducts();
+      rebuildCards();
+      createKanaFilters();
+      createRarityFilters();
+      closeProductModal();
+      resetPageAndDraw();
+      showToast("作成商品を削除しました");
     }
 
     function toNonNegativeNumber(value) {
