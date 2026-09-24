@@ -130,6 +130,27 @@
     .product-form-grid .wide { grid-column:1/-1; }
     .product-price-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
     .product-modal-help { margin-top:6px; color:var(--muted); font-size:.7rem; }
+    .product-deduction-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0 0 12px;
+      border: 1px solid #f1d48a;
+      border-radius: 10px;
+      padding: 11px 12px;
+      background: var(--accent-soft);
+      color: #66520b;
+      cursor: pointer;
+    }
+    .product-deduction-option input {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      margin-top: 1px;
+      accent-color: var(--main);
+    }
+    .product-deduction-title { display:block; font-size:.76rem; font-weight:900; }
+    .product-deduction-help { display:block; margin-top:2px; font-size:.66rem; font-weight:650; opacity:.82; }
     .product-modal-actions { border-top:1px solid var(--line); justify-content:flex-end; }
     .product-modal-actions button { border-radius:9px; padding:9px 15px; font-size:.78rem; font-weight:900; }
     .product-delete-btn { margin-right:auto; border:1px solid #f1b8be; background:var(--danger-soft); color:var(--danger); }
@@ -1885,6 +1906,13 @@
           </div>
           <div class="wide">
             <div class="field-label">ランク別買取価格</div>
+            <label class="product-deduction-option" for="product-is-deduction">
+              <input id="product-is-deduction" type="checkbox">
+              <span>
+                <span class="product-deduction-title">合計から差し引く商品にする</span>
+                <span class="product-deduction-help">送料・手数料などに使用します。チェックすると、入力した金額がマイナスで計算されます。</span>
+              </span>
+            </label>
             <div class="product-price-grid">
               <div><label class="field-label" for="product-price-a">A</label><input id="product-price-a" class="control-input" type="number" min="0" step="1" inputmode="numeric" value="0"></div>
               <div><label class="field-label" for="product-price-b">B</label><input id="product-price-b" class="control-input" type="number" min="0" step="1" inputmode="numeric" value="0"></div>
@@ -2435,6 +2463,7 @@
 
     function renderCard(card) {
       const hasValue = ["A", "B", "C", "D"].some(rank => Number(inputs[`${card.name}-${rank}`]?.q) > 0);
+      const isDeduction = Boolean(card.isDeduction) || ["A", "B", "C", "D"].some(rank => Number(card[`price${rank}`]) < 0);
       const imageUrl = safeImageUrl(card.image);
       const rows = ["A", "B", "C", "D"].map(rank => {
         const key = `${card.name}-${rank}`;
@@ -2468,7 +2497,7 @@
             <div class="image-fallback"><i class="bi bi-image" aria-hidden="true"></i><span>画像なし</span></div>
           </div>
           <div class="product-body">
-            ${card._custom ? `<div class="custom-product-badge"><i class="bi bi-device-ssd"></i>この端末で作成</div>` : ""}
+            ${card._custom ? `<div class="custom-product-badge"><i class="bi ${isDeduction ? "bi-dash-circle" : "bi-device-ssd"}"></i>${isDeduction ? "控除項目" : "この端末で作成"}</div>` : ""}
             <div class="product-name" title="${escapeHtml(card.name)}">${escapeHtml(card.name)}</div>
             <table class="rank-table" aria-label="${escapeHtml(card.name)}のランク別価格"><tbody>${rows}</tbody></table>
           </div>
@@ -3436,8 +3465,10 @@
       document.getElementById("product-code").value = product?.code || "";
       document.getElementById("product-rarity").value = product?.rarity || "";
       document.getElementById("product-image").value = product?.image || "";
+      const isDeduction = Boolean(product?.isDeduction) || ["A", "B", "C", "D"].some(rank => Number(product?.[`price${rank}`]) < 0);
+      document.getElementById("product-is-deduction").checked = isDeduction;
       ["A", "B", "C", "D"].forEach(rank => {
-        document.getElementById(`product-price-${rank.toLowerCase()}`).value = product ? toNonNegativeNumber(product[`price${rank}`]) : 0;
+        document.getElementById(`product-price-${rank.toLowerCase()}`).value = product ? Math.abs(toSignedNumber(product[`price${rank}`])) : 0;
       });
       document.getElementById("product-modal-title").textContent = product ? "作成した商品を編集" : "マスタ未登録の商品を作成";
       document.getElementById("product-delete-btn").style.display = product ? "inline-flex" : "none";
@@ -3457,21 +3488,24 @@
       event.preventDefault();
       const editingId = document.getElementById("product-edit-id").value;
       const oldProduct = customProducts.find(item => item.id === editingId);
+      const isDeduction = document.getElementById("product-is-deduction").checked;
+      const priceSign = isDeduction ? -1 : 1;
       const product = {
         id: editingId || (window.crypto?.randomUUID?.() || `custom-${Date.now()}-${Math.random().toString(16).slice(2)}`),
         name: document.getElementById("product-name").value.trim(),
         code: document.getElementById("product-code").value.trim(),
         rarity: document.getElementById("product-rarity").value.trim(),
         image: safeImageUrl(document.getElementById("product-image").value),
-        priceA: toNonNegativeNumber(document.getElementById("product-price-a").value),
-        priceB: toNonNegativeNumber(document.getElementById("product-price-b").value),
-        priceC: toNonNegativeNumber(document.getElementById("product-price-c").value),
-        priceD: toNonNegativeNumber(document.getElementById("product-price-d").value),
+        priceA: priceSign * toNonNegativeNumber(document.getElementById("product-price-a").value),
+        priceB: priceSign * toNonNegativeNumber(document.getElementById("product-price-b").value),
+        priceC: priceSign * toNonNegativeNumber(document.getElementById("product-price-c").value),
+        priceD: priceSign * toNonNegativeNumber(document.getElementById("product-price-d").value),
+        isDeduction,
         updatedAt: new Date().toISOString()
       };
       if (!product.name) return showToast("商品名を入力してください", "error");
-      if (![product.priceA, product.priceB, product.priceC, product.priceD].some(price => price > 0)) {
-        return showToast("いずれかのランクに買取価格を入力してください", "error");
+      if (![product.priceA, product.priceB, product.priceC, product.priceD].some(price => price !== 0)) {
+        return showToast("いずれかのランクに金額を入力してください", "error");
       }
       const duplicate = [...masterCards, ...customProducts].find(item => item.id !== editingId && normalizeSearchText(item.name) === normalizeSearchText(product.name));
       if (duplicate) return showToast("同じ商品名がすでにあります。型番などを商品名に追加してください", "error");
@@ -3521,8 +3555,13 @@
       return Number.isFinite(number) ? Math.max(0, number) : 0;
     }
 
+    function toSignedNumber(value) {
+      const number = Number(String(value ?? 0).replace(/,/g, ""));
+      return Number.isFinite(number) ? number : 0;
+    }
+
     function formatNumber(value) {
-      return toNonNegativeNumber(value).toLocaleString("ja-JP");
+      return toSignedNumber(value).toLocaleString("ja-JP");
     }
   </script>
 
