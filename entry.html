@@ -3,85 +3,53 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#101a3b">
+  <meta name="theme-color" content="#16213e">
   <meta name="color-scheme" content="light dark">
   <meta name="description" content="ポケカ買取ラボの買取査定お申込フォームです。">
   <meta name="referrer" content="no-referrer">
   <title>買取査定お申込フォーム｜ポケカ買取ラボ</title>
   <script defer src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+  <link rel="stylesheet" href="pklab-theme.css">
   <style>
+    /* 色は pklab-theme.css の共通トークンから取る（ライト／ダークは共通ファイル側で切り替え） */
     :root {
-      --navy-950: #0b1228;
-      --navy-900: #101a3b;
-      --navy-800: #172653;
-      --navy-700: #20366f;
-      --blue-600: #315fd6;
-      --blue-500: #4976e8;
-      --blue-100: #eaf0ff;
-      --ink-900: #172033;
-      --ink-700: #3b465c;
-      --ink-500: #68748b;
-      --line: #dce2ec;
-      --surface: #ffffff;
-      --canvas: #f3f5f9;
-      --success: #137a52;
-      --success-bg: #e8f7f0;
-      --warning: #8a5a00;
-      --warning-bg: #fff6dc;
-      --danger: #b3261e;
-      --danger-bg: #fff0ef;
-      --focus: #8bb0ff;
-      --shadow: 0 18px 48px rgba(16, 26, 59, 0.1);
-      --radius-xl: 24px;
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --heading: #101a3b;
-      --link: #315fd6;
-      --ink-400: #98a2b3;
-      --line-strong: #cdd5e2;
-      --line-blue: #cad7f5;
-      --surface-soft: #f5f7fa;
-      --surface-muted: #eef1f6;
-      --surface-tint: #f4f7ff;
-      --success-line: #9fcdbb;
-      --danger-line: #f0c3bf;
-    }
-
-    /* ダークモード（端末の設定に合わせて自動で切り替え） */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        color-scheme: dark;
-        --ink-900: #e7eaf3;
-        --ink-700: #c3cad8;
-        --ink-500: #9aa4b8;
-        --ink-400: #6f7a90;
-        --heading: #e3e8ff;
-        --link: #93adff;
-        --blue-100: rgba(73, 118, 232, 0.18);
-        --line: #2a3248;
-        --line-strong: #3a4460;
-        --line-blue: #34467a;
-        --surface: #161b2c;
-        --surface-soft: #1b2134;
-        --surface-muted: #20273b;
-        --surface-tint: #1a2240;
-        --canvas: #0c101b;
-        --success: #3cc58c;
-        --success-bg: rgba(60, 197, 140, 0.12);
-        --success-line: rgba(60, 197, 140, 0.4);
-        --warning: #f2c55c;
-        --warning-bg: rgba(242, 197, 92, 0.12);
-        --danger: #ff7a72;
-        --danger-bg: rgba(255, 122, 114, 0.12);
-        --danger-line: rgba(255, 122, 114, 0.45);
-        --focus: #6d8fe8;
-        --shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
-      }
-      html { background: var(--canvas); }
-      body {
-        background: radial-gradient(circle at 15% -10%, rgba(73, 118, 232, 0.12), transparent 32rem), var(--canvas);
-      }
-      input[type="date"] { color-scheme: dark; }
+      --navy-950: var(--pk-bar, #16213e);
+      --navy-900: var(--pk-navy, #16213e);
+      --navy-800: var(--pk-navy-2, #24345f);
+      --navy-700: var(--pk-navy-2, #24345f);
+      --blue-600: var(--pk-fill, #16213e);
+      --blue-500: var(--pk-fill-hover, #24345f);
+      --blue-100: var(--pk-fill-soft, #e8ebf3);
+      --heading: var(--pk-ink, #16213e);
+      --link: var(--pk-link, #2c4bb3);
+      --ink-900: var(--pk-ink, #16213e);
+      --ink-700: var(--pk-ink-2, #3d4863);
+      --ink-500: var(--pk-muted, #66708a);
+      --ink-400: var(--pk-subtle, #9aa3b5);
+      --line: var(--pk-line, #dce1ea);
+      --line-strong: var(--pk-line-strong, #c6cedb);
+      --line-blue: var(--pk-line-strong, #c6cedb);
+      --surface: var(--pk-surface, #fff);
+      --surface-soft: var(--pk-surface-2, #f6f8fb);
+      --surface-muted: var(--pk-surface-3, #eef1f6);
+      --surface-tint: var(--pk-surface-2, #f6f8fb);
+      --canvas: var(--pk-canvas, #eef1f6);
+      --success: var(--pk-green, #1f8a5b);
+      --success-bg: var(--pk-green-soft, #e6f4ec);
+      --success-line: var(--pk-green-line, #a9d8bf);
+      --warning: var(--pk-gold-text, #6e5100);
+      --warning-bg: var(--pk-gold-soft, #fbf3d9);
+      --danger: var(--pk-red, #c8402f);
+      --danger-bg: var(--pk-red-soft, #fcedea);
+      --danger-line: var(--pk-red-line, #edb8ae);
+      --focus: var(--pk-gold, #e8b931);
+      --shadow: var(--pk-shadow-2, 0 8px 24px rgba(22, 33, 62, .10));
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
     }
 
     /* 見出しへのフォーカス移動（読み上げ用）で枠線を出さない */
@@ -105,13 +73,9 @@
     body {
       margin: 0;
       min-width: 320px;
-      background:
-        radial-gradient(circle at 15% -10%, rgba(73, 118, 232, 0.14), transparent 32rem),
-        var(--canvas);
+      background: var(--canvas);
       color: var(--ink-900);
-      font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP",
-        "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+      font-family: var(--pk-font, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, system-ui, sans-serif);
       font-size: 16px;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
@@ -151,7 +115,7 @@
     }
 
     .site-header {
-      background: linear-gradient(135deg, var(--navy-950), var(--navy-800));
+      background: var(--navy-950);
       color: #fff;
       overflow: hidden;
     }
@@ -159,30 +123,16 @@
     .header-inner {
       width: min(100% - 32px, 760px);
       margin: 0 auto;
-      padding: 32px 0 30px;
+      padding: 18px 0 20px;
       position: relative;
     }
 
-    .header-inner::after {
-      content: "";
-      position: absolute;
-      width: 260px;
-      height: 260px;
-      right: -130px;
-      bottom: -180px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 50%;
-      box-shadow:
-        0 0 0 34px rgba(255, 255, 255, 0.04),
-        0 0 0 68px rgba(255, 255, 255, 0.03);
-      pointer-events: none;
-    }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 22px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .brand-mark {
@@ -194,7 +144,7 @@
       background: linear-gradient(145deg, #fff, #dce6ff);
       color: var(--navy-900);
       font-size: 13px;
-      font-weight: 900;
+      font-weight: 700;
       letter-spacing: -0.04em;
       box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
     }
@@ -206,7 +156,7 @@
 
     .brand-name {
       font-size: 15px;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: 0.04em;
     }
 
@@ -219,14 +169,14 @@
     .header-title {
       max-width: 620px;
       margin: 0;
-      font-size: clamp(26px, 6vw, 38px);
-      line-height: 1.3;
-      letter-spacing: -0.03em;
+      font-size: clamp(22px, 5vw, 30px);
+      line-height: 1.35;
+      letter-spacing: 0;
     }
 
     .header-lead {
       max-width: 600px;
-      margin: 12px 0 0;
+      margin: 6px 0 0;
       color: rgba(255, 255, 255, 0.74);
       font-size: 14px;
     }
@@ -234,8 +184,8 @@
     .header-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 20px;
+      gap: 6px;
+      margin-top: 12px;
     }
 
     .meta-chip {
@@ -249,7 +199,7 @@
       background: rgba(255, 255, 255, 0.08);
       color: rgba(255, 255, 255, 0.82);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 400;
     }
 
     .meta-dot {
@@ -291,7 +241,7 @@
       gap: 8px;
       color: var(--ink-500);
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 700;
       text-align: center;
     }
 
@@ -358,7 +308,7 @@
       background: var(--surface);
       color: var(--ink-700);
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 400;
       box-shadow: 0 8px 22px rgba(16, 26, 59, 0.05);
     }
 
@@ -375,7 +325,7 @@
       color: var(--link);
       font-family: Georgia, serif;
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     .status.is-success {
@@ -410,7 +360,7 @@
 
     .panel {
       padding: clamp(20px, 5vw, 34px);
-      border: 1px solid rgba(220, 226, 236, 0.9);
+      border: 1px solid var(--line);
       border-radius: var(--radius-xl);
       background: var(--surface);
       box-shadow: var(--shadow);
@@ -428,7 +378,7 @@
       margin: 0 0 6px;
       color: var(--link);
       font-size: 11px;
-      font-weight: 900;
+      font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
@@ -457,7 +407,7 @@
     .required-note span,
     .required-badge {
       color: var(--danger);
-      font-weight: 800;
+      font-weight: 700;
     }
 
     .section + .section {
@@ -473,7 +423,7 @@
       margin: 0 0 16px;
       color: var(--heading);
       font-size: 15px;
-      font-weight: 900;
+      font-weight: 700;
     }
 
     .section-index {
@@ -512,7 +462,7 @@
       margin: 0 0 7px;
       color: var(--ink-700);
       font-size: 12px;
-      font-weight: 850;
+      font-weight: 700;
     }
 
     .optional-badge {
@@ -521,7 +471,7 @@
       background: var(--surface-muted);
       color: var(--ink-500);
       font-size: 9px;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     .control {
@@ -573,7 +523,7 @@
     .control.is-reused::placeholder {
       color: var(--success);
       font-size: 12px;
-      font-weight: 750;
+      font-weight: 400;
     }
 
     .field-hint {
@@ -585,7 +535,7 @@
 
     .field-hint.is-error {
       color: var(--danger);
-      font-weight: 700;
+      font-weight: 400;
     }
 
     .lookup-card {
@@ -604,7 +554,7 @@
       margin: 0;
       color: var(--heading);
       font-size: 13px;
-      font-weight: 900;
+      font-weight: 700;
     }
 
     .lookup-text {
@@ -624,7 +574,7 @@
       border-radius: var(--radius-md);
       cursor: pointer;
       font-size: 14px;
-      font-weight: 850;
+      font-weight: 700;
       line-height: 1.2;
       text-decoration: none;
       transition:
@@ -649,7 +599,7 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--navy-800), var(--blue-600));
+      background: var(--blue-600);
       color: #fff;
       box-shadow: 0 10px 22px rgba(49, 95, 214, 0.2);
     }
@@ -708,7 +658,7 @@
       border-radius: 8px;
       background: var(--surface-muted);
       color: var(--heading);
-      font-weight: 900;
+      font-weight: 700;
     }
 
     .choice-card {
@@ -743,7 +693,7 @@
       display: block;
       color: var(--heading);
       font-size: 14px;
-      font-weight: 900;
+      font-weight: 700;
     }
 
     .choice-description {
@@ -761,7 +711,7 @@
       background: var(--warning-bg);
       color: var(--warning);
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 400;
     }
 
     .summary-list {
@@ -788,14 +738,14 @@
     .summary-row dt {
       color: var(--ink-500);
       font-size: 11px;
-      font-weight: 750;
+      font-weight: 400;
     }
 
     .summary-row dd {
       margin: 0;
       color: var(--ink-900);
       font-size: 13px;
-      font-weight: 750;
+      font-weight: 400;
       overflow-wrap: anywhere;
     }
 
@@ -882,7 +832,7 @@
     .agreement-copy {
       color: var(--ink-900);
       font-size: 13px;
-      font-weight: 850;
+      font-weight: 700;
     }
 
     .agreement-note {
@@ -890,7 +840,7 @@
       margin-top: 3px;
       color: var(--ink-500);
       font-size: 10px;
-      font-weight: 500;
+      font-weight: 400;
     }
 
     .submit-button {
@@ -932,7 +882,7 @@
       background: var(--success-bg);
       color: var(--success);
       font-size: 30px;
-      font-weight: 900;
+      font-weight: 700;
       box-shadow: 0 0 0 9px rgba(19, 122, 82, 0.07);
     }
 
@@ -961,7 +911,7 @@
     .receipt-id small {
       color: var(--ink-500);
       font-size: 9px;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     .receipt-id strong {
@@ -1001,7 +951,7 @@
       background: var(--blue-100);
       color: var(--link);
       font-size: 11px;
-      font-weight: 900;
+      font-weight: 700;
     }
 
     .page-footer {
@@ -1080,6 +1030,18 @@
         transition-duration: 0.01ms !important;
       }
     }
+
+    /* ===== v2.3 デザイン調整 ===== */
+    .brand-mark.pk-mark { width: 36px; height: 36px; border-radius: 9px; background: var(--pk-gold, #e8b931); color: var(--pk-gold-ink, #2e2300); font-size: .86rem; letter-spacing: .02em; box-shadow: none; }
+    .brand-name { letter-spacing: .02em; }
+    .meta-chip { min-height: 26px; padding: 3px 9px; font-size: 11px; }
+    .meta-dot { background: var(--pk-gold, #e8b931); box-shadow: none; }
+    .btn-primary { box-shadow: none; }
+    .btn-primary:hover:not(:disabled) { background: var(--blue-500); }
+    .eyebrow { letter-spacing: .04em; color: var(--ink-500); }
+    .panel, .progress-card { box-shadow: var(--pk-shadow-1, 0 1px 2px rgba(22, 33, 62, .06)); }
+    :focus-visible { outline-color: var(--focus); }
+    .pk-legal { width: min(100% - 32px, 760px); }
   </style>
 </head>
 <body>
@@ -1088,10 +1050,9 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="brand" aria-label="ポケカ買取ラボ">
-        <div class="brand-mark" aria-hidden="true">PK</div>
+        <div class="brand-mark pk-mark" aria-hidden="true">PK</div>
         <div class="brand-copy">
           <span class="brand-name">ポケカ買取ラボ</span>
-          <span class="brand-sub">PURCHASE APPLICATION</span>
         </div>
       </div>
       <h1 class="header-title">買取査定お申込フォーム</h1>
@@ -1138,7 +1099,7 @@
         <section class="panel step-panel" data-step-panel="1" aria-labelledby="step1Title">
           <div class="panel-head">
             <div>
-              <p class="eyebrow">STEP 01</p>
+              <p class="eyebrow">ステップ 1／3</p>
               <h2 id="step1Title" class="panel-title" tabindex="-1">ご本人情報</h2>
               <p class="panel-description">査定のご連絡と本人確認に必要な情報です。</p>
             </div>
@@ -1303,7 +1264,6 @@
           <div class="button-row">
             <button class="btn btn-primary" type="button" data-next-step="2">
               振込先の入力へ
-              <span aria-hidden="true">→</span>
             </button>
           </div>
         </section>
@@ -1311,7 +1271,7 @@
         <section class="panel step-panel" data-step-panel="2" aria-labelledby="step2Title" hidden>
           <div class="panel-head">
             <div>
-              <p class="eyebrow">STEP 02</p>
+              <p class="eyebrow">ステップ 2／3</p>
               <h2 id="step2Title" class="panel-title" tabindex="-1">振込先・査定条件</h2>
               <p class="panel-description">買取成立後の振込先と、査定条件をご指定ください。</p>
             </div>
@@ -1406,12 +1366,10 @@
 
           <div class="button-row">
             <button class="btn btn-secondary" type="button" data-prev-step="1">
-              <span aria-hidden="true">←</span>
               戻る
             </button>
             <button class="btn btn-primary" type="button" data-next-step="3">
               入力内容を確認
-              <span aria-hidden="true">→</span>
             </button>
           </div>
         </section>
@@ -1419,7 +1377,7 @@
         <section class="panel step-panel" data-step-panel="3" aria-labelledby="step3Title" hidden>
           <div class="panel-head">
             <div>
-              <p class="eyebrow">STEP 03</p>
+              <p class="eyebrow">ステップ 3／3</p>
               <h2 id="step3Title" class="panel-title" tabindex="-1">内容確認・利用規約</h2>
               <p class="panel-description">入力内容と規約をご確認のうえ、お申込みください。</p>
             </div>
@@ -1494,7 +1452,6 @@
 
           <div class="button-row">
             <button class="btn btn-secondary" type="button" data-prev-step="2">
-              <span aria-hidden="true">←</span>
               入力内容を修正
             </button>
           </div>
@@ -1519,8 +1476,10 @@
       </section>
     </div>
 
-    <footer class="page-footer">
-      <p>© ポケカ買取ラボ</p>
+    <!-- 古物営業法に基づく表示。氏名または名称は許可証の記載どおりにしてください -->
+    <footer class="pk-legal">
+      <div><strong>ポケカ買取ラボ</strong></div>
+      <div>古物商許可：東京都公安委員会 第304362220808号</div>
     </footer>
   </main>
 
