@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#101a3b">
+  <meta name="color-scheme" content="light dark">
   <meta name="description" content="ポケカ買取ラボの買取査定お申込フォームです。">
   <meta name="referrer" content="no-referrer">
   <title>買取査定お申込フォーム｜ポケカ買取ラボ</title>
   <script defer src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
   <style>
     :root {
-      color-scheme: light;
       --navy-950: #0b1228;
       --navy-900: #101a3b;
       --navy-800: #172653;
@@ -35,7 +35,61 @@
       --radius-xl: 24px;
       --radius-lg: 16px;
       --radius-md: 12px;
+      --heading: #101a3b;
+      --link: #315fd6;
+      --ink-400: #98a2b3;
+      --line-strong: #cdd5e2;
+      --line-blue: #cad7f5;
+      --surface-soft: #f5f7fa;
+      --surface-muted: #eef1f6;
+      --surface-tint: #f4f7ff;
+      --success-line: #9fcdbb;
+      --danger-line: #f0c3bf;
     }
+
+    /* ダークモード（端末の設定に合わせて自動で切り替え） */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --ink-900: #e7eaf3;
+        --ink-700: #c3cad8;
+        --ink-500: #9aa4b8;
+        --ink-400: #6f7a90;
+        --heading: #e3e8ff;
+        --link: #93adff;
+        --blue-100: rgba(73, 118, 232, 0.18);
+        --line: #2a3248;
+        --line-strong: #3a4460;
+        --line-blue: #34467a;
+        --surface: #161b2c;
+        --surface-soft: #1b2134;
+        --surface-muted: #20273b;
+        --surface-tint: #1a2240;
+        --canvas: #0c101b;
+        --success: #3cc58c;
+        --success-bg: rgba(60, 197, 140, 0.12);
+        --success-line: rgba(60, 197, 140, 0.4);
+        --warning: #f2c55c;
+        --warning-bg: rgba(242, 197, 92, 0.12);
+        --danger: #ff7a72;
+        --danger-bg: rgba(255, 122, 114, 0.12);
+        --danger-line: rgba(255, 122, 114, 0.45);
+        --focus: #6d8fe8;
+        --shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+      }
+      html { background: var(--canvas); }
+      body {
+        background: radial-gradient(circle at 15% -10%, rgba(73, 118, 232, 0.12), transparent 32rem), var(--canvas);
+      }
+      input[type="date"] { color-scheme: dark; }
+    }
+
+    /* 見出しへのフォーカス移動（読み上げ用）で枠線を出さない */
+    .panel-title:focus { outline: none; }
+
+    .guardian-card { margin-top: 2px; border-color: var(--warning); background: var(--warning-bg); }
+    .turnstile-box { display: flex; justify-content: center; margin: 4px 0 16px; min-height: 65px; }
+    .turnstile-box[hidden] { display: none; }
 
     *,
     *::before,
@@ -272,7 +326,7 @@
 
     .step.is-current,
     .step.is-complete {
-      color: var(--navy-800);
+      color: var(--heading);
     }
 
     .step.is-current .step-number {
@@ -318,16 +372,16 @@
       margin-top: 1px;
       border-radius: 50%;
       background: var(--blue-100);
-      color: var(--blue-600);
+      color: var(--link);
       font-family: Georgia, serif;
       font-size: 13px;
       font-weight: 800;
     }
 
     .status.is-success {
-      border-color: #b8e0ce;
+      border-color: var(--success-line);
       background: var(--success-bg);
-      color: #0f6845;
+      color: var(--success);
     }
 
     .status.is-success::before {
@@ -338,7 +392,7 @@
     }
 
     .status.is-error {
-      border-color: #f0c3bf;
+      border-color: var(--danger-line);
       background: var(--danger-bg);
       color: var(--danger);
     }
@@ -372,7 +426,7 @@
 
     .eyebrow {
       margin: 0 0 6px;
-      color: var(--blue-600);
+      color: var(--link);
       font-size: 11px;
       font-weight: 900;
       letter-spacing: 0.12em;
@@ -381,7 +435,7 @@
 
     .panel-title {
       margin: 0;
-      color: var(--navy-900);
+      color: var(--heading);
       font-size: clamp(21px, 4.5vw, 26px);
       line-height: 1.35;
       letter-spacing: -0.02em;
@@ -417,7 +471,7 @@
       align-items: center;
       gap: 10px;
       margin: 0 0 16px;
-      color: var(--navy-900);
+      color: var(--heading);
       font-size: 15px;
       font-weight: 900;
     }
@@ -429,7 +483,7 @@
       height: 26px;
       border-radius: 8px;
       background: var(--blue-100);
-      color: var(--blue-600);
+      color: var(--link);
       font-size: 11px;
     }
 
@@ -464,7 +518,7 @@
     .optional-badge {
       padding: 1px 6px;
       border-radius: 999px;
-      background: #eef1f6;
+      background: var(--surface-muted);
       color: var(--ink-500);
       font-size: 9px;
       font-weight: 800;
@@ -474,10 +528,10 @@
       width: 100%;
       min-height: 50px;
       padding: 12px 13px;
-      border: 1px solid #cdd5e2;
+      border: 1px solid var(--line-strong);
       border-radius: var(--radius-md);
       outline: none;
-      background: #fff;
+      background: var(--surface);
       color: var(--ink-900);
       font-size: 16px;
       transition:
@@ -491,12 +545,12 @@
     }
 
     .control::placeholder {
-      color: #98a2b3;
+      color: var(--ink-400);
       opacity: 1;
     }
 
     .control:hover {
-      border-color: #9da9bc;
+      border-color: var(--ink-400);
     }
 
     .control:focus {
@@ -504,14 +558,16 @@
       box-shadow: 0 0 0 4px rgba(73, 118, 232, 0.14);
     }
 
-    .control:invalid:not(:placeholder-shown):not(:focus) {
-      border-color: #d66d67;
+    .control:user-invalid:not(:focus),
+    .control.was-validated:invalid:not(:focus),
+    .control:invalid:not(:placeholder-shown):not(:focus):not(select):not([type="date"]) {
+      border-color: var(--danger);
     }
 
     .control.is-reused {
       border-style: dashed;
-      border-color: #9fcdbb;
-      background: #f3fbf7;
+      border-color: var(--success-line);
+      background: var(--success-bg);
     }
 
     .control.is-reused::placeholder {
@@ -535,9 +591,9 @@
     .lookup-card {
       margin-top: 18px;
       padding: 15px;
-      border: 1px solid #cad7f5;
+      border: 1px solid var(--line-blue);
       border-radius: var(--radius-lg);
-      background: linear-gradient(135deg, #f4f7ff, #fff);
+      background: linear-gradient(135deg, var(--surface-tint), var(--surface));
     }
 
     .lookup-copy {
@@ -546,7 +602,7 @@
 
     .lookup-title {
       margin: 0;
-      color: var(--navy-800);
+      color: var(--heading);
       font-size: 13px;
       font-weight: 900;
     }
@@ -603,16 +659,16 @@
     }
 
     .btn-secondary {
-      border-color: #cdd5e2;
-      background: #fff;
-      color: var(--navy-800);
+      border-color: var(--line-strong);
+      background: var(--surface);
+      color: var(--heading);
     }
 
     .btn-lookup {
       width: 100%;
-      border-color: #b8c9f1;
-      background: #fff;
-      color: var(--blue-600);
+      border-color: var(--line-blue);
+      background: var(--surface);
+      color: var(--link);
     }
 
     .button-row {
@@ -638,7 +694,7 @@
       margin-top: 20px;
       padding: 13px 14px;
       border-radius: var(--radius-md);
-      background: #f5f7fa;
+      background: var(--surface-soft);
       color: var(--ink-500);
       font-size: 11px;
     }
@@ -650,8 +706,8 @@
       width: 26px;
       height: 26px;
       border-radius: 8px;
-      background: #e5eaf2;
-      color: var(--navy-800);
+      background: var(--surface-muted);
+      color: var(--heading);
       font-weight: 900;
     }
 
@@ -661,7 +717,7 @@
       grid-template-columns: auto 1fr;
       gap: 13px;
       padding: 17px;
-      border: 1px solid #d8dee9;
+      border: 1px solid var(--line-strong);
       border-radius: var(--radius-lg);
       cursor: pointer;
       transition:
@@ -672,7 +728,7 @@
 
     .choice-card:has(input:checked) {
       border-color: var(--blue-500);
-      background: #f4f7ff;
+      background: var(--surface-tint);
       box-shadow: 0 0 0 3px rgba(73, 118, 232, 0.1);
     }
 
@@ -685,7 +741,7 @@
 
     .choice-title {
       display: block;
-      color: var(--navy-900);
+      color: var(--heading);
       font-size: 14px;
       font-weight: 900;
     }
@@ -722,7 +778,7 @@
       grid-template-columns: minmax(110px, 34%) 1fr;
       gap: 14px;
       padding: 12px 14px;
-      background: #fff;
+      background: var(--surface);
     }
 
     .summary-row + .summary-row {
@@ -761,7 +817,7 @@
 
     .terms-heading h3 {
       margin: 0;
-      color: var(--navy-900);
+      color: var(--heading);
       font-size: 14px;
     }
 
@@ -773,10 +829,10 @@
     .terms-box {
       max-height: 290px;
       padding: 17px;
-      border: 1px solid #cdd5e2;
+      border: 1px solid var(--line-strong);
       border-radius: var(--radius-md);
       overflow-y: auto;
-      background: #f9fafc;
+      background: var(--surface-soft);
       color: var(--ink-700);
       font-size: 11px;
       line-height: 1.8;
@@ -785,7 +841,7 @@
 
     .terms-box h4 {
       margin: 17px 0 5px;
-      color: var(--navy-900);
+      color: var(--heading);
       font-size: 12px;
     }
 
@@ -805,15 +861,15 @@
       align-items: start;
       margin-top: 16px;
       padding: 16px;
-      border: 1px solid #d5dce8;
+      border: 1px solid var(--line-strong);
       border-radius: var(--radius-md);
-      background: #fff;
+      background: var(--surface);
       cursor: pointer;
     }
 
     .agreement:has(input:checked) {
-      border-color: #9fcdbb;
-      background: #f3fbf7;
+      border-color: var(--success-line);
+      background: var(--success-bg);
     }
 
     .agreement input {
@@ -859,7 +915,7 @@
 
     .success-panel {
       padding: clamp(30px, 8vw, 54px) clamp(22px, 6vw, 44px);
-      border: 1px solid #c1e3d3;
+      border: 1px solid var(--success-line);
       border-radius: var(--radius-xl);
       background: var(--surface);
       text-align: center;
@@ -882,7 +938,7 @@
 
     .success-panel h2 {
       margin: 0;
-      color: var(--navy-900);
+      color: var(--heading);
       font-size: 25px;
     }
 
@@ -899,7 +955,7 @@
       margin-top: 18px;
       padding: 10px 18px;
       border-radius: var(--radius-md);
-      background: #f1f4f8;
+      background: var(--surface-muted);
     }
 
     .receipt-id small {
@@ -909,7 +965,7 @@
     }
 
     .receipt-id strong {
-      color: var(--navy-900);
+      color: var(--heading);
       font-size: 14px;
       letter-spacing: 0.05em;
     }
@@ -943,7 +999,7 @@
       height: 28px;
       border-radius: 9px;
       background: var(--blue-100);
-      color: var(--blue-600);
+      color: var(--link);
       font-size: 11px;
       font-weight: 900;
     }
@@ -1120,7 +1176,7 @@
                   maxlength="14"
                   required
                 >
-                <p id="telHint" class="field-hint">ハイフンあり・なし、どちらでも入力できます。</p>
+                <p id="telHint" class="field-hint">0から始まる番号を、ハイフンあり・なしどちらでも入力できます。</p>
               </div>
             </div>
 
@@ -1167,6 +1223,17 @@
                 >
                 <p id="birthdayHint" class="field-hint">西暦で選択してください。</p>
               </div>
+              <div id="guardianField" class="field is-wide" hidden>
+                <label class="choice-card guardian-card" for="guardianConsent">
+                  <input id="guardianConsent" type="checkbox">
+                  <span>
+                    <span class="choice-title">保護者の同意を得ています</span>
+                    <span id="guardianHint" class="choice-description">
+                      18歳未満の方のお申込みには保護者の同意が必要です。必要に応じて保護者の方へ確認のご連絡をする場合があります。
+                    </span>
+                  </span>
+                </label>
+              </div>
               <div class="field">
                 <label class="field-label" for="zip">
                   郵便番号
@@ -1201,12 +1268,13 @@
                 <select id="idType" class="control repeat-reusable" required>
                   <option value="">選択してください</option>
                   <option value="運転免許証">運転免許証</option>
-                  <option value="健康保険証">健康保険証</option>
                   <option value="マイナンバーカード">マイナンバーカード</option>
                   <option value="パスポート">パスポート</option>
+                  <option value="運転経歴証明書">運転経歴証明書</option>
+                  <option value="在留カード・特別永住者証明書">在留カード・特別永住者証明書</option>
                   <option value="学生証">学生証</option>
                 </select>
-                <p class="field-hint">有効期限内のものをご用意ください。</p>
+                <p id="idTypeHint" class="field-hint">有効期限内のものをご用意ください。健康保険証は2025年12月2日以降ご利用いただけません。</p>
               </div>
               <div class="field">
                 <label class="field-label" for="idNum">身分証番号 <span class="required-badge">＊</span></label>
@@ -1418,6 +1486,8 @@
             </label>
           </section>
 
+          <div id="turnstileBox" class="turnstile-box" hidden></div>
+
           <button id="submitBtn" class="btn btn-primary submit-button" type="submit">
             規約に同意して査定を申し込む
           </button>
@@ -1458,7 +1528,16 @@
     "use strict";
 
     const GAS_URL = "https://script.google.com/macros/s/AKfycby5xWYc8T8kjh1-f7flDw5djwL3kGpBM1n-jiObp-BgifTNwFYXYv_-wZWRmzAGZHwMzQ/exec";
-    const FORM_VERSION = "2.0.0";
+    const FORM_VERSION = "2.1.0";
+    // Cloudflare Turnstile のサイトキー（任意）。設定する場合はGAS側に TURNSTILE_SECRET も設定してください。
+    const TURNSTILE_SITE_KEY = "";
+    const GUARDIAN_REQUIRED_UNDER_AGE = 18;
+    // サーバーから返る項目名 → 入力欄があるステップ
+    const FIELD_STEPS = {
+      name: 1, tel: 1, kana: 1, birthday: 1, zip: 1, addressText: 1, idType: 1, idNum: 1, guardianConsent: 1,
+      bankName: 2, bankBranch: 2, bankType: 2, bankNum: 2, bankHolder: 2,
+      agree: 3, turnstile: 3
+    };
     const TERMS_VERSION = "2026-07-29";
     const REQUEST_TIMEOUT_MS = 20000;
     const REUSABLE_FIELD_IDS = [
@@ -1482,7 +1561,9 @@
       lookupKey: "",
       requestId: createRequestId(),
       isSubmitting: false,
-      submitted: false
+      submitted: false,
+      turnstileWidgetId: null,
+      turnstileToken: ""
     };
 
     const byId = (id) => document.getElementById(id);
@@ -1538,7 +1619,11 @@
 
       byId("kana").addEventListener("input", () => validateKana("kana", "kanaHint"));
       byId("bankHolder").addEventListener("input", () => validateKana("bankHolder", "bankHolderHint"));
-      byId("birthday").addEventListener("change", validateBirthday);
+      byId("birthday").addEventListener("change", () => {
+        validateBirthday();
+        updateGuardianVisibility();
+      });
+      byId("guardianConsent").addEventListener("change", () => byId("guardianConsent").setCustomValidity(""));
 
       document.querySelectorAll("input, select").forEach((field) => {
         field.addEventListener("input", () => {
@@ -1571,7 +1656,10 @@
         else indicator.removeAttribute("aria-current");
       });
 
-      if (step === 3) buildConfirmationSummary();
+      if (step === 3) {
+        buildConfirmationSummary();
+        renderTurnstile();
+      }
 
       if (shouldScroll) {
         document.querySelector(`[data-step-panel="${step}"]`)?.scrollIntoView({
@@ -1593,7 +1681,8 @@
           validatePhone,
           validateBirthday,
           validateZip,
-          () => validateKana("kana", "kanaHint")
+          () => validateKana("kana", "kanaHint"),
+          validateGuardian
         ];
         validators.forEach((validate) => validate());
       }
@@ -1604,6 +1693,7 @@
       }
 
       const panel = document.querySelector(`[data-step-panel="${step}"]`);
+      panel.querySelectorAll(".control").forEach((field) => field.classList.add("was-validated"));
       const invalid = [...panel.querySelectorAll("input, select")]
         .find((field) => !field.checkValidity());
 
@@ -1622,12 +1712,43 @@
       const field = byId("tel");
       const digits = normalizeDigits(field.value);
       field.setCustomValidity("");
-      if (field.value && !/^\d{10,11}$/.test(digits)) {
-        field.setCustomValidity("電話番号は10桁または11桁で入力してください。");
-        setHint("telHint", "電話番号は10桁または11桁で入力してください。", true);
+      if (field.value && !/^0\d{9,10}$/.test(digits)) {
+        field.setCustomValidity("電話番号は0から始まる10桁または11桁で入力してください。");
+        setHint("telHint", "電話番号は0から始まる10桁または11桁で入力してください。", true);
         return false;
       }
-      setHint("telHint", "ハイフンあり・なし、どちらでも入力できます。");
+      setHint("telHint", "0から始まる番号を、ハイフンあり・なしどちらでも入力できます。");
+      return true;
+    }
+
+    function calculateAge(value) {
+      const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!match) return null;
+      const today = new Date();
+      let age = today.getFullYear() - Number(match[1]);
+      const month = today.getMonth() + 1;
+      if (month < Number(match[2]) || (month === Number(match[2]) && today.getDate() < Number(match[3]))) age -= 1;
+      return age;
+    }
+
+    function updateGuardianVisibility(forceShow = false) {
+      const age = calculateAge(byId("birthday").value);
+      const show = forceShow || (age !== null && age < GUARDIAN_REQUIRED_UNDER_AGE);
+      byId("guardianField").hidden = !show;
+      byId("guardianConsent").required = show;
+      if (!show) {
+        byId("guardianConsent").checked = false;
+        byId("guardianConsent").setCustomValidity("");
+      }
+    }
+
+    function validateGuardian() {
+      const field = byId("guardianConsent");
+      field.setCustomValidity("");
+      if (!byId("guardianField").hidden && !field.checked) {
+        field.setCustomValidity("18歳未満の方は、保護者の同意が必要です。");
+        return false;
+      }
       return true;
     }
 
@@ -1868,6 +1989,7 @@
         ["口座種別", valueOrReused("bankType")],
         ["口座番号", valueOrReused("bankNum", maskPrivateValue)],
         ["口座名義", valueOrReused("bankHolder")],
+        ...(!byId("guardianField").hidden ? [["保護者の同意", byId("guardianConsent").checked ? "同意を得ています" : "未確認"]] : []),
         [
           "査定条件",
           byId("cancelIfSubMax").checked
@@ -1898,6 +2020,12 @@
           setStep(step);
           return;
         }
+      }
+
+      if (TURNSTILE_SITE_KEY && !state.turnstileToken) {
+        setStep(3, false);
+        showGlobalStatus("送信前の確認（ロボットでないことの確認）を完了してください。", "error");
+        return;
       }
 
       if (!byId("agree").checked) {
@@ -1936,7 +2064,9 @@
           bankNum: normalizeDigits(getResolvedValue("bankNum")),
           bankHolder: getResolvedValue("bankHolder"),
           cancelIfSubMax: byId("cancelIfSubMax").checked ? "希望する" : "希望しない"
-        }
+        },
+        guardianConsent: !byId("guardianField").hidden && byId("guardianConsent").checked,
+        turnstileToken: state.turnstileToken
       };
 
       const button = byId("submitBtn");
@@ -1958,7 +2088,10 @@
         });
 
         if (result?.result !== "SUCCESS" && result?.success !== true) {
-          throw new Error(result?.message || "申込結果を確認できませんでした。");
+          const apiError = new Error(result?.message || "申込結果を確認できませんでした。");
+          apiError.code = result?.code || "";
+          apiError.field = result?.field || "";
+          throw apiError;
         }
 
         state.submitted = true;
@@ -1979,13 +2112,19 @@
         byId("successTitle").focus?.();
       } catch (error) {
         console.error("申込送信に失敗しました。", error);
+        resetTurnstile();
         const timeout = error.name === "TimeoutError";
-        showGlobalStatus(
-          timeout
-            ? "送信がタイムアウトしました。受付済みの可能性があります。数分待ってから、同じ内容でもう一度お試しください。"
-            : `送信できませんでした。${error.message || "通信状況を確認してもう一度お試しください。"}`,
-          "error"
-        );
+        if (timeout) {
+          showGlobalStatus(
+            "送信がタイムアウトしました。もう一度「申し込む」を押してください。同じ内容は二重に受け付けられません。",
+            "error"
+          );
+        } else if (!handleServerFieldError(error)) {
+          showGlobalStatus(
+            `送信できませんでした。${error.message || "通信状況を確認してもう一度お試しください。"}`,
+            "error"
+          );
+        }
       } finally {
         state.isSubmitting = false;
         if (!state.submitted) {
@@ -1993,6 +2132,92 @@
           button.innerHTML = original;
         }
       }
+    }
+
+    /**
+     * サーバーのエラーに項目名が付いていれば、そのステップへ戻って該当欄を示します。
+     */
+    function handleServerFieldError(error) {
+      const code = error.code || "";
+      if (/^REPEAT_|^INVALID_REPEAT/.test(code)) {
+        clearRepeatCustomerState(false);
+        setStep(1);
+        showLookupStatus(`${error.message} 「登録情報を照合する」をもう一度押してください。`, "error");
+        showGlobalStatus(error.message, "error");
+        byId("checkBtn").focus();
+        return true;
+      }
+
+      if (code === "ID_TYPE_RETIRED" || code === "ID_NUMBER_REQUIRED") {
+        // 登録済みの身分証が使えないため、種類と番号を入力してもらう
+        ["idType", "idNum"].forEach((id) => {
+          const field = byId(id);
+          field.required = true;
+          field.classList.remove("is-reused");
+          if (field.tagName === "SELECT") {
+            const emptyOption = [...field.options].find((option) => option.value === "");
+            if (emptyOption) emptyOption.textContent = emptyOption.dataset.originalText || "選択してください";
+            field.value = "";
+          } else {
+            field.placeholder = field.dataset.originalPlaceholder || "";
+          }
+        });
+      }
+      if (code === "GUARDIAN_CONSENT_REQUIRED") updateGuardianVisibility(true);
+
+      const fieldId = error.field;
+      const step = FIELD_STEPS[fieldId];
+      if (!step) return false;
+
+      setStep(step);
+      showGlobalStatus(error.message, "error");
+      const target = fieldId === "turnstile" ? byId("turnstileBox") : byId(fieldId);
+      if (target && fieldId !== "turnstile") {
+        target.setCustomValidity?.(error.message);
+        const hint = byId(`${fieldId}Hint`);
+        if (hint) setHint(`${fieldId}Hint`, error.message, true);
+        window.setTimeout(() => {
+          target.focus({ preventScroll: true });
+          target.scrollIntoView({ behavior: "smooth", block: "center" });
+          target.reportValidity?.();
+        }, 250);
+      }
+      return true;
+    }
+
+    // ===== Cloudflare Turnstile（サイトキーを設定した場合のみ） =====
+    function renderTurnstile() {
+      if (!TURNSTILE_SITE_KEY) return;
+      const box = byId("turnstileBox");
+      box.hidden = false;
+      const draw = () => {
+        if (state.turnstileWidgetId !== null || !window.turnstile) return;
+        state.turnstileWidgetId = window.turnstile.render(box, {
+          sitekey: TURNSTILE_SITE_KEY,
+          language: "ja",
+          theme: "auto",
+          callback: (token) => { state.turnstileToken = token; },
+          "expired-callback": () => { state.turnstileToken = ""; },
+          "error-callback": () => { state.turnstileToken = ""; }
+        });
+      };
+      if (window.turnstile) {
+        draw();
+        return;
+      }
+      if (!document.getElementById("turnstileScript")) {
+        const script = document.createElement("script");
+        script.id = "turnstileScript";
+        script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+        script.async = true;
+        script.onload = draw;
+        document.head.appendChild(script);
+      }
+    }
+
+    function resetTurnstile() {
+      state.turnstileToken = "";
+      if (window.turnstile && state.turnstileWidgetId !== null) window.turnstile.reset(state.turnstileWidgetId);
     }
 
     async function fetchJson(url, options = {}) {
