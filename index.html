@@ -1852,6 +1852,105 @@
       .brand-title { font-size: .84rem; }
     }
 
+
+    /* ===== 追加：査定提示（お客様用URL） ===== */
+    .offer-banner {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 11px 13px 11px 15px;
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+    .offer-banner.visible { display: flex; }
+    .offer-banner > i { font-size: 1.25rem; color: var(--main-text); }
+    .offer-banner-copy { flex: 1; min-width: 0; }
+    .offer-banner-title { color: var(--ink); font-size: .84rem; font-weight: 900; }
+    .offer-banner-text { margin-top: 2px; color: var(--muted); font-size: .72rem; font-weight: 700; }
+    .offer-banner-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+    .offer-banner-actions button {
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      padding: 7px 11px;
+      background: var(--surface);
+      color: var(--muted-strong);
+      font-size: .72rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .offer-banner-actions button.primary { border-color: var(--main); background: var(--main); color: #fff; }
+    .offer-banner.is-pending { border-color: var(--main-2); background: var(--main-soft); }
+    .offer-banner.is-answered { border-color: var(--success); background: var(--success-soft); }
+    .offer-banner.is-answered > i { color: var(--success); }
+    .offer-banner.is-expired, .offer-banner.is-stale { border-color: var(--accent-line); background: var(--accent-soft); }
+    .offer-banner.is-expired > i, .offer-banner.is-stale > i { color: var(--accent-ink); }
+    .case-chip {
+      display: inline-block;
+      margin-left: 4px;
+      border-radius: 999px;
+      padding: 0 6px;
+      background: var(--main-soft);
+      color: var(--main-text);
+      font-size: .56rem;
+      font-weight: 900;
+      vertical-align: 1px;
+    }
+    .case-chip.answered { background: var(--success); color: #fff; }
+    .case-chip.expired { background: var(--accent); color: #302700; }
+    .case-tab.active .case-chip { background: rgba(255, 255, 255, .2); color: #fff; }
+    .case-tab.active .case-chip.answered { background: var(--success); }
+    .receipt-action.offer { border: 1px solid var(--main-2); background: var(--main-soft); color: var(--main-text); }
+    .receipt-actions .receipt-action.finalize { grid-column: 1 / -1; }
+
+    .offer-share-modal { width: min(720px, 100%); }
+    .offer-share-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 20px; align-items: start; }
+    .offer-qr-wrap { position: relative; border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: #fff; }
+    .offer-qr { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+    .offer-qr-fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 10px; color: #68748a; font-size: .74rem; text-align: center; background: #fff; border-radius: 12px; }
+    .offer-share-name { color: var(--ink); font-size: 1rem; font-weight: 900; }
+    .offer-share-meta { margin-top: 3px; color: var(--muted); font-size: .74rem; font-weight: 700; }
+    .offer-url-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+    .offer-url-row .control-input { font-size: .72rem; font-family: ui-monospace, Menlo, monospace; }
+    .offer-url-row .product-save-btn { border-radius: 10px; padding: 0 14px; font-size: .76rem; font-weight: 900; white-space: nowrap; }
+    .offer-share-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .offer-share-actions .sync-btn { padding: 8px 12px; font-size: .74rem; text-decoration: none; }
+    .offer-line-btn { border-color: #06c755 !important; background: #06c755 !important; color: #fff !important; }
+
+    #offer-result {
+      display: none;
+      min-height: 100vh;
+      padding: 28px 18px 45px;
+      background: var(--surface);
+    }
+    .offer-result-open #offer-result { display: block; }
+    .offer-result-open .footer-bar { display: none; }
+    .offer-result-open { padding-bottom: 0; background: var(--surface); }
+    #offer-result .check-banner { margin-bottom: 12px; }
+    .table-receipt tr.is-returned td { color: var(--muted); }
+    .table-receipt tr.is-deduction td { background: var(--surface-soft); }
+    .table-receipt td.num { text-align: center; font-variant-numeric: tabular-nums; font-weight: 850; }
+    .table-receipt td.accept { color: var(--success); }
+    .table-receipt td.return { color: var(--danger); }
+    .offer-result-bottom { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 14px; margin-top: 14px; }
+    .offer-result-bank { border: 1px solid var(--line); border-radius: 11px; padding: 12px 14px; background: var(--surface-soft); font-size: .8rem; }
+    .offer-result-bank dl { display: grid; grid-template-columns: 6em 1fr; gap: 3px 10px; margin: 6px 0 0; }
+    .offer-result-bank dt { color: var(--muted); font-weight: 700; }
+    .offer-result-bank dd { margin: 0; font-weight: 850; }
+    .offer-result-bank .changed { display: inline-block; margin-left: 6px; border-radius: 999px; padding: 1px 8px; background: var(--accent); color: #302700; font-size: .64rem; font-weight: 900; }
+    .offer-result-sign { border: 1px solid var(--line); border-radius: 11px; padding: 12px 14px; }
+    .offer-result-sign img { display: block; width: 100%; max-height: 120px; object-fit: contain; border-radius: 8px; background: #fff; }
+    @media (max-width: 760px) {
+      .offer-banner { flex-wrap: wrap; }
+      .offer-banner-actions { width: 100%; justify-content: flex-start; }
+      .offer-share-grid { grid-template-columns: 1fr; }
+      .offer-qr-wrap { width: 220px; margin: 0 auto; }
+      .offer-result-bottom { grid-template-columns: 1fr; }
+      #offer-result { padding: 18px 10px 30px; }
+    }
+
     @media print {
       @page { size: A4; margin: 10mm; }
       body {
@@ -1903,6 +2002,10 @@
       }
       .print-compress-text { font-size: 9pt !important; }
       .print-compress-total { font-size: 11pt !important; font-weight: 900 !important; }
+      body.offer-result-open #receipt { display: none !important; }
+      body.offer-result-open #offer-result { display: block !important; min-height: auto !important; padding: 0 !important; }
+      #offer-result .check-banner { display: none !important; }
+      .offer-result-sign img { max-height: 30mm; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1971,6 +2074,14 @@
             <div class="check-banner-title">受付時の確認事項</div>
             <div id="check-banner-list" class="check-banner-list"></div>
           </div>
+        </div>
+        <div id="offer-banner" class="offer-banner" role="status">
+          <i id="offer-banner-icon" class="bi bi-send" aria-hidden="true"></i>
+          <div class="offer-banner-copy">
+            <div id="offer-banner-title" class="offer-banner-title"></div>
+            <div id="offer-banner-text" class="offer-banner-text"></div>
+          </div>
+          <div id="offer-banner-actions" class="offer-banner-actions"></div>
         </div>
         <div id="cancel-banner" class="cancel-banner" role="alert">
           <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
@@ -2186,10 +2297,65 @@
         <button class="receipt-action print" type="button" onclick="window.print()">
           <i class="bi bi-printer me-1" aria-hidden="true"></i>印刷・PDF保存
         </button>
+        <button id="btn-offer" class="receipt-action offer" type="button" onclick="issueOffer()">
+          <i class="bi bi-qr-code me-1" aria-hidden="true"></i>お客様に提示（URL発行）
+        </button>
         <button id="btn-finalize" class="receipt-action finalize" type="button" onclick="finalizeTrade()">
           <i class="bi bi-cloud-check me-1" aria-hidden="true"></i>買取確定・保存
         </button>
         <button id="receipt-back-btn" class="receipt-action back" type="button" onclick="hideReceipt()">編集に戻る</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="offer-result" aria-label="お客様の回答">
+    <div class="receipt-container">
+      <div class="receipt-screen-head">
+        <div>
+          <div class="receipt-kicker">CUSTOMER RESPONSE</div>
+          <h1 class="receipt-title">査定結果（お客様の回答）</h1>
+        </div>
+        <button class="receipt-back-top no-print" type="button" onclick="hideOfferResult()">
+          <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>編集に戻る
+        </button>
+      </div>
+      <div class="receipt-print-title print-only">査定結果確認書</div>
+      <div id="offer-result-flags" class="check-banner"></div>
+      <div id="offer-result-meta" class="receipt-meta"></div>
+      <div class="table-wrap">
+        <table class="table-receipt">
+          <thead>
+            <tr>
+              <th style="width:40%; text-align:left;">商品名 / ランク</th>
+              <th style="width:13%;">単価</th>
+              <th style="width:10%;">提示</th>
+              <th style="width:10%;">買取</th>
+              <th style="width:10%;">返送</th>
+              <th style="width:17%; text-align:right;">買取小計</th>
+            </tr>
+          </thead>
+          <tbody id="offer-result-body"></tbody>
+        </table>
+      </div>
+      <div class="offer-result-bottom">
+        <div id="offer-result-bank" class="offer-result-bank"></div>
+        <div class="offer-result-sign">
+          <div class="field-label">お客様のサイン</div>
+          <img id="offer-result-signature" alt="お客様のサイン">
+          <div id="offer-result-signer" class="receipt-meta-sub"></div>
+        </div>
+      </div>
+      <div class="receipt-actions no-print">
+        <button class="receipt-action print" type="button" onclick="window.print()">
+          <i class="bi bi-printer me-1" aria-hidden="true"></i>印刷（返送明細つき）
+        </button>
+        <button id="btn-offer-finalize" class="receipt-action finalize" type="button" onclick="finalizeOffer()">
+          <i class="bi bi-cloud-check me-1" aria-hidden="true"></i>この内容で買取確定
+        </button>
+        <button id="btn-offer-close" class="receipt-action finalize" type="button" onclick="closeOfferReturned()" hidden>
+          <i class="bi bi-box-arrow-up me-1" aria-hidden="true"></i>全品返送で完了
+        </button>
+        <button class="receipt-action back" type="button" onclick="hideOfferResult()">編集に戻る</button>
       </div>
     </div>
   </section>
@@ -2353,6 +2519,37 @@
     </div>
   </div>
 
+  <div id="offer-share-backdrop" class="product-modal-backdrop no-print" role="dialog" aria-modal="true" aria-labelledby="offer-share-title" onclick="if (event.target === this) closeOfferShare()">
+    <div class="product-modal offer-share-modal">
+      <div class="product-modal-head">
+        <h2 id="offer-share-title" class="product-modal-title"><i class="bi bi-qr-code me-1" aria-hidden="true"></i>お客様用URL</h2>
+        <button class="product-modal-close" type="button" onclick="closeOfferShare()" aria-label="閉じる"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="product-modal-body">
+        <div class="offer-share-grid">
+          <div class="offer-qr-wrap">
+            <canvas id="offer-qr" class="offer-qr" width="220" height="220" aria-label="URLのQRコード"></canvas>
+            <div id="offer-qr-fallback" class="offer-qr-fallback" hidden>QRコードを表示できませんでした</div>
+          </div>
+          <div class="offer-share-copy">
+            <div id="offer-share-name" class="offer-share-name"></div>
+            <div id="offer-share-meta" class="offer-share-meta"></div>
+            <label class="field-label" for="offer-share-url" style="margin-top:12px">URL</label>
+            <div class="offer-url-row">
+              <input id="offer-share-url" class="control-input" type="text" readonly>
+              <button class="product-save-btn" type="button" onclick="copyOfferUrl()"><i class="bi bi-clipboard me-1" aria-hidden="true"></i>コピー</button>
+            </div>
+            <div class="offer-share-actions">
+              <a id="offer-share-line" class="sync-btn offer-line-btn" href="#" target="_blank" rel="noopener noreferrer">LINEで送る</a>
+              <button class="sync-btn" type="button" onclick="copyOfferMessage()">案内文ごとコピー</button>
+            </div>
+            <p class="settings-help">お客様はURLを開いたあと、<b>電話番号の下4桁</b>で本人確認をします。5回間違えるとURLはロックされます。金額を変えた場合は再発行してください（古いURLは無効になります）。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-container" class="toast-container-custom" aria-live="polite" aria-atomic="true"></div>
 
   <script>
@@ -2372,6 +2569,9 @@
     const THEME_KEY = "pk_pos_theme";
     const DELETED_CASES_KEY = "pk_pos_deleted_case_ids";
     const WAITING_REFRESH_INTERVAL = 20000;
+    // お客様用ページのURL。空欄なら、このPOSと同じ場所の offer.html を使います
+    const OFFER_PAGE_URL = "";
+    const OFFER_QR_LIBRARY_URL = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js";
     const AUTH_ERROR_CODES = ["UNAUTHORIZED", "STAFF_AUTH_NOT_CONFIGURED", "STAFF_KEY_TOO_SHORT", "NO_STAFF_KEY"];
 
     let cards = [];
@@ -2441,8 +2641,11 @@
       }
       isInitializing = false;
       refreshWaiting();
+      refreshOffers();
       waitingTimer = window.setInterval(() => {
-        if (document.visibilityState === "visible") refreshWaiting();
+        if (document.visibilityState !== "visible") return;
+        refreshWaiting();
+        refreshOffers();
       }, WAITING_REFRESH_INTERVAL);
       dataRefreshTimer = window.setInterval(() => loadCardData({ silent: true }), DATA_REFRESH_INTERVAL);
       if (window.matchMedia) {
@@ -2610,6 +2813,7 @@
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") {
           refreshWaiting();
+          refreshOffers();
           if (Date.now() - lastDataLoadedAt > 60000) loadCardData({ silent: true });
         }
       });
@@ -2619,6 +2823,7 @@
         }
         if (event.key === "Escape" && document.getElementById("product-modal-backdrop").classList.contains("open")) closeProductModal();
         if (event.key === "Escape" && document.getElementById("settings-backdrop").classList.contains("open")) closeSettings();
+        if (event.key === "Escape" && document.getElementById("offer-share-backdrop").classList.contains("open")) closeOfferShare();
         const tag = document.activeElement?.tagName;
         const editing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
         if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.key.toLowerCase() === "z" && !editing && !isViewingLog) {
@@ -3126,6 +3331,7 @@
       updateCaseListUI();
       renderSelectionDrawer();
       updatePriceChangeBanner();
+      updateOfferBanner();
       updateUndoButton();
     }
 
@@ -3263,7 +3469,7 @@
     function renderSelectionDrawer() {
       const list = document.getElementById("selected-drawer-list");
       if (!list) return;
-      const entries = Object.entries(inputs).filter(([, item]) => Number(item.q) > 0);
+      const entries = sortForDisplay(Object.entries(inputs).filter(([, item]) => Number(item.q) > 0));
       const summary = getInputSummary(inputs);
       document.getElementById("drawer-total-qty").textContent = `${summary.types}種類・${summary.quantity}枚${summary.deductions ? `・控除${summary.deductions}件` : ""}`;
       document.getElementById("drawer-total-amount").textContent = formatYen(summary.amount);
@@ -3317,9 +3523,11 @@
       document.body.classList.remove("history-open");
 
       const body = document.getElementById("r-body");
-      const entries = Object.entries(inputs).filter(([, item]) => Number(item.q) > 0);
+      const entries = sortForDisplay(Object.entries(inputs).filter(([, item]) => Number(item.q) > 0));
       const summary = getInputSummary(inputs);
       const readonly = isViewingLog;
+      document.getElementById("btn-offer").style.display = readonly ? "none" : "block";
+      document.getElementById("btn-offer").disabled = entries.length === 0;
 
       document.getElementById("btn-finalize").style.display = readonly ? "none" : "block";
       document.getElementById("btn-finalize").disabled = entries.length === 0;
@@ -3425,7 +3633,8 @@
     function caseSignature(item) {
       return JSON.stringify([
         item.name, item.data, item.tel, item.cancelIfSubMax,
-        item.bankName, item.bankBranch, item.bankType, item.bankNum, item.bankHolder
+        item.bankName, item.bankBranch, item.bankType, item.bankNum, item.bankHolder,
+        item.offer ? `${item.offer.offerId}:${item.offer.status}` : ""
       ]);
     }
 
@@ -3476,6 +3685,7 @@
       });
       document.getElementById("cancel-banner").classList.toggle("visible", item.cancelIfSubMax === "希望する");
       updateApplicationInfo();
+      updateOfferBanner();
       updateCustomerSummary();
       currentPage = 1;
       calc();
@@ -3584,11 +3794,15 @@
         const summary = getInputSummary(item.data || {});
         const isActive = id === activeCaseId;
         const hasFlags = Array.isArray(item.flags) && item.flags.length > 0;
+        const offerStatus = item.offer?.status;
+        const chip = offerStatus === "回答済み" ? `<span class="case-chip answered">回答済</span>`
+          : offerStatus === "期限切れ" ? `<span class="case-chip expired">期限切れ</span>`
+          : offerStatus === "回答待ち" ? `<span class="case-chip">提示中</span>` : "";
         return `
           <div class="case-tab ${isActive ? "active" : ""}" role="button" tabindex="0" data-case-id="${escapeHtml(id)}" aria-current="${isActive ? "true" : "false"}">
             <div class="case-tab-copy">
               <div class="case-name">${hasFlags ? `<i class="bi bi-exclamation-diamond-fill case-flag" aria-label="確認事項あり"></i>` : ""}${escapeHtml(item.name || "新規")}</div>
-              <div class="case-meta">${summary.quantity}枚・${formatYen(summary.amount)}</div>
+              <div class="case-meta">${summary.quantity}枚・${formatYen(summary.amount)}${chip}</div>
             </div>
             <button class="case-delete" type="button" data-case-delete="${escapeHtml(id)}" aria-label="${escapeHtml(item.name || "新規")}の査定を削除">
               <i class="bi bi-x-lg" aria-hidden="true"></i>
@@ -3681,6 +3895,24 @@
     async function finalizeTrade() {
       const activeCase = cases[activeCaseId];
       if (!activeCase) return;
+      const offer = activeCase.offer;
+      if (offer?.status === "回答済み") {
+        // お客様が回答済みなら、回答どおりに確定する画面へ
+        openOfferResult();
+        return;
+      }
+      if (offer && ["回答待ち", "期限切れ"].includes(offer.status)) {
+        if (!window.confirm("お客様に提示中のURLがあります。\nURLを取り消して、この画面の内容で確定しますか？")) return;
+        try {
+          await staffApi("cancel_offer", { offerId: offer.offerId }, 20000);
+          activeCase.offer = null;
+          persistCases();
+          updateOfferBanner();
+        } catch (error) {
+          showToast(`提示を取り消せませんでした：${describeError(error)}`, "error");
+          return;
+        }
+      }
       const summary = getInputSummary(inputs);
       if (!summary.quantity) {
         showToast("商品を1点以上追加してください", "error");
@@ -4123,6 +4355,441 @@
         super(message);
         this.name = "ApiError";
         this.code = code;
+      }
+    }
+
+    // ===== 査定提示（お客様用URL） =====
+    function offerPageUrl() {
+      if (OFFER_PAGE_URL) return OFFER_PAGE_URL;
+      const url = new URL("offer.html", window.location.href);
+      url.hash = "";
+      url.search = "";
+      return url.href;
+    }
+
+    function sortForDisplay(entries) {
+      // 手数料・送料などのマイナス項目は常に一番下
+      return entries
+        .map((entry, index) => ({ entry, index }))
+        .sort((a, b) => ((Number(a.entry[1].p) < 0) - (Number(b.entry[1].p) < 0)) || (a.index - b.index))
+        .map(item => item.entry);
+    }
+
+    function currentOffer() {
+      return cases[activeCaseId]?.offer || null;
+    }
+
+    function offerContentSignature() {
+      return JSON.stringify(Object.values(inputs).filter(item => Number(item.q) > 0).map(item => [item.n, item.t, Number(item.p), Number(item.q)]));
+    }
+
+    async function issueOffer() {
+      const activeCase = cases[activeCaseId];
+      if (!activeCase || isViewingLog) return;
+      const summary = getInputSummary(inputs);
+      if (!summary.quantity) {
+        showToast("商品を1点以上追加してください", "error");
+        return;
+      }
+      if (summary.amount < 0) {
+        showToast("控除後の合計がマイナスです。明細を確認してください", "error");
+        return;
+      }
+      if (!activeCase.tel && !activeCase.applicationId) {
+        showToast("URLを開くときの本人確認に電話番号を使います。顧客情報に電話番号を入力してください", "error");
+        hideReceipt();
+        document.getElementById("customer-info-panel").open = true;
+        window.setTimeout(() => document.getElementById("cust-tel").focus(), 50);
+        return;
+      }
+      const existing = activeCase.offer;
+      const message = existing && ["回答待ち", "期限切れ", "回答済み"].includes(existing.status)
+        ? `前回発行したURLは無効になります。\n${existing.status === "回答済み" ? "お客様の回答も取り消されます。\n" : ""}現在の内容でURLを再発行しますか？`
+        : `お客様用のURLを発行しますか？\n合計 ${summary.quantity}枚 / ${formatYen(summary.amount)}\n発行後に金額を変えた場合は、再発行が必要です。`;
+      if (!window.confirm(message)) return;
+
+      saveCurrentCase();
+      const button = document.getElementById("btn-offer");
+      button.disabled = true;
+      const original = button.innerHTML;
+      button.innerHTML = `<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>発行中`;
+      try {
+        const items = sortForDisplay(Object.entries(inputs).filter(([, item]) => Number(item.q) > 0)).map(([, item]) => item);
+        const result = await staffApi("create_offer", {
+          caseId: activeCaseId,
+          applicationId: activeCase.applicationId || "",
+          customerName: document.getElementById("cust-name").value.trim() || activeCase.name || "",
+          tel: activeCase.tel || "",
+          items,
+          bankName: activeCase.bankName || "",
+          bankBranch: activeCase.bankBranch || "",
+          bankType: activeCase.bankType || "",
+          bankNum: activeCase.bankNum || "",
+          bankHolder: activeCase.bankHolder || ""
+        }, 30000);
+        activeCase.offer = {
+          offerId: result.offerId,
+          url: `${offerPageUrl()}#t=${result.token}`,
+          expiresAt: result.expiresAt,
+          createdAt: new Date().toISOString(),
+          status: "回答待ち",
+          totalQty: result.totalQty,
+          totalAmount: result.totalAmount,
+          signature: offerContentSignature()
+        };
+        delete activeCase.tradeRequestId;
+        touchCase(activeCaseId);
+        persistCases();
+        updateOfferBanner();
+        updateCaseListUI();
+        openOfferShare();
+        showToast("お客様用URLを発行しました");
+      } catch (error) {
+        console.error("URLの発行に失敗しました。", error);
+        showToast(`URLを発行できませんでした：${describeError(error)}`, "error");
+      } finally {
+        button.disabled = false;
+        button.innerHTML = original;
+      }
+    }
+
+    function offerShareMessage(offer, name) {
+      return `${name || "お客様"} 様\nポケカ買取ラボです。査定が完了しました。\n下記URLから、カードごとに買取・キャンセルをお選びいただき、振込先の確認とサインをお願いいたします。\n（開くときに、お申込み時の電話番号の下4桁を入力します）\n回答期限：${formatOfferDate(offer.expiresAt)}\n${offer.url}`;
+    }
+
+    function openOfferShare() {
+      const offer = currentOffer();
+      if (!offer?.url) return;
+      const name = cases[activeCaseId]?.name || "";
+      document.getElementById("offer-share-name").textContent = `${name} 様`;
+      document.getElementById("offer-share-meta").textContent = `${offer.offerId}・${offer.totalQty}枚 ${formatYen(offer.totalAmount)}・回答期限 ${formatOfferDate(offer.expiresAt)}`;
+      document.getElementById("offer-share-url").value = offer.url;
+      document.getElementById("offer-share-line").href = `https://line.me/R/share?text=${encodeURIComponent(offerShareMessage(offer, name))}`;
+      document.getElementById("offer-share-backdrop").classList.add("open");
+      drawOfferQr(offer.url);
+    }
+
+    function closeOfferShare() {
+      document.getElementById("offer-share-backdrop").classList.remove("open");
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+    }
+
+    async function copyOfferUrl() {
+      const offer = currentOffer();
+      if (!offer?.url) return;
+      await copyText(offer.url);
+      showToast("URLをコピーしました");
+    }
+
+    async function copyOfferMessage() {
+      const offer = currentOffer();
+      if (!offer?.url) return;
+      await copyText(offerShareMessage(offer, cases[activeCaseId]?.name));
+      showToast("案内文をコピーしました");
+    }
+
+    function loadQrLibrary() {
+      if (window.qrcode) return Promise.resolve(window.qrcode);
+      if (loadQrLibrary.promise) return loadQrLibrary.promise;
+      loadQrLibrary.promise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = OFFER_QR_LIBRARY_URL;
+        script.async = true;
+        script.onload = () => (window.qrcode ? resolve(window.qrcode) : reject(new Error("QR library missing")));
+        script.onerror = () => {
+          loadQrLibrary.promise = null;
+          reject(new Error("QR library failed"));
+        };
+        document.head.appendChild(script);
+      });
+      return loadQrLibrary.promise;
+    }
+
+    async function drawOfferQr(text) {
+      const canvas = document.getElementById("offer-qr");
+      const fallback = document.getElementById("offer-qr-fallback");
+      fallback.hidden = true;
+      try {
+        const factory = await loadQrLibrary();
+        const qr = factory(0, "M");
+        qr.addData(text);
+        qr.make();
+        const count = qr.getModuleCount();
+        const margin = 4;
+        const size = 440;
+        const cell = size / (count + margin * 2);
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext("2d");
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, size, size);
+        context.fillStyle = "#000000";
+        for (let row = 0; row < count; row++) {
+          for (let col = 0; col < count; col++) {
+            if (qr.isDark(row, col)) {
+              context.fillRect(Math.floor((col + margin) * cell), Math.floor((row + margin) * cell), Math.ceil(cell), Math.ceil(cell));
+            }
+          }
+        }
+      } catch (error) {
+        console.warn("QRコードを表示できませんでした。", error);
+        fallback.hidden = false;
+      }
+    }
+
+    function formatOfferDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value || "");
+      return new Intl.DateTimeFormat("ja-JP", { month: "numeric", day: "numeric", weekday: "short", hour: "2-digit", minute: "2-digit" }).format(date);
+    }
+
+    function updateOfferBanner() {
+      const banner = document.getElementById("offer-banner");
+      if (!banner) return;
+      const offer = currentOffer();
+      banner.className = "offer-banner";
+      if (!offer || ["取消", "確定済み", "全品返送"].includes(offer.status)) return;
+
+      const title = document.getElementById("offer-banner-title");
+      const text = document.getElementById("offer-banner-text");
+      const icon = document.getElementById("offer-banner-icon");
+      const actions = document.getElementById("offer-banner-actions");
+      const stale = offer.status !== "回答済み" && offer.signature && offer.signature !== offerContentSignature();
+      const button = (label, handler, primary = false) => `<button type="button" class="${primary ? "primary" : ""}" onclick="${handler}">${label}</button>`;
+
+      if (offer.status === "回答済み") {
+        banner.classList.add("visible", "is-answered");
+        icon.className = "bi bi-patch-check-fill";
+        title.textContent = `お客様が回答しました（${formatOfferDate(offer.answeredAt)}）`;
+        const warnings = [offer.bankChanged ? "振込先の変更あり" : "", ...(offer.flags || []).filter(flag => flag !== "お客様が振込先を変更")].filter(Boolean);
+        text.textContent = `買取 ${offer.acceptedQty || 0}枚 ${formatYen(offer.acceptedAmount || 0)}・返送 ${offer.returnedQty || 0}枚${warnings.length ? `・⚠ ${warnings.join("・")}` : ""}`;
+        actions.innerHTML = button("回答内容を確認して確定", "openOfferResult()", true) + button("URLを再発行", "issueOfferFromBanner()");
+      } else if (offer.status === "期限切れ") {
+        banner.classList.add("visible", "is-expired");
+        icon.className = "bi bi-hourglass-bottom";
+        title.textContent = "回答期限が過ぎました（保留中）";
+        text.textContent = `期限 ${formatOfferDate(offer.expiresAt)}。お客様に確認のうえ、URLを再発行するか、取り消してこの画面で確定してください。`;
+        actions.innerHTML = button("URLを再発行", "issueOfferFromBanner()", true) + button("提示を取り消す", "cancelCurrentOffer()");
+      } else {
+        banner.classList.add("visible", stale ? "is-stale" : "is-pending");
+        icon.className = stale ? "bi bi-exclamation-triangle-fill" : "bi bi-send";
+        title.textContent = stale ? "提示したあとに内容が変わっています" : "お客様に提示中（回答待ち）";
+        text.textContent = stale
+          ? "お客様には発行時の内容が表示されています。今の内容で見てもらうには、URLを再発行してください。"
+          : `回答期限 ${formatOfferDate(offer.expiresAt)}・${offer.totalQty}枚 ${formatYen(offer.totalAmount)}${offer.locked ? "・⚠ 本人確認に5回失敗してロック中" : ""}`;
+        actions.innerHTML = (stale ? button("URLを再発行", "issueOfferFromBanner()", true) : button("URL・QRを表示", "openOfferShare()", true)) + button("提示を取り消す", "cancelCurrentOffer()");
+      }
+    }
+
+    function issueOfferFromBanner() {
+      showReceipt();
+      issueOffer();
+    }
+
+    async function cancelCurrentOffer() {
+      const offer = currentOffer();
+      if (!offer) return;
+      if (!window.confirm("お客様用URLを無効にしますか？\nお客様はこのURLから回答できなくなります。")) return;
+      try {
+        await staffApi("cancel_offer", { offerId: offer.offerId }, 20000);
+        cases[activeCaseId].offer = null;
+        touchCase(activeCaseId);
+        persistCases();
+        updateOfferBanner();
+        updateCaseListUI();
+        showToast("提示を取り消しました");
+      } catch (error) {
+        showToast(`取り消せませんでした：${describeError(error)}`, "error");
+      }
+    }
+
+    // 回答待ちの提示の状態をまとめて確認する（待機一覧と同じ間隔）
+    async function refreshOffers() {
+      if (!getStaffKey() || AUTH_ERROR_CODES.includes(staffAuthState)) return;
+      const watching = Object.entries(cases).filter(([, item]) => item.offer && ["回答待ち", "期限切れ", "回答済み"].includes(item.offer.status));
+      if (!watching.length) return;
+      try {
+        const response = await staffApi("get_offers", { offerIds: watching.map(([, item]) => item.offer.offerId) }, 15000);
+        const byId = Object.fromEntries((response.data || []).map(item => [item.offerId, item]));
+        let changed = false;
+        watching.forEach(([id, item]) => {
+          const latest = byId[item.offer.offerId];
+          if (!latest) return;
+          const before = item.offer.status;
+          Object.assign(item.offer, {
+            status: latest.status,
+            answeredAt: latest.answeredAt,
+            acceptedQty: latest.acceptedQty,
+            acceptedAmount: latest.acceptedAmount,
+            returnedQty: latest.returnedQty,
+            bankChanged: latest.bankChanged,
+            flags: latest.flags,
+            locked: latest.locked
+          });
+          if (before !== latest.status) {
+            changed = true;
+            if (latest.status === "回答済み") showToast(`${item.name || "お客様"} 様が査定結果に回答しました`);
+            if (latest.status === "期限切れ") showToast(`${item.name || "お客様"} 様の回答期限が過ぎました（保留）`, "error");
+            if (["取消", "確定済み", "全品返送"].includes(latest.status)) item.offer = null;
+          }
+        });
+        if (changed) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
+          updateCaseListUI();
+        }
+        updateOfferBanner();
+      } catch (error) {
+        console.warn("提示の状態を確認できませんでした。", error);
+      }
+    }
+
+    // ===== お客様の回答 =====
+    let offerDetail = null;
+
+    async function openOfferResult() {
+      const offer = currentOffer();
+      if (!offer) return;
+      try {
+        const response = await staffApi("get_offer_detail", { offerId: offer.offerId }, 20000);
+        offerDetail = response.offer;
+      } catch (error) {
+        showToast(`回答を読み込めませんでした：${describeError(error)}`, "error");
+        return;
+      }
+      if (offerDetail.status !== "回答済み") {
+        showToast(`この提示は「${offerDetail.status}」です`, "error");
+        offer.status = offerDetail.status;
+        updateOfferBanner();
+        return;
+      }
+      renderOfferResult();
+      document.getElementById("main-ui").style.display = "none";
+      document.getElementById("receipt").style.display = "none";
+      document.body.classList.remove("receipt-open");
+      document.body.classList.add("offer-result-open");
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+
+    function hideOfferResult() {
+      document.body.classList.remove("offer-result-open");
+      document.getElementById("main-ui").style.display = "block";
+      draw();
+    }
+
+    function renderOfferResult() {
+      const detail = offerDetail;
+      const selections = sortForDisplay((detail.selections || []).map(line => [line.lineId, line])).map(([, line]) => line);
+      const flags = [detail.bankChanged ? "お客様が振込先を変更しました" : "", ...(detail.flags || []).filter(flag => flag !== "お客様が振込先を変更")].filter(Boolean);
+      const flagBox = document.getElementById("offer-result-flags");
+      flagBox.classList.toggle("visible", flags.length > 0);
+      flagBox.innerHTML = flags.length ? `<i class="bi bi-exclamation-diamond-fill" aria-hidden="true"></i><div><div class="check-banner-title">確認してください</div><div class="check-banner-list">${flags.map(flag => `<span>${escapeHtml(flag)}</span>`).join("")}</div></div>` : "";
+
+      document.getElementById("offer-result-meta").innerHTML = `
+        <div>
+          <div>氏名：${escapeHtml(detail.name)} 様</div>
+          <div class="receipt-meta-sub">提示ID：${escapeHtml(detail.offerId)}${detail.applicationId ? `　受付番号：${escapeHtml(detail.applicationId)}` : ""}</div>
+        </div>
+        <div class="receipt-meta-sub">回答：${escapeHtml(detail.answeredAt)}<br>買取 ${detail.acceptedQty}枚・返送 ${detail.returnedQty}枚</div>`;
+
+      const rows = selections.map(line => {
+        const deduction = line.p < 0;
+        const subtotal = line.p * line.acceptQty;
+        return `
+          <tr class="${deduction ? "is-deduction" : line.acceptQty === 0 ? "is-returned" : ""}">
+            <td class="print-compress-text"><b>${escapeHtml(line.n)}</b><br><small>${deduction ? "差し引き（変更不可）" : `ランク：${escapeHtml(line.t)}`}</small></td>
+            <td style="text-align:center;">${formatYen(line.p)}</td>
+            <td class="num">${deduction ? "—" : line.q}</td>
+            <td class="num accept">${deduction ? (line.acceptQty ? "適用" : "なし") : line.acceptQty}</td>
+            <td class="num return">${deduction ? "—" : line.returnQty || ""}</td>
+            <td style="text-align:right; font-weight:850;">${formatYen(subtotal)}</td>
+          </tr>`;
+      }).join("");
+      document.getElementById("offer-result-body").innerHTML = rows + `
+        <tr class="receipt-total-row">
+          <td colspan="3" class="print-compress-text" style="text-align:right; font-weight:900;">お振込み金額</td>
+          <td class="num accept">${detail.acceptedQty}枚</td>
+          <td class="num return">${detail.returnedQty}枚</td>
+          <td class="receipt-total-amount print-compress-total" style="text-align:right;">${formatYen(detail.acceptedAmount)}</td>
+        </tr>`;
+
+      const bank = detail.bankChange || detail.bank || {};
+      document.getElementById("offer-result-bank").innerHTML = detail.acceptedQty > 0 ? `
+        <div class="field-label">振込先${detail.bankChange ? '<span class="changed">お客様が変更</span>' : ""}</div>
+        <dl>
+          <dt>金融機関</dt><dd>${escapeHtml(bank.bankName || "—")}</dd>
+          <dt>支店</dt><dd>${escapeHtml(bank.bankBranch || "—")}</dd>
+          <dt>種別</dt><dd>${escapeHtml(bank.bankType || "—")}</dd>
+          <dt>口座番号</dt><dd>${escapeHtml(bank.bankNumMasked || "—")}</dd>
+          <dt>名義</dt><dd>${escapeHtml(bank.bankHolder || "—")}</dd>
+        </dl>` : `<div class="field-label">振込先</div><div class="receipt-meta-sub">全品キャンセルのため、お振込みはありません。</div>`;
+
+      const image = document.getElementById("offer-result-signature");
+      image.src = detail.signature || "";
+      image.hidden = !detail.signature;
+      document.getElementById("offer-result-signer").textContent = `署名：${detail.signerName || "—"}（${detail.agreedAt ? formatOfferDate(detail.agreedAt) : ""}）`;
+
+      const allReturned = !detail.acceptedQty;
+      document.getElementById("btn-offer-finalize").hidden = allReturned;
+      document.getElementById("btn-offer-close").hidden = !allReturned;
+    }
+
+    async function finalizeOffer() {
+      const activeCase = cases[activeCaseId];
+      if (!activeCase?.offer || !offerDetail) return;
+      if (!window.confirm(`お客様の回答どおりに買取を確定しますか？\n買取 ${offerDetail.acceptedQty}枚 / ${formatYen(offerDetail.acceptedAmount)}\n返送 ${offerDetail.returnedQty}枚`)) return;
+      if (!activeCase.tradeRequestId) {
+        activeCase.tradeRequestId = createRequestId("trade");
+        persistCases();
+      }
+      const button = document.getElementById("btn-offer-finalize");
+      button.disabled = true;
+      try {
+        const result = await staffApi("log_trade", {
+          requestId: activeCase.tradeRequestId,
+          offerId: activeCase.offer.offerId,
+          customerName: activeCase.name || offerDetail.name
+        }, 35000);
+        showToast(result.duplicate ? "この提示は確定済みでした（二重登録はしていません）" : `買取を確定しました（${formatYen(result.totalAmount)}）`);
+        const finishedId = activeCaseId;
+        hideOfferResult();
+        removeCase(finishedId);
+        refreshWaiting();
+      } catch (error) {
+        showToast(error.name === "AbortError"
+          ? "通信がタイムアウトしました。もう一度押しても二重には登録されません"
+          : `確定できませんでした：${describeError(error)}`, "error");
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function closeOfferReturned() {
+      const activeCase = cases[activeCaseId];
+      if (!activeCase?.offer) return;
+      if (!window.confirm("全品返送でこの査定を完了しますか？\n受付は「キャンセル」になります。返送の手配を忘れずに行ってください。")) return;
+      try {
+        await staffApi("close_offer", { offerId: activeCase.offer.offerId }, 20000);
+        showToast("全品返送で完了しました");
+        const finishedId = activeCaseId;
+        hideOfferResult();
+        removeCase(finishedId);
+        refreshWaiting();
+      } catch (error) {
+        showToast(`完了できませんでした：${describeError(error)}`, "error");
       }
     }
 
