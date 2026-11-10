@@ -4,33 +4,99 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#11194d">
+  <meta name="color-scheme" content="light dark">
   <title>PKlab POS SYSTEM</title>
+  <script>
+    // テーマを描画前に決めてチラつきを防ぐ
+    (function () {
+      var pref = "auto";
+      try { pref = localStorage.getItem("pk_pos_theme") || "auto"; } catch (e) {}
+      var dark = pref === "dark" || (pref === "auto" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    })();
+  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <style>
     :root {
+      color-scheme: light;
       --ink: #182033;
       --muted: #68748a;
+      --muted-strong: #586579;
+      --subtle: #9aa5b6;
       --line: #dfe5ee;
+      --line-soft: #edf0f4;
       --line-strong: #cbd4e1;
       --surface: #ffffff;
       --surface-soft: #f7f9fc;
+      --surface-sunken: #f2f4f7;
+      --surface-glass: rgba(255, 255, 255, .94);
+      --checker: #f4f6fa;
       --canvas: #edf1f7;
+      --canvas-glow: rgba(38, 53, 136, .07);
+      --header-bg: rgba(255, 255, 255, .96);
+      --footer-bg: rgba(17, 25, 77, .97);
       --main: #11194d;
       --main-2: #263588;
+      --main-hover: #1b266a;
+      --main-text: #11194d;
       --main-soft: #eef0ff;
+      --main-soft-hover: #e1e5ff;
       --accent: #f3c641;
       --accent-soft: #fff8dc;
+      --accent-line: #ead170;
+      --accent-ink: #5d4a00;
       --success: #16845b;
       --success-soft: #eaf8f2;
       --danger: #dc3545;
       --danger-soft: #fff0f1;
+      --danger-line: #efb2b8;
+      --price: #dc3545;
       --shadow-sm: 0 1px 2px rgba(16, 24, 40, .04), 0 3px 10px rgba(16, 24, 40, .04);
       --shadow-md: 0 10px 28px rgba(17, 25, 77, .10);
       --radius-sm: 8px;
       --radius: 13px;
       --radius-lg: 18px;
       --footer-height: 84px;
+    }
+
+    /* ダークテーマ：端末設定に合わせる（自動）か、設定画面で固定 */
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ink: #e7eaf3;
+      --muted: #9aa4b8;
+      --muted-strong: #b6bfcf;
+      --subtle: #6f7a90;
+      --line: #2a3248;
+      --line-soft: #222a3e;
+      --line-strong: #3a4460;
+      --surface: #161b2c;
+      --surface-soft: #1b2134;
+      --surface-sunken: #121726;
+      --surface-glass: rgba(22, 27, 44, .94);
+      --checker: #1c2234;
+      --canvas: #0c101b;
+      --canvas-glow: rgba(100, 117, 230, .10);
+      --header-bg: rgba(18, 23, 38, .94);
+      --footer-bg: rgba(10, 13, 24, .97);
+      --main: #4b5ed6;
+      --main-2: #6a7bec;
+      --main-hover: #5b6de2;
+      --main-text: #aeb8ff;
+      --main-soft: rgba(106, 123, 236, .16);
+      --main-soft-hover: rgba(106, 123, 236, .26);
+      --accent: #f3c641;
+      --accent-soft: rgba(243, 198, 65, .12);
+      --accent-line: rgba(243, 198, 65, .38);
+      --accent-ink: #f2d77c;
+      --success: #22a06f;
+      --success-soft: rgba(34, 160, 111, .15);
+      --danger: #e5484d;
+      --danger-soft: rgba(229, 72, 77, .14);
+      --danger-line: rgba(229, 72, 77, .45);
+      --price: #ff7b84;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .35);
+      --shadow-md: 0 12px 30px rgba(0, 0, 0, .45);
     }
 
     * { box-sizing: border-box; }
@@ -41,7 +107,7 @@
       min-height: 100vh;
       padding-bottom: calc(var(--footer-height) + env(safe-area-inset-bottom));
       background:
-        radial-gradient(circle at 8% 0%, rgba(38, 53, 136, .07), transparent 27rem),
+        radial-gradient(circle at 8% 0%, var(--canvas-glow), transparent 27rem),
         var(--canvas);
       color: var(--ink);
       font-family: Inter, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -69,12 +135,12 @@
       border-radius: 10px;
       padding: 0 15px;
       background: var(--main-soft);
-      color: var(--main);
+      color: var(--main-text);
       font-size: .78rem;
       font-weight: 900;
       white-space: nowrap;
     }
-    .create-product-btn:hover { background: #e1e5ff; }
+    .create-product-btn:hover { background: var(--main-soft-hover); }
     .custom-product-badge {
       display: inline-flex;
       align-items: center;
@@ -83,7 +149,7 @@
       border-radius: 999px;
       padding: 3px 7px;
       background: var(--accent-soft);
-      color: #745b00;
+      color: var(--accent-ink);
       font-size: .61rem;
       font-weight: 900;
     }
@@ -95,8 +161,8 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 5px 8px;
-      background: rgba(255,255,255,.94);
-      color: var(--main);
+      background: var(--surface-glass);
+      color: var(--main-text);
       font-size: .66rem;
       font-weight: 900;
       box-shadow: var(--shadow-sm);
@@ -118,12 +184,12 @@
       max-height: calc(100vh - 36px);
       overflow: auto;
       border-radius: 18px;
-      background: #fff;
+      background: var(--surface);
       box-shadow: 0 24px 70px rgba(10, 15, 40, .3);
     }
     .product-modal-head, .product-modal-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 20px; }
     .product-modal-head { border-bottom: 1px solid var(--line); }
-    .product-modal-title { margin:0; color:var(--main); font-size:1.05rem; font-weight:900; }
+    .product-modal-title { margin:0; color: var(--main-text); font-size:1.05rem; font-weight:900; }
     .product-modal-close { border:0; background:transparent; color:var(--muted); font-size:1.1rem; }
     .product-modal-body { padding:20px; }
     .product-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
@@ -135,11 +201,11 @@
       align-items: flex-start;
       gap: 10px;
       margin: 0 0 12px;
-      border: 1px solid #f1d48a;
+      border: 1px solid var(--accent-line);
       border-radius: 10px;
       padding: 11px 12px;
       background: var(--accent-soft);
-      color: #66520b;
+      color: var(--accent-ink);
       cursor: pointer;
     }
     .product-deduction-option input {
@@ -153,8 +219,8 @@
     .product-deduction-help { display:block; margin-top:2px; font-size:.66rem; font-weight:650; opacity:.82; }
     .product-modal-actions { border-top:1px solid var(--line); justify-content:flex-end; }
     .product-modal-actions button { border-radius:9px; padding:9px 15px; font-size:.78rem; font-weight:900; }
-    .product-delete-btn { margin-right:auto; border:1px solid #f1b8be; background:var(--danger-soft); color:var(--danger); }
-    .product-cancel-btn { border:1px solid var(--line); background:#fff; color:var(--ink); }
+    .product-delete-btn { margin-right:auto; border:1px solid var(--danger-line); background:var(--danger-soft); color:var(--danger); }
+    .product-cancel-btn { border:1px solid var(--line); background: var(--surface); color:var(--ink); }
     .product-save-btn { border:1px solid var(--main); background:var(--main); color:#fff; }
     @media (max-width: 620px) {
       .product-form-grid { grid-template-columns:1fr; }
@@ -165,7 +231,7 @@
       position: sticky;
       top: 0;
       z-index: 1020;
-      background: rgba(255, 255, 255, .96);
+      background: var(--header-bg);
       border-bottom: 1px solid var(--line);
       box-shadow: 0 4px 18px rgba(24, 32, 51, .06);
       backdrop-filter: blur(14px);
@@ -182,7 +248,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 18px;
-      border-bottom: 1px solid #eef1f5;
+      border-bottom: 1px solid var(--line-soft);
     }
     .brand {
       min-width: 0;
@@ -206,7 +272,7 @@
     }
     .brand-copy { min-width: 0; }
     .brand-title {
-      color: var(--main);
+      color: var(--main-text);
       font-size: .94rem;
       font-weight: 900;
       letter-spacing: .035em;
@@ -237,7 +303,7 @@
       height: 6px;
       flex: 0 0 auto;
       border-radius: 50%;
-      background: #aab3c2;
+      background: var(--subtle);
     }
     .data-status.ready::before { background: #21a475; box-shadow: 0 0 0 3px rgba(33, 164, 117, .12); }
     .data-status.error::before { background: var(--danger); box-shadow: 0 0 0 3px rgba(220, 53, 69, .12); }
@@ -267,7 +333,7 @@
     }
     .mode-btn.active {
       background: var(--surface);
-      color: var(--main);
+      color: var(--main-text);
       box-shadow: var(--shadow-sm);
     }
 
@@ -291,7 +357,7 @@
       font-weight: 850;
       box-shadow: 0 6px 14px rgba(17, 25, 77, .17);
     }
-    .new-case-btn:hover { background: #1b266a; }
+    .new-case-btn:hover { background: var(--main-hover); }
     .case-list {
       min-width: 0;
       flex: 1 1 auto;
@@ -314,12 +380,12 @@
       padding: 4px 6px 4px 11px;
       border: 1px solid var(--line-strong);
       border-radius: 9px;
-      background: #fff;
+      background: var(--surface);
       color: var(--ink);
       cursor: pointer;
       transition: .15s ease;
     }
-    .case-tab:hover { border-color: #9da9bc; }
+    .case-tab:hover { border-color: var(--subtle); }
     .case-tab.active {
       border-color: var(--main);
       background: var(--main);
@@ -351,7 +417,7 @@
       border: 0;
       border-radius: 7px;
       background: transparent;
-      color: #9aa5b6;
+      color: var(--subtle);
       font-size: .9rem;
     }
     .case-tab.active .case-delete { color: rgba(255, 255, 255, .67); }
@@ -365,11 +431,11 @@
     .waiting-select {
       width: 174px;
       min-height: 38px;
-      border: 1px solid #ead170;
+      border: 1px solid var(--accent-line);
       border-radius: 9px;
       padding: 7px 30px 7px 11px;
       background-color: var(--accent-soft);
-      color: #5d4a00;
+      color: var(--accent-ink);
       font-size: .76rem;
       font-weight: 800;
     }
@@ -385,7 +451,7 @@
       justify-content: center;
       gap: 8px;
       margin-bottom: 12px;
-      border: 1px solid #ef9ba3;
+      border: 1px solid var(--danger-line);
       border-radius: var(--radius);
       padding: 11px 15px;
       background: var(--danger);
@@ -425,7 +491,7 @@
       min-height: 42px;
       border: 1px solid var(--line-strong);
       border-radius: 10px;
-      background: #fff;
+      background: var(--surface);
       color: var(--ink);
       padding: 9px 12px;
       font-size: .88rem;
@@ -433,7 +499,7 @@
       transition: .15s ease;
     }
     .control-input::placeholder,
-    .search-input::placeholder { color: #a1abb9; font-weight: 500; }
+    .search-input::placeholder { color: var(--subtle); font-weight: 500; }
     .control-input:focus,
     .search-input:focus {
       border-color: var(--main-2);
@@ -447,7 +513,7 @@
       top: 50%;
       left: 13px;
       transform: translateY(-50%);
-      color: #818da0;
+      color: var(--subtle);
       pointer-events: none;
     }
     .search-input { padding-left: 38px; padding-right: 42px; }
@@ -462,8 +528,8 @@
       transform: translateY(-50%);
       border: 0;
       border-radius: 8px;
-      background: #edf1f6;
-      color: #657187;
+      background: var(--surface-sunken);
+      color: var(--muted-strong);
     }
     .search-clear.visible { display: grid; }
     .receipt-cta-wrap { display: flex; align-items: flex-end; }
@@ -482,11 +548,11 @@
       font-weight: 850;
       white-space: nowrap;
     }
-    .receipt-cta:hover { background: #1b266a; }
+    .receipt-cta:hover { background: var(--main-hover); }
 
     .customer-panel {
       border-bottom: 1px solid var(--line);
-      background: #fbfcfe;
+      background: var(--surface-soft);
     }
     .customer-panel > summary {
       min-height: 43px;
@@ -495,7 +561,7 @@
       justify-content: space-between;
       gap: 12px;
       padding: 9px 15px;
-      color: var(--main);
+      color: var(--main-text);
       font-size: .73rem;
       font-weight: 900;
       cursor: pointer;
@@ -517,7 +583,7 @@
     .customer-panel[open] > summary .summary-chevron { transform: rotate(180deg); }
     .customer-panel-body {
       padding: 0 15px 14px;
-      border-top: 1px solid #eef1f5;
+      border-top: 1px solid var(--line-soft);
     }
     .customer-grid {
       display: grid;
@@ -535,7 +601,7 @@
       border: 1px solid var(--line);
       border-radius: 9px;
       padding: 8px 10px;
-      background: #fff;
+      background: var(--surface);
     }
     .sync-status {
       min-width: 0;
@@ -552,10 +618,10 @@
       height: 7px;
       flex: 0 0 auto;
       border-radius: 50%;
-      background: #a7b0bd;
+      background: var(--subtle);
     }
     .sync-status.synced::before { background: var(--success); box-shadow: 0 0 0 3px rgba(22, 132, 91, .1); }
-    .sync-status.syncing::before { background: #e5a300; animation: sync-pulse 1s infinite alternate; }
+    .sync-status.syncing::before { background: var(--accent); animation: sync-pulse 1s infinite alternate; }
     .sync-status.error::before { background: var(--danger); }
     @keyframes sync-pulse { to { opacity: .35; } }
     .sync-actions { display: flex; gap: 6px; }
@@ -563,8 +629,8 @@
       border: 1px solid var(--line-strong);
       border-radius: 7px;
       padding: 6px 8px;
-      background: #fff;
-      color: #586579;
+      background: var(--surface);
+      color: var(--muted-strong);
       font-size: .63rem;
       font-weight: 850;
       white-space: nowrap;
@@ -576,7 +642,7 @@
       gap: 15px;
       padding: 14px 15px;
       border-bottom: 1px solid var(--line);
-      background: #fbfcfe;
+      background: var(--surface-soft);
     }
     .filter-groups {
       min-width: 0;
@@ -608,14 +674,14 @@
       border: 1px solid var(--line-strong);
       border-radius: 7px;
       padding: 5px 8px;
-      background: #fff;
-      color: #586579;
+      background: var(--surface);
+      color: var(--muted-strong);
       font-size: .68rem;
       font-weight: 800;
       white-space: nowrap;
       transition: .13s ease;
     }
-    .filter-btn:hover { border-color: #9da9bc; color: var(--main); }
+    .filter-btn:hover { border-color: var(--subtle); color: var(--main-text); }
     .filter-btn.active {
       border-color: var(--main);
       background: var(--main);
@@ -642,20 +708,20 @@
       padding: 3px;
       border: 1px solid var(--line);
       border-radius: 9px;
-      background: #f0f3f7;
+      background: var(--surface-sunken);
     }
     .view-btn {
       min-height: 31px;
       border: 0;
       border-radius: 7px;
       background: transparent;
-      color: #6a7689;
+      color: var(--muted-strong);
       font-size: .72rem;
       font-weight: 800;
     }
     .view-btn.active {
-      background: #fff;
-      color: var(--main);
+      background: var(--surface);
+      color: var(--main-text);
       box-shadow: var(--shadow-sm);
     }
     .compact-setting-row {
@@ -673,8 +739,8 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 6px 9px;
-      background: #fff;
-      color: #586579;
+      background: var(--surface);
+      color: var(--muted-strong);
       font-size: .68rem;
       font-weight: 800;
       cursor: pointer;
@@ -685,7 +751,7 @@
       min-height: 33px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fff;
+      background: var(--surface);
       color: var(--ink);
       padding: 5px 8px;
       font-size: .7rem;
@@ -731,11 +797,11 @@
       justify-content: space-between;
       gap: 12px;
       margin-top: 12px;
-      border: 1px solid #e6bd31;
+      border: 1px solid var(--accent-line);
       border-radius: var(--radius);
       padding: 10px 13px;
       background: var(--accent-soft);
-      color: #5d4a00;
+      color: var(--accent-ink);
       box-shadow: var(--shadow-sm);
     }
     .price-change-banner.visible { display: flex; }
@@ -746,7 +812,7 @@
       border: 0;
       border-radius: 8px;
       padding: 7px 10px;
-      background: #6c5600;
+      background: var(--accent-ink);
       color: #fff;
       font-size: .65rem;
       font-weight: 900;
@@ -754,7 +820,7 @@
     .rank-price-change {
       display: block;
       margin-top: 2px;
-      color: #a16d00;
+      color: var(--accent-ink);
       font-size: .56rem;
       font-weight: 800;
       white-space: nowrap;
@@ -780,21 +846,21 @@
       border: 1px solid var(--line-strong);
       border-radius: 8px;
       padding: 5px 9px;
-      background: #fff;
-      color: #526075;
+      background: var(--surface);
+      color: var(--muted-strong);
       font-size: .68rem;
       font-weight: 850;
     }
-    .page-link-btn:hover:not(:disabled) { border-color: var(--main); color: var(--main); }
+    .page-link-btn:hover:not(:disabled) { border-color: var(--main); color: var(--main-text); }
     .page-link-btn.active {
       border-color: var(--main);
       background: var(--main);
       color: #fff;
     }
     .page-link-btn:disabled {
-      border-color: #e4e8ef;
-      background: #f2f4f7;
-      color: #a7b0bd;
+      border-color: var(--line-soft);
+      background: var(--surface-sunken);
+      color: var(--subtle);
       cursor: not-allowed;
     }
     .page-range {
@@ -822,13 +888,13 @@
       transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
     }
     .product-card:hover {
-      border-color: #b7c1d0;
+      border-color: var(--line-strong);
       box-shadow: 0 8px 22px rgba(24, 32, 51, .08);
       transform: translateY(-1px);
     }
     .product-card.has-value {
       border: 2px solid var(--main-2);
-      background: linear-gradient(180deg, #fff, #f7f8ff);
+      background: linear-gradient(180deg, var(--surface), var(--surface-soft));
       box-shadow: 0 9px 24px rgba(38, 53, 136, .14);
     }
     .selected-mark {
@@ -854,13 +920,13 @@
       display: grid;
       place-items: center;
       overflow: hidden;
-      border-bottom: 1px solid #edf0f4;
+      border-bottom: 1px solid var(--line-soft);
       background:
-        linear-gradient(45deg, #f4f6fa 25%, transparent 25%),
-        linear-gradient(-45deg, #f4f6fa 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #f4f6fa 75%),
-        linear-gradient(-45deg, transparent 75%, #f4f6fa 75%),
-        #fafbfd;
+        linear-gradient(45deg, var(--checker) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--checker) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--checker) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--checker) 75%),
+        var(--surface-soft);
       background-position: 0 0, 0 6px, 6px -6px, -6px 0;
       background-size: 12px 12px;
     }
@@ -876,7 +942,7 @@
       justify-content: center;
       flex-direction: column;
       gap: 4px;
-      color: #9aa5b5;
+      color: var(--subtle);
       font-size: .65rem;
       font-weight: 700;
     }
@@ -904,12 +970,12 @@
     .rank-table td { vertical-align: middle; }
     .rank-label {
       width: 24px;
-      color: var(--main);
+      color: var(--main-text);
       font-size: .7rem;
       font-weight: 950;
     }
     .rank-price {
-      color: var(--danger);
+      color: var(--price);
       font-variant-numeric: tabular-nums;
       font-weight: 900;
       white-space: nowrap;
@@ -922,7 +988,7 @@
       overflow: hidden;
       border: 1px solid var(--line-strong);
       border-radius: 8px;
-      background: #fff;
+      background: var(--surface);
       color: var(--ink);
       transition: .13s ease;
     }
@@ -944,7 +1010,7 @@
       font-weight: 900;
       line-height: 1;
     }
-    .qty-btn:hover { background: rgba(17, 25, 77, .07); }
+    .qty-btn:hover { background: var(--main-soft); }
     .qty-ctrl.has-value .qty-btn:hover { background: rgba(255, 255, 255, .13); }
     .qty-num {
       width: 38px;
@@ -974,7 +1040,7 @@
     .list-view .product-image-wrap {
       height: 100%;
       min-height: 132px;
-      border-right: 1px solid #edf0f4;
+      border-right: 1px solid var(--line-soft);
       border-bottom: 0;
     }
     .list-view .product-body {
@@ -998,7 +1064,7 @@
       display: grid;
       place-items: center;
       margin-top: 13px;
-      border: 1px dashed #c7d0dc;
+      border: 1px dashed var(--line-strong);
       border-radius: var(--radius-lg);
       background: rgba(255, 255, 255, .7);
       color: var(--muted);
@@ -1039,7 +1105,7 @@
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: #fff;
+      background: var(--surface);
     }
     .skeleton::after {
       content: "";
@@ -1055,7 +1121,7 @@
     .history-shell {
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
-      background: #fff;
+      background: var(--surface);
       box-shadow: var(--shadow-sm);
     }
     .history-header {
@@ -1066,14 +1132,14 @@
       padding: 17px 18px;
       border-bottom: 1px solid var(--line);
     }
-    .section-title { margin: 0; color: var(--main); font-size: 1rem; font-weight: 900; }
+    .section-title { margin: 0; color: var(--main-text); font-size: 1rem; font-weight: 900; }
     .section-caption { margin-top: 3px; color: var(--muted); font-size: .68rem; }
     .reload-btn {
       border: 1px solid var(--line-strong);
       border-radius: 9px;
       padding: 7px 10px;
-      background: #fff;
-      color: #586579;
+      background: var(--surface);
+      color: var(--muted-strong);
       font-size: .7rem;
       font-weight: 850;
     }
@@ -1086,13 +1152,13 @@
       padding: 14px;
       border: 1px solid var(--line);
       border-radius: 11px;
-      background: #fff;
+      background: var(--surface);
     }
     .log-item + .log-item { margin-top: 8px; }
     .log-name { overflow: hidden; text-overflow: ellipsis; color: var(--ink); font-size: .8rem; font-weight: 900; }
     .log-meta { margin-top: 4px; color: var(--muted); font-size: .66rem; }
     .log-side { display: flex; align-items: center; gap: 13px; }
-    .log-amount { color: var(--danger); font-size: 1rem; font-variant-numeric: tabular-nums; font-weight: 950; white-space: nowrap; }
+    .log-amount { color: var(--price); font-size: 1rem; font-variant-numeric: tabular-nums; font-weight: 950; white-space: nowrap; }
     .log-detail-btn {
       border: 0;
       border-radius: 8px;
@@ -1116,7 +1182,7 @@
       justify-content: space-between;
       gap: 18px;
       padding: 12px max(22px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
-      background: rgba(17, 25, 77, .97);
+      background: var(--footer-bg);
       color: #fff;
       box-shadow: 0 -9px 28px rgba(17, 25, 77, .19);
       backdrop-filter: blur(12px);
@@ -1149,7 +1215,7 @@
       display: none;
       min-height: 100vh;
       padding: 28px 18px 45px;
-      background: #fff;
+      background: var(--surface);
     }
     .receipt-container { width: min(880px, 100%); margin: 0 auto; }
     .receipt-screen-head {
@@ -1160,13 +1226,13 @@
       margin-bottom: 17px;
     }
     .receipt-kicker { color: var(--main-2); font-size: .66rem; font-weight: 900; letter-spacing: .08em; }
-    .receipt-title { margin: 3px 0 0; color: var(--main); font-size: 1.45rem; font-weight: 950; }
+    .receipt-title { margin: 3px 0 0; color: var(--main-text); font-size: 1.45rem; font-weight: 950; }
     .receipt-back-top {
       border: 1px solid var(--line-strong);
       border-radius: 9px;
       padding: 8px 12px;
-      background: #fff;
-      color: #586579;
+      background: var(--surface);
+      color: var(--muted-strong);
       font-size: .74rem;
       font-weight: 850;
     }
@@ -1186,7 +1252,7 @@
     .receipt-meta-sub { color: var(--muted); font-size: .68rem; font-weight: 650; }
     .receipt-alert { display: block; margin-top: 5px; color: var(--danger); font-size: .78rem; font-weight: 950; }
     .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 11px; }
-    .table-receipt { width: 100%; min-width: 660px; border-collapse: collapse; background: #fff; }
+    .table-receipt { width: 100%; min-width: 660px; border-collapse: collapse; background: var(--surface); }
     .table-receipt th,
     .table-receipt td { border-bottom: 1px solid var(--line); padding: 11px 13px; vertical-align: middle; }
     .table-receipt tr:last-child td { border-bottom: 0; }
@@ -1209,8 +1275,8 @@
       color: var(--danger);
       font-size: .84rem;
     }
-    .receipt-total-row { background: #f4f6fb; }
-    .receipt-total-amount { color: var(--danger); font-size: 1.2rem; font-variant-numeric: tabular-nums; font-weight: 950; }
+    .receipt-total-row { background: var(--surface-sunken); }
+    .receipt-total-amount { color: var(--price); font-size: 1.2rem; font-variant-numeric: tabular-nums; font-weight: 950; }
     .receipt-actions {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1226,11 +1292,11 @@
     }
     .receipt-action.print { border: 1px solid var(--success); background: var(--success); color: #fff; }
     .receipt-action.finalize { border: 1px solid var(--main); background: var(--main); color: #fff; }
-    .receipt-action.back { grid-column: 1 / -1; border: 1px solid var(--line-strong); background: #fff; color: #586579; }
+    .receipt-action.back { grid-column: 1 / -1; border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted-strong); }
     .receipt-item-memo {
       display: block;
       margin-top: 4px;
-      color: #826400;
+      color: var(--accent-ink);
       font-size: .64rem;
       font-weight: 750;
     }
@@ -1255,7 +1321,7 @@
       width: min(460px, 100vw);
       display: grid;
       grid-template-rows: auto minmax(0, 1fr) auto;
-      background: #f5f7fb;
+      background: var(--surface-sunken);
       box-shadow: -18px 0 45px rgba(17, 25, 77, .18);
       transform: translateX(102%);
       transition: transform .22s ease;
@@ -1268,9 +1334,9 @@
       gap: 12px;
       padding: 16px;
       border-bottom: 1px solid var(--line);
-      background: #fff;
+      background: var(--surface);
     }
-    .drawer-title { color: var(--main); font-size: .95rem; font-weight: 950; }
+    .drawer-title { color: var(--main-text); font-size: .95rem; font-weight: 950; }
     .drawer-caption { margin-top: 3px; color: var(--muted); font-size: .64rem; }
     .drawer-close {
       width: 36px;
@@ -1279,8 +1345,8 @@
       place-items: center;
       border: 1px solid var(--line);
       border-radius: 9px;
-      background: #fff;
-      color: #657187;
+      background: var(--surface);
+      color: var(--muted-strong);
     }
     .drawer-list { overflow-y: auto; padding: 10px; }
     .drawer-empty {
@@ -1295,7 +1361,7 @@
       border: 1px solid var(--line);
       border-radius: 11px;
       padding: 11px;
-      background: #fff;
+      background: var(--surface);
       box-shadow: var(--shadow-sm);
     }
     .drawer-item + .drawer-item { margin-top: 8px; }
@@ -1307,7 +1373,7 @@
     }
     .drawer-item-name { color: var(--ink); font-size: .73rem; font-weight: 900; line-height: 1.4; }
     .drawer-rank { color: var(--main-2); font-size: .64rem; font-weight: 900; }
-    .drawer-item-price { margin-top: 3px; color: var(--danger); font-size: .72rem; font-weight: 900; }
+    .drawer-item-price { margin-top: 3px; color: var(--price); font-size: .72rem; font-weight: 900; }
     .drawer-item-actions { display: flex; align-items: center; gap: 7px; margin-top: 9px; }
     .drawer-delete {
       width: 32px;
@@ -1336,11 +1402,11 @@
       justify-content: space-between;
       gap: 8px;
       margin-top: 8px;
-      border: 1px solid #efd370;
+      border: 1px solid var(--accent-line);
       border-radius: 8px;
       padding: 7px 8px;
       background: var(--accent-soft);
-      color: #675100;
+      color: var(--accent-ink);
       font-size: .62rem;
       font-weight: 800;
     }
@@ -1349,7 +1415,7 @@
       border: 0;
       border-radius: 7px;
       padding: 5px 7px;
-      background: #6c5600;
+      background: var(--accent-ink);
       color: #fff;
       font-size: .6rem;
       font-weight: 900;
@@ -1357,7 +1423,7 @@
     .drawer-footer {
       border-top: 1px solid var(--line);
       padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
-      background: #fff;
+      background: var(--surface);
     }
     .drawer-total {
       display: flex;
@@ -1368,12 +1434,12 @@
       font-size: .68rem;
       font-weight: 750;
     }
-    .drawer-total strong { color: var(--main); font-size: 1.08rem; font-variant-numeric: tabular-nums; }
+    .drawer-total strong { color: var(--main-text); font-size: 1.08rem; font-variant-numeric: tabular-nums; }
     .drawer-clear {
       width: 100%;
       min-height: 40px;
       margin-top: 9px;
-      border: 1px solid #efb2b8;
+      border: 1px solid var(--danger-line);
       border-radius: 9px;
       background: var(--danger-soft);
       color: var(--danger);
@@ -1398,7 +1464,7 @@
       border: 1px solid var(--line);
       border-radius: 11px;
       padding: 11px 13px;
-      background: #fff;
+      background: var(--surface);
       color: var(--ink);
       box-shadow: var(--shadow-md);
       font-size: .74rem;
@@ -1412,7 +1478,7 @@
     .history-open { padding-bottom: 0; }
     .history-open .footer-bar,
     .receipt-open .footer-bar { display: none; }
-    .receipt-open { padding-bottom: 0; background: #fff; }
+    .receipt-open { padding-bottom: 0; background: var(--surface); }
 
     @media (max-width: 900px) {
       .header-main, .case-row, .app-shell { padding-inline: 13px; }
@@ -1505,7 +1571,285 @@
       #rarity-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .card-grid:not(.list-view) { grid-template-columns: 1fr; }
       .card-grid:not(.list-view) .product-card { display: grid; grid-template-columns: 105px minmax(0, 1fr); }
-      .card-grid:not(.list-view) .product-image-wrap { height: 100%; min-height: 180px; border-right: 1px solid #edf0f4; border-bottom: 0; }
+      .card-grid:not(.list-view) .product-image-wrap { height: 100%; min-height: 180px; border-right: 1px solid var(--line-soft); border-bottom: 0; }
+    }
+
+
+    /* ===== 追加：ヘッダー操作 ===== */
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface-soft);
+      color: var(--muted-strong);
+      font-size: 1.05rem;
+      transition: .15s ease;
+    }
+    .icon-btn:hover { border-color: var(--line-strong); color: var(--main-text); }
+    .icon-btn-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 9px;
+      height: 9px;
+      display: none;
+      border: 2px solid var(--surface);
+      border-radius: 50%;
+      background: var(--danger);
+    }
+    .icon-btn.needs-attention .icon-btn-dot { display: block; }
+
+    /* ===== 追加：警告・確認事項 ===== */
+    .auth-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      border: 1px solid var(--danger-line);
+      border-radius: var(--radius);
+      padding: 10px 12px 10px 15px;
+      background: var(--danger-soft);
+      color: var(--ink);
+      font-size: .8rem;
+      font-weight: 750;
+    }
+    .auth-banner.visible { display: flex; }
+    .auth-banner > i { color: var(--danger); font-size: 1.05rem; }
+    .auth-banner > span { flex: 1; min-width: 0; }
+    .auth-banner-btn {
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 8px;
+      padding: 7px 12px;
+      background: var(--danger);
+      color: #fff;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+    .check-banner {
+      display: none;
+      align-items: flex-start;
+      gap: 11px;
+      margin-bottom: 12px;
+      border: 1px solid var(--accent-line);
+      border-radius: var(--radius);
+      padding: 11px 15px;
+      background: var(--accent-soft);
+      color: var(--accent-ink);
+    }
+    .check-banner.visible { display: flex; }
+    .check-banner > i { margin-top: 1px; font-size: 1.1rem; }
+    .check-banner-title { font-size: .72rem; font-weight: 900; letter-spacing: .03em; }
+    .check-banner-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .check-banner-list span {
+      border: 1px solid var(--accent-line);
+      border-radius: 999px;
+      padding: 3px 10px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: .74rem;
+      font-weight: 850;
+    }
+    .case-flag { margin-right: 4px; color: var(--accent); font-size: .72rem; }
+    .application-info {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 10px;
+      margin-top: 12px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 9px;
+      padding: 8px 11px;
+      color: var(--muted-strong);
+      font-size: .72rem;
+    }
+    .application-info b { color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+    .application-info span { color: var(--muted); }
+    .field-hint { margin: 5px 2px 0; color: var(--muted); font-size: .64rem; line-height: 1.45; }
+    .field-hint:empty { display: none; }
+
+    /* ===== 追加：待機一覧の状態 ===== */
+    .waiting-select[data-state="empty"] { border-color: var(--line-strong); background-color: var(--surface-soft); color: var(--muted); }
+    .waiting-select[data-state="error"] { border-color: var(--danger-line); background-color: var(--danger-soft); color: var(--danger); }
+    .waiting-select[data-state="waiting"] { box-shadow: 0 0 0 3px var(--accent-soft); }
+
+    /* ===== 追加：絞り込みパネル（スマホでは折りたたむ） ===== */
+    .filter-panel { border-bottom: 1px solid var(--line); }
+    .filter-panel > summary {
+      min-height: 43px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 15px;
+      color: var(--main-text);
+      font-size: .73rem;
+      font-weight: 900;
+      cursor: pointer;
+      list-style: none;
+    }
+    .filter-panel > summary::-webkit-details-marker { display: none; }
+    .filter-panel > summary .summary-chevron { transition: transform .16s ease; }
+    .filter-panel[open] > summary .summary-chevron { transform: rotate(180deg); }
+    .filter-panel[open] > summary { border-bottom: 1px solid var(--line-soft); }
+    .filter-panel .filter-layout { border-bottom: 0; }
+    .filter-summary {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      color: var(--muted);
+      text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: .65rem;
+      font-weight: 700;
+    }
+    .filter-summary.active { color: var(--main-text); font-weight: 900; }
+
+    /* ===== 追加：カード ===== */
+    .product-meta {
+      margin-top: 3px;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: .64rem;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .rank-table tr.has-qty td { background: var(--main-soft); }
+    .rank-table tr.has-qty td:first-child { border-radius: 7px 0 0 7px; padding-left: 5px; }
+    .rank-table tr.has-qty td:last-child { border-radius: 0 7px 7px 0; }
+    .rank-price.is-deduction { color: var(--success); }
+    .card-subtotal {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-top: 6px;
+      border-top: 1px dashed var(--line-strong);
+      padding-top: 7px;
+      color: var(--muted-strong);
+      font-size: .68rem;
+      font-weight: 800;
+    }
+    .card-subtotal strong { color: var(--main-text); font-size: .86rem; font-variant-numeric: tabular-nums; }
+    .product-card.is-deduction { border-style: dashed; }
+
+    /* ===== 追加：履歴タブ ===== */
+    .history-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .history-tabs {
+      display: inline-grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-soft);
+    }
+    .history-tab {
+      border: 0;
+      border-radius: 7px;
+      padding: 6px 12px;
+      background: transparent;
+      color: var(--muted);
+      font-size: .74rem;
+      font-weight: 850;
+    }
+    .history-tab.active { background: var(--surface); color: var(--main-text); box-shadow: var(--shadow-sm); }
+
+    /* ===== 追加：設定 ===== */
+    .settings-modal { width: min(560px, 100%); }
+    .settings-body { display: grid; gap: 18px; }
+    .settings-section + .settings-section { border-top: 1px solid var(--line-soft); padding-top: 16px; }
+    .settings-heading { margin: 0 0 6px; color: var(--ink); font-size: .86rem; font-weight: 900; }
+    .settings-help { margin: 6px 0 0; color: var(--muted); font-size: .7rem; line-height: 1.6; }
+    .settings-help code { color: var(--main-text); }
+    .staff-key-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; margin-top: 10px; }
+    .staff-key-row .sync-btn { font-size: .7rem; padding-inline: 10px; }
+    .staff-key-row .product-save-btn { border-radius: 10px; padding: 0 14px; font-size: .74rem; font-weight: 900; white-space: nowrap; }
+    .settings-status { margin-top: 8px; color: var(--muted); font-size: .72rem; font-weight: 800; }
+    .settings-status.ok { color: var(--success); }
+    .settings-status.error { color: var(--danger); }
+    .settings-status.ok::before { content: "● "; }
+    .settings-link-btn { margin-top: 6px; border: 0; padding: 0; background: none; color: var(--muted); font-size: .68rem; text-decoration: underline; }
+    .segmented {
+      display: inline-grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-soft);
+    }
+    .segmented button {
+      min-width: 84px;
+      border: 0;
+      border-radius: 7px;
+      padding: 7px 12px;
+      background: transparent;
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 850;
+    }
+    .segmented button.active { background: var(--main); color: #fff; }
+    .settings-section .sync-status { font-size: .74rem; }
+    .settings-section .sync-actions { margin-top: 10px; }
+    .settings-section .sync-btn { padding: 8px 11px; font-size: .72rem; }
+    .shortcut-list { display: grid; gap: 6px; margin: 4px 0 0; }
+    .shortcut-list div { display: flex; align-items: center; gap: 10px; font-size: .74rem; }
+    .shortcut-list dt { min-width: 120px; font-weight: 600; }
+    .shortcut-list dd { margin: 0; color: var(--muted-strong); }
+    kbd {
+      display: inline-block;
+      min-width: 22px;
+      border: 1px solid var(--line-strong);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      padding: 1px 6px;
+      background: var(--surface-soft);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: .68rem;
+      font-weight: 800;
+      text-align: center;
+    }
+    .product-modal { background: var(--surface); color: var(--ink); }
+
+    /* ===== 追加：ダークテーマの細部 ===== */
+    :root[data-theme="dark"] .product-image { filter: brightness(.94); }
+    :root[data-theme="dark"] .control-input,
+    :root[data-theme="dark"] .search-input { background: var(--surface-sunken); }
+    :root[data-theme="dark"] .waiting-select { color-scheme: dark; }
+    :root[data-theme="dark"] .product-modal-backdrop { background: rgba(0, 0, 0, .62); }
+    :root[data-theme="dark"] .qty-ctrl.has-value { box-shadow: none; }
+
+    /* ===== 追加：タッチ操作の端末ではボタンを大きく ===== */
+    @media (pointer: coarse) {
+      .qty-ctrl { grid-template-columns: 34px 40px 34px; }
+      .qty-btn { width: 34px; height: 34px; font-size: 1.1rem; }
+      .qty-num { width: 40px; height: 34px; font-size: .82rem; }
+      .case-delete { width: 32px; height: 32px; }
+    }
+    @media (max-width: 760px) {
+      .header-actions { gap: 6px; }
+      .icon-btn { width: 36px; height: 36px; border-radius: 10px; }
+      .mode-btn { min-width: 0; padding: 7px 10px; }
+      .history-header { flex-wrap: wrap; }
+      .staff-key-row { grid-template-columns: minmax(0, 1fr) auto; }
+      .staff-key-row .product-save-btn { grid-column: 1 / -1; min-height: 40px; }
+      .shortcut-list dt { min-width: 100px; }
+    }
+    @media (max-width: 520px) {
+      .waiting-select { width: 92px; padding: 7px 20px 7px 8px; background-position: right 5px center; font-size: .7rem; }
+    }
+    @media (max-width: 410px) {
+      #theme-toggle { display: none; }
+      .brand-title { font-size: .84rem; }
     }
 
     @media print {
@@ -1581,14 +1925,22 @@
             </div>
           </div>
         </div>
-        <nav class="mode-switch" aria-label="表示モード">
-          <button id="btn-mode-main" class="mode-btn active" type="button" onclick="switchMode('main')" aria-pressed="true">
-            <i class="bi bi-calculator me-1" aria-hidden="true"></i>査定
+        <div class="header-actions">
+          <nav class="mode-switch" aria-label="表示モード">
+            <button id="btn-mode-main" class="mode-btn active" type="button" onclick="switchMode('main')" aria-pressed="true">
+              <i class="bi bi-calculator me-1" aria-hidden="true"></i>査定
+            </button>
+            <button id="btn-mode-logs" class="mode-btn" type="button" onclick="switchMode('logs')" aria-pressed="false">
+              <i class="bi bi-clock-history me-1" aria-hidden="true"></i>履歴
+            </button>
+          </nav>
+          <button id="theme-toggle" class="icon-btn" type="button" onclick="toggleTheme()" aria-label="ライト／ダークを切り替え" title="ライト／ダークを切り替え">
+            <i class="bi bi-moon-stars" aria-hidden="true"></i>
           </button>
-          <button id="btn-mode-logs" class="mode-btn" type="button" onclick="switchMode('logs')" aria-pressed="false">
-            <i class="bi bi-clock-history me-1" aria-hidden="true"></i>履歴
+          <button id="settings-btn" class="icon-btn" type="button" onclick="openSettings()" aria-label="設定" title="設定（スタッフキー・テーマ・同期）">
+            <i class="bi bi-gear" aria-hidden="true"></i><span class="icon-btn-dot" aria-hidden="true"></span>
           </button>
-        </nav>
+        </div>
       </div>
 
       <div class="case-row">
@@ -1606,7 +1958,20 @@
     </header>
 
     <main class="app-shell">
+      <div id="auth-banner" class="auth-banner" role="alert">
+        <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
+        <span id="auth-banner-text">スタッフキーが未設定です。待機一覧・買取確定・履歴を使うには設定してください。</span>
+        <button type="button" class="auth-banner-btn" onclick="openSettings()">設定を開く</button>
+      </div>
+
       <section id="査定モード">
+        <div id="check-banner" class="check-banner" role="status">
+          <i class="bi bi-exclamation-diamond-fill" aria-hidden="true"></i>
+          <div>
+            <div class="check-banner-title">受付時の確認事項</div>
+            <div id="check-banner-list" class="check-banner-list"></div>
+          </div>
+        </div>
         <div id="cancel-banner" class="cancel-banner" role="alert">
           <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
           満額査定以外は返送希望のお客様です
@@ -1653,6 +2018,7 @@
               <i class="bi bi-chevron-down summary-chevron" aria-hidden="true"></i>
             </summary>
             <div class="customer-panel-body">
+              <div id="application-info" class="application-info" hidden></div>
               <div class="customer-grid">
                 <div>
                   <label class="field-label" for="cust-tel">電話番号</label>
@@ -1684,30 +2050,23 @@
                 </div>
                 <div>
                   <label class="field-label" for="cust-bank-num">口座番号</label>
-                  <input id="cust-bank-num" class="control-input" type="text" inputmode="numeric" placeholder="口座番号" data-case-field="bankNum">
+                  <input id="cust-bank-num" class="control-input" type="text" inputmode="numeric" placeholder="口座番号" data-case-field="bankNum" autocomplete="off">
+                  <div id="bank-num-hint" class="field-hint"></div>
                 </div>
                 <div class="wide-field">
                   <label class="field-label" for="cust-bank-holder">口座名義</label>
                   <input id="cust-bank-holder" class="control-input" type="text" placeholder="口座名義（カナ）" data-case-field="bankHolder">
                 </div>
               </div>
-              <div class="customer-sync-row">
-                <div id="sync-status" class="sync-status">端末保存のみ・サーバー同期を確認中</div>
-                <div class="sync-actions">
-                  <button class="sync-btn" type="button" onclick="backupCasesToServer(true)">
-                    <i class="bi bi-cloud-arrow-up me-1" aria-hidden="true"></i>今すぐ保存
-                  </button>
-                  <button class="sync-btn" type="button" onclick="restoreServerBackup(true)">
-                    <i class="bi bi-cloud-arrow-down me-1" aria-hidden="true"></i>復元
-                  </button>
-                  <button class="sync-btn" type="button" onclick="copyGasBackupCode()">
-                    <i class="bi bi-code-slash me-1" aria-hidden="true"></i>GASコード
-                  </button>
-                </div>
-              </div>
             </div>
           </details>
 
+          <details id="filter-panel" class="filter-panel">
+            <summary>
+              <span><i class="bi bi-funnel me-1" aria-hidden="true"></i>絞り込み・表示設定</span>
+              <span id="filter-summary" class="filter-summary">すべて表示</span>
+              <i class="bi bi-chevron-down summary-chevron" aria-hidden="true"></i>
+            </summary>
           <div class="filter-layout">
             <div class="filter-groups">
               <div class="filter-row">
@@ -1744,6 +2103,7 @@
               </div>
             </div>
           </div>
+          </details>
 
           <div class="results-toolbar">
             <div class="results-copy">
@@ -1776,12 +2136,18 @@
         <div class="history-shell">
           <div class="history-header">
             <div>
-              <h2 class="section-title">最近の買取履歴</h2>
-              <div class="section-caption">確定済みの査定内容を明細形式で確認できます</div>
+              <h2 class="section-title">履歴</h2>
+              <div id="history-caption" class="section-caption">確定済みの査定内容を明細形式で確認できます</div>
             </div>
-            <button class="reload-btn" type="button" onclick="loadTradeLogs()">
-              <i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>再読込
-            </button>
+            <div class="history-actions">
+              <div class="history-tabs" role="tablist" aria-label="履歴の種類">
+                <button id="history-tab-trades" class="history-tab active" type="button" role="tab" aria-selected="true" onclick="setHistoryTab('trades')">買取履歴</button>
+                <button id="history-tab-temp" class="history-tab" type="button" role="tab" aria-selected="false" onclick="setHistoryTab('temp')">一時保存</button>
+              </div>
+              <button class="reload-btn" type="button" onclick="reloadHistory()">
+                <i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>再読込
+              </button>
+            </div>
           </div>
           <div id="logs-container" class="logs-container"></div>
         </div>
@@ -1832,7 +2198,7 @@
     <div class="total-block">
       <div>
         <div class="total-label">現在の査定合計</div>
-        <div class="total-amount">¥<span id="t-amt">0</span></div>
+        <div class="total-amount"><span id="t-amt">¥0</span></div>
       </div>
       <div class="total-qty"><span id="t-types">0</span>種類・合計<span id="t-qty">0</span>枚</div>
     </div>
@@ -1870,7 +2236,7 @@
     <div class="drawer-footer">
       <div class="drawer-total">
         <span id="drawer-total-qty">0種類・0枚</span>
-        <strong>¥<span id="drawer-total-amount">0</span></strong>
+        <strong><span id="drawer-total-amount">¥0</span></strong>
       </div>
       <button class="drawer-clear" type="button" onclick="clearCurrentCase()">
         <i class="bi bi-eraser me-1" aria-hidden="true"></i>現在の査定内容を空にする
@@ -1930,6 +2296,63 @@
     </form>
   </div>
 
+  <div id="settings-backdrop" class="product-modal-backdrop no-print" role="dialog" aria-modal="true" aria-labelledby="settings-title" onclick="if (event.target === this) closeSettings()">
+    <div class="product-modal settings-modal">
+      <div class="product-modal-head">
+        <h2 id="settings-title" class="product-modal-title"><i class="bi bi-gear me-1" aria-hidden="true"></i>設定</h2>
+        <button class="product-modal-close" type="button" onclick="closeSettings()" aria-label="閉じる"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="product-modal-body settings-body">
+        <section class="settings-section">
+          <h3 class="settings-heading">スタッフキー</h3>
+          <p class="settings-help">待機一覧・買取確定・履歴・サーバー保存に必要です。キーはApps Scriptの <code>setupPosApiKey</code> で発行し、この端末にだけ保存されます。</p>
+          <form class="staff-key-row" onsubmit="saveStaffKey(event)">
+            <label class="visually-hidden" for="staff-key-input">スタッフキー</label>
+            <input id="staff-key-input" class="control-input" type="password" autocomplete="off" spellcheck="false" placeholder="スタッフキーを貼り付け">
+            <button class="sync-btn" type="button" onclick="toggleStaffKeyVisibility()" id="staff-key-visibility">表示</button>
+            <button class="product-save-btn" type="submit">保存して接続確認</button>
+          </form>
+          <div id="staff-key-status" class="settings-status">未設定</div>
+          <button class="settings-link-btn" type="button" onclick="clearStaffKey()">この端末からキーを削除</button>
+        </section>
+
+        <section class="settings-section">
+          <h3 class="settings-heading">テーマ</h3>
+          <div class="segmented" role="radiogroup" aria-label="テーマ">
+            <button type="button" role="radio" data-theme-option="auto" onclick="setThemePreference('auto')">自動</button>
+            <button type="button" role="radio" data-theme-option="light" onclick="setThemePreference('light')">ライト</button>
+            <button type="button" role="radio" data-theme-option="dark" onclick="setThemePreference('dark')">ダーク</button>
+          </div>
+          <p class="settings-help">「自動」は端末の設定（ダークモード）に合わせます。</p>
+        </section>
+
+        <section class="settings-section">
+          <h3 class="settings-heading">サーバー同期</h3>
+          <div id="sync-status" class="sync-status">端末保存のみ・サーバー同期を確認中</div>
+          <p class="settings-help">査定中のデータは端末に自動保存され、数秒後にサーバーへもバックアップされます。他の端末の査定は消えません。</p>
+          <div class="sync-actions">
+            <button class="sync-btn" type="button" onclick="backupCasesToServer(true)">
+              <i class="bi bi-cloud-arrow-up me-1" aria-hidden="true"></i>今すぐ保存
+            </button>
+            <button class="sync-btn" type="button" onclick="restoreServerBackup(true)">
+              <i class="bi bi-cloud-arrow-down me-1" aria-hidden="true"></i>サーバーから取り込む
+            </button>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h3 class="settings-heading">キーボード操作</h3>
+          <dl class="shortcut-list">
+            <div><dt><kbd>/</kbd></dt><dd>検索欄へ移動</dd></div>
+            <div><dt><kbd>Ctrl</kbd>+<kbd>Enter</kbd></dt><dd>明細を確認</dd></div>
+            <div><dt><kbd>Ctrl</kbd>+<kbd>Z</kbd></dt><dd>1つ戻す（入力欄の外で）</dd></div>
+            <div><dt><kbd>Esc</kbd></dt><dd>検索クリア・パネルを閉じる</dd></div>
+          </dl>
+        </section>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-container" class="toast-container-custom" aria-live="polite" aria-atomic="true"></div>
 
   <script>
@@ -1945,6 +2368,11 @@
     const CUSTOM_PRODUCTS_KEY = "pk_pos_custom_products_v1";
     const SERVER_BACKUP_SCOPE = "pklab-pos-shared";
     const DATA_REFRESH_INTERVAL = 5 * 60 * 1000;
+    const STAFF_KEY_STORAGE = "pk_pos_staff_key";
+    const THEME_KEY = "pk_pos_theme";
+    const DELETED_CASES_KEY = "pk_pos_deleted_case_ids";
+    const WAITING_REFRESH_INTERVAL = 20000;
+    const AUTH_ERROR_CODES = ["UNAUTHORIZED", "STAFF_AUTH_NOT_CONFIGURED", "STAFF_KEY_TOO_SHORT", "NO_STAFF_KEY"];
 
     let cards = [];
     let masterCards = [];
@@ -1968,8 +2396,14 @@
     let dataRefreshTimer = null;
     let backupTimer = null;
     let undoStacks = {};
-    let syncSupported = null;
     let isInitializing = true;
+    let staffAuthState = "unknown";
+    let staffAuthMessage = "";
+    let pendingDeletedIds = [];
+    let caseSignatures = {};
+    let tempSaves = [];
+    let historyTab = "trades";
+    let waitingLoadState = "idle";
     let lastDataLoadedAt = 0;
 
     const kanaMap = {
@@ -1988,19 +2422,34 @@
     window.addEventListener("load", initialize);
 
     async function initialize() {
+      applyTheme(getThemePreference());
       bindStaticEvents();
       loadPreferences();
       loadCustomProducts();
+      loadPendingDeletions();
       loadLocalCases();
       renderViewControls();
+      initFilterPanel();
       updateCaseListUI();
       calc();
+      if (!getStaffKey()) setStaffAuthState("missing");
       await loadCardData();
-      await restoreServerBackup(false);
+      if (getStaffKey()) {
+        await restoreServerBackup(false);
+      } else {
+        setSyncStatus("スタッフキー未設定のため、サーバー同期は停止しています", "error");
+      }
       isInitializing = false;
       refreshWaiting();
-      waitingTimer = window.setInterval(refreshWaiting, 15000);
+      waitingTimer = window.setInterval(() => {
+        if (document.visibilityState === "visible") refreshWaiting();
+      }, WAITING_REFRESH_INTERVAL);
       dataRefreshTimer = window.setInterval(() => loadCardData({ silent: true }), DATA_REFRESH_INTERVAL);
+      if (window.matchMedia) {
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => {
+          if (getThemePreference() === "auto") applyTheme("auto");
+        });
+      }
     }
 
     function bindStaticEvents() {
@@ -2105,7 +2554,12 @@
 
       logs.addEventListener("click", event => {
         const button = event.target.closest("[data-log-index]");
-        if (button) showLogDetail(Number(button.dataset.logIndex));
+        if (button) {
+          showLogDetail(Number(button.dataset.logIndex));
+          return;
+        }
+        const tempButton = event.target.closest("[data-temp-index]");
+        if (tempButton) loadTempSave(Number(tempButton.dataset.tempIndex));
       });
 
       drawerList.addEventListener("click", event => {
@@ -2164,6 +2618,13 @@
           closeSelectionDrawer();
         }
         if (event.key === "Escape" && document.getElementById("product-modal-backdrop").classList.contains("open")) closeProductModal();
+        if (event.key === "Escape" && document.getElementById("settings-backdrop").classList.contains("open")) closeSettings();
+        const tag = document.activeElement?.tagName;
+        const editing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+        if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.key.toLowerCase() === "z" && !editing && !isViewingLog) {
+          event.preventDefault();
+          undoLastAction();
+        }
       });
     }
 
@@ -2462,7 +2923,8 @@
     }
 
     function renderCard(card) {
-      const hasValue = ["A", "B", "C", "D"].some(rank => Number(inputs[`${card.name}-${rank}`]?.q) > 0);
+      let cardQuantity = 0;
+      let cardSubtotal = 0;
       const isDeduction = Boolean(card.isDeduction) || ["A", "B", "C", "D"].some(rank => Number(card[`price${rank}`]) < 0);
       const imageUrl = safeImageUrl(card.image);
       const rows = ["A", "B", "C", "D"].map(rank => {
@@ -2471,12 +2933,14 @@
         const price = Number(card[`price${rank}`]) || 0;
         const selectedPrice = Number(inputs[key]?.p) || 0;
         const hasPriceChange = quantity > 0 && selectedPrice !== price;
+        cardQuantity += quantity;
+        cardSubtotal += quantity * (quantity > 0 ? selectedPrice : 0);
         return `
-          <tr>
+          <tr class="${quantity > 0 ? "has-qty" : ""}">
             <td class="rank-label">${rank}</td>
-            <td class="rank-price">
-              ¥${formatNumber(price)}
-              ${hasPriceChange ? `<span class="rank-price-change">選択時 ¥${formatNumber(selectedPrice)}</span>` : ""}
+            <td class="rank-price ${price < 0 ? "is-deduction" : ""}">
+              ${formatYen(price)}
+              ${hasPriceChange ? `<span class="rank-price-change">選択時 ${formatYen(selectedPrice)}</span>` : ""}
             </td>
             <td class="rank-control-cell">
               <div class="qty-ctrl ${quantity > 0 ? "has-value" : ""}">
@@ -2487,19 +2951,21 @@
             </td>
           </tr>`;
       }).join("");
+      const hasValue = cardQuantity > 0;
 
       return `
-        <article class="product-card ${hasValue ? "has-value" : ""}">
+        <article class="product-card ${hasValue ? "has-value" : ""} ${isDeduction ? "is-deduction" : ""}">
           ${card._custom ? `<button class="custom-product-edit" type="button" data-custom-edit="${escapeHtml(card._customId)}"><i class="bi bi-pencil-square me-1"></i>編集</button>` : ""}
-          <span class="selected-mark"><i class="bi bi-check-lg" aria-hidden="true"></i>選択中</span>
+          <span class="selected-mark"><i class="bi bi-check-lg" aria-hidden="true"></i>${cardQuantity}枚</span>
           <div class="product-image-wrap ${imageUrl ? "" : "image-error"}">
-            ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(card.name)}" class="product-image" loading="lazy" onerror="this.parentElement.classList.add('image-error')">` : ""}
+            ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(card.name)}" class="product-image" loading="lazy" decoding="async" onerror="this.parentElement.classList.add('image-error')">` : ""}
             <div class="image-fallback"><i class="bi bi-image" aria-hidden="true"></i><span>画像なし</span></div>
           </div>
           <div class="product-body">
             ${card._custom ? `<div class="custom-product-badge"><i class="bi ${isDeduction ? "bi-dash-circle" : "bi-device-ssd"}"></i>${isDeduction ? "控除項目" : "この端末で作成"}</div>` : ""}
             <div class="product-name" title="${escapeHtml(card.name)}">${escapeHtml(card.name)}</div>
             <table class="rank-table" aria-label="${escapeHtml(card.name)}のランク別価格"><tbody>${rows}</tbody></table>
+            ${hasValue ? `<div class="card-subtotal"><span>小計</span><strong>${formatYen(cardSubtotal)}</strong></div>` : ""}
           </div>
         </article>`;
     }
@@ -2550,6 +3016,7 @@
       const resetButton = document.getElementById("reset-filter-btn");
       resetButton.classList.toggle("visible", hasFilters());
       document.getElementById("search-clear").classList.toggle("visible", document.getElementById("search").value.length > 0);
+      updateFilterSummary();
     }
 
     function hasFilters() {
@@ -2655,7 +3122,7 @@
       const summary = getInputSummary(inputs);
       document.getElementById("t-qty").textContent = String(summary.quantity);
       document.getElementById("t-types").textContent = String(summary.types);
-      document.getElementById("t-amt").textContent = formatNumber(summary.amount);
+      document.getElementById("t-amt").textContent = formatYen(summary.amount);
       updateCaseListUI();
       renderSelectionDrawer();
       updatePriceChangeBanner();
@@ -2663,15 +3130,21 @@
     }
 
     function getInputSummary(data) {
+      // 控除項目（マイナス単価）は金額にだけ反映し、枚数・種類には数えない（サーバー集計と同じ）
       return Object.values(data || {}).reduce((result, item) => {
         const quantity = Number(item.q) || 0;
+        const price = Number(item.p) || 0;
         if (quantity > 0) {
-          result.types += 1;
-          result.quantity += quantity;
-          result.amount += quantity * (Number(item.p) || 0);
+          if (price >= 0) {
+            result.types += 1;
+            result.quantity += quantity;
+          } else {
+            result.deductions += 1;
+          }
+          result.amount += quantity * price;
         }
         return result;
-      }, { types: 0, quantity: 0, amount: 0 });
+      }, { types: 0, quantity: 0, amount: 0, deductions: 0 });
     }
 
     function cloneInputs(data = inputs) {
@@ -2792,8 +3265,8 @@
       if (!list) return;
       const entries = Object.entries(inputs).filter(([, item]) => Number(item.q) > 0);
       const summary = getInputSummary(inputs);
-      document.getElementById("drawer-total-qty").textContent = `${summary.types}種類・${summary.quantity}枚`;
-      document.getElementById("drawer-total-amount").textContent = formatNumber(summary.amount);
+      document.getElementById("drawer-total-qty").textContent = `${summary.types}種類・${summary.quantity}枚${summary.deductions ? `・控除${summary.deductions}件` : ""}`;
+      document.getElementById("drawer-total-amount").textContent = formatYen(summary.amount);
       document.getElementById("drawer-caption").textContent = entries.length
         ? `${summary.types}種類・合計${summary.quantity}枚を編集中`
         : "商品・数量・メモをまとめて編集";
@@ -2813,7 +3286,7 @@
               <div>
                 <div class="drawer-item-name">${escapeHtml(item.n)}</div>
                 <div class="drawer-rank">ランク ${escapeHtml(item.t)}</div>
-                <div class="drawer-item-price">¥${formatNumber(item.p)} × ${Number(item.q)}枚</div>
+                <div class="drawer-item-price">${formatYen(item.p)} × ${Number(item.q)}${Number(item.p) < 0 ? "" : "枚"}</div>
               </div>
               <button class="drawer-delete" type="button" data-drawer-action="delete" data-key="${encodedKey}" aria-label="${escapeHtml(item.n)}を削除">
                 <i class="bi bi-trash3" aria-hidden="true"></i>
@@ -2828,7 +3301,7 @@
             </div>
             ${changed ? `
               <div class="drawer-price-warning">
-                <span>選択時 ¥${formatNumber(item.p)} → 最新 ¥${formatNumber(latestPrice)}</span>
+                <span>選択時 ${formatYen(item.p)} → 最新 ${formatYen(latestPrice)}</span>
                 <button class="apply-price-btn" type="button" data-drawer-action="apply-price" data-key="${encodedKey}">最新価格を適用</button>
               </div>` : ""}
             <textarea class="drawer-memo" rows="2" maxlength="200" placeholder="傷・確認事項などの内部メモ" data-item-memo data-key="${encodedKey}">${escapeHtml(item.memo || "")}</textarea>
@@ -2871,7 +3344,7 @@
                 <b>${escapeHtml(item.n)}</b><br><small>ランク：${escapeHtml(item.t)}</small>
                 ${item.memo ? `<span class="receipt-item-memo no-print">内部メモ：${escapeHtml(item.memo)}</span>` : ""}
               </td>
-              <td style="text-align:center;">¥${formatNumber(item.p)}</td>
+              <td style="text-align:center;">${formatYen(item.p)}</td>
               <td style="text-align:center;">
                 ${readonly ? `<b>${Number(item.q)}</b>` : `
                   <div class="qty-ctrl has-value no-print" style="margin:auto;">
@@ -2881,7 +3354,7 @@
                   </div>
                   <span class="print-only"><b>${Number(item.q)}</b></span>`}
               </td>
-              <td style="text-align:right; font-weight:850;">¥${formatNumber(subtotal)}</td>
+              <td style="text-align:right; font-weight:850;">${formatYen(subtotal)}</td>
               <td class="no-print" style="text-align:center;">
                 ${readonly ? "" : `<button class="btn-delete-row" type="button" data-receipt-action="delete" data-key="${encodedKey}" aria-label="${escapeHtml(item.n)}を削除"><i class="bi bi-trash3" aria-hidden="true"></i></button>`}
               </td>
@@ -2893,12 +3366,13 @@
         <tr class="receipt-total-row">
           <td colspan="2" class="print-compress-text" style="text-align:right; font-weight:900;">合計査定額</td>
           <td class="print-compress-text" style="text-align:center; font-weight:900;">${summary.quantity}枚</td>
-          <td class="receipt-total-amount print-compress-total" style="text-align:right;">¥${formatNumber(summary.amount)}</td>
+          <td class="receipt-total-amount print-compress-total" style="text-align:right;">${formatYen(summary.amount)}</td>
           <td class="no-print"></td>
         </tr>`;
 
       const activeCase = cases[activeCaseId] || {};
       const customerName = readonly ? tempLogMeta.name : (document.getElementById("cust-name").value || "未指定");
+      const applicationId = readonly ? (tempLogMeta.applicationId || "") : (activeCase.applicationId || "");
       const cancelMessage = !readonly && activeCase.cancelIfSubMax === "希望する"
         ? `<span class="receipt-alert">満額査定以外は返送希望</span>`
         : "";
@@ -2908,6 +3382,7 @@
       document.getElementById("receipt-meta").innerHTML = `
         <div>
           <div>氏名：${escapeHtml(customerName)} 様</div>
+          ${applicationId ? `<div class="receipt-meta-sub">受付番号：${escapeHtml(applicationId)}</div>` : ""}
           ${cancelMessage}
         </div>
         <div class="receipt-meta-sub">${readonly ? "確定済み明細" : `明細作成：${escapeHtml(now)}`}<br>${summary.types}種類・${summary.quantity}枚</div>`;
@@ -2939,11 +3414,30 @@
     }
 
     function saveCurrentCase() {
-      if (!activeCaseId || !cases[activeCaseId]) return;
+      if (!activeCaseId || !cases[activeCaseId] || isViewingLog) return;
       cases[activeCaseId].name = document.getElementById("cust-name").value.trim() || "新規";
       cases[activeCaseId].data = inputs;
+      touchCase(activeCaseId);
       persistCases();
       markSaved();
+    }
+
+    function caseSignature(item) {
+      return JSON.stringify([
+        item.name, item.data, item.tel, item.cancelIfSubMax,
+        item.bankName, item.bankBranch, item.bankType, item.bankNum, item.bankHolder
+      ]);
+    }
+
+    // 内容が変わったときだけ更新日時を進める（サーバー側のマージで新しい方を残すため）
+    function touchCase(id) {
+      const item = cases[id];
+      if (!item) return false;
+      const signature = caseSignature(item);
+      if (caseSignatures[id] === signature && item.updatedAt) return false;
+      caseSignatures[id] = signature;
+      item.updatedAt = new Date().toISOString();
+      return true;
     }
 
     function persistCases() {
@@ -2972,18 +3466,48 @@
     function loadCase(id) {
       if (!id || !cases[id]) return;
       activeCaseId = id;
-      inputs = cases[id].data && typeof cases[id].data === "object" ? cases[id].data : {};
+      const item = cases[id];
+      inputs = item.data && typeof item.data === "object" ? item.data : {};
+      caseSignatures[id] = caseSignature(item);
       localStorage.setItem(ACTIVE_CASE_KEY, id);
-      document.getElementById("cust-name").value = cases[id].name === "新規" ? "" : (cases[id].name || "");
+      document.getElementById("cust-name").value = item.name === "新規" ? "" : (item.name || "");
       document.querySelectorAll("[data-case-field]").forEach(field => {
-        field.value = cases[id][field.dataset.caseField] || (field.dataset.caseField === "cancelIfSubMax" ? "希望しない" : "");
+        field.value = item[field.dataset.caseField] || (field.dataset.caseField === "cancelIfSubMax" ? "希望しない" : "");
       });
-      document.getElementById("cancel-banner").classList.toggle("visible", cases[id].cancelIfSubMax === "希望する");
+      document.getElementById("cancel-banner").classList.toggle("visible", item.cancelIfSubMax === "希望する");
+      updateApplicationInfo();
       updateCustomerSummary();
       currentPage = 1;
       calc();
       draw();
       updateCaseListUI();
+    }
+
+    function updateApplicationInfo() {
+      const item = cases[activeCaseId] || {};
+      const flags = Array.isArray(item.flags) ? item.flags : [];
+      const banner = document.getElementById("check-banner");
+      document.getElementById("check-banner-list").innerHTML = flags.map(flag => `<span>${escapeHtml(flag)}</span>`).join("");
+      banner.classList.toggle("visible", flags.length > 0);
+
+      const info = document.getElementById("application-info");
+      if (item.applicationId) {
+        info.hidden = false;
+        info.innerHTML = `<i class="bi bi-ticket-perforated me-1" aria-hidden="true"></i>受付番号 <b>${escapeHtml(item.applicationId)}</b>${item.createdAt ? `<span>受付 ${escapeHtml(item.createdAt)}</span>` : ""}`;
+      } else {
+        info.hidden = true;
+        info.innerHTML = "";
+      }
+
+      const bankInput = document.getElementById("cust-bank-num");
+      const hint = document.getElementById("bank-num-hint");
+      if (item.applicationId && item.bankNumMasked) {
+        bankInput.placeholder = `受付時の口座（${item.bankNumMasked}）`;
+        hint.textContent = "空欄なら受付時の口座で記録します。別の口座に振り込む場合だけ入力してください。";
+      } else {
+        bankInput.placeholder = "口座番号";
+        hint.textContent = "";
+      }
     }
 
     function selectCase(id) {
@@ -2995,8 +3519,8 @@
     function createNewCase(options = {}) {
       const { focusName = true, notify = true } = options;
       if (activeCaseId && cases[activeCaseId]) saveCurrentCase();
-      const id = `c_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
-      cases[id] = { name: "新規", data: {}, cancelIfSubMax: "希望しない" };
+      const id = createCaseId();
+      cases[id] = { name: "新規", data: {}, cancelIfSubMax: "希望しない", updatedAt: new Date().toISOString() };
       activeCaseId = id;
       inputs = {};
       persistCases();
@@ -3004,6 +3528,15 @@
       if (focusName) window.setTimeout(() => document.getElementById("cust-name").focus(), 0);
       if (notify) showToast("新しい査定を作成しました");
       return id;
+    }
+
+    function createCaseId() {
+      return `c_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+    }
+
+    function createRequestId(prefix) {
+      const random = window.crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
+      return `${prefix}_${random}`;
     }
 
     function autoUpdateCaseName() {
@@ -3016,10 +3549,13 @@
       if (!activeCaseId || !cases[activeCaseId]) return;
       const field = event.currentTarget;
       const key = field.dataset.caseField;
-      cases[activeCaseId][key] = field.value.trim();
+      let value = field.value.trim();
+      if (key === "bankNum") value = value.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\D/g, "");
+      cases[activeCaseId][key] = value;
       if (key === "cancelIfSubMax") {
         document.getElementById("cancel-banner").classList.toggle("visible", field.value === "希望する");
       }
+      touchCase(activeCaseId);
       persistCases();
       markSaved();
       updateCustomerSummary();
@@ -3028,10 +3564,13 @@
     function updateCustomerSummary() {
       const activeCase = cases[activeCaseId] || {};
       const parts = [];
+      if (activeCase.applicationId) parts.push("受付済");
       if (activeCase.tel) parts.push(activeCase.tel);
       if (activeCase.bankName) parts.push(activeCase.bankName);
-      if (activeCase.bankType) parts.push(activeCase.bankType);
+      if (activeCase.bankNum) parts.push(`口座 ****${activeCase.bankNum.slice(-4)}`);
+      else if (activeCase.bankNumMasked) parts.push(`口座 ${activeCase.bankNumMasked}`);
       if (activeCase.cancelIfSubMax === "希望する") parts.push("満額以外返送");
+      if (Array.isArray(activeCase.flags) && activeCase.flags.length) parts.push(`確認${activeCase.flags.length}件`);
       document.getElementById("customer-summary").textContent = parts.length
         ? parts.join("・")
         : "電話番号・振込情報を確認";
@@ -3044,11 +3583,12 @@
         const item = cases[id] || {};
         const summary = getInputSummary(item.data || {});
         const isActive = id === activeCaseId;
+        const hasFlags = Array.isArray(item.flags) && item.flags.length > 0;
         return `
           <div class="case-tab ${isActive ? "active" : ""}" role="button" tabindex="0" data-case-id="${escapeHtml(id)}" aria-current="${isActive ? "true" : "false"}">
             <div class="case-tab-copy">
-              <div class="case-name">${escapeHtml(item.name || "新規")}</div>
-              <div class="case-meta">${summary.quantity}枚・¥${formatNumber(summary.amount)}</div>
+              <div class="case-name">${hasFlags ? `<i class="bi bi-exclamation-diamond-fill case-flag" aria-label="確認事項あり"></i>` : ""}${escapeHtml(item.name || "新規")}</div>
+              <div class="case-meta">${summary.quantity}枚・${formatYen(summary.amount)}</div>
             </div>
             <button class="case-delete" type="button" data-case-delete="${escapeHtml(id)}" aria-label="${escapeHtml(item.name || "新規")}の査定を削除">
               <i class="bi bi-x-lg" aria-hidden="true"></i>
@@ -3061,8 +3601,16 @@
       if (!id || !cases[id]) return;
       const name = cases[id].name || "新規";
       if (!window.confirm(`「${name}」の査定を削除しますか？\nこの操作は元に戻せません。`)) return;
+      removeCase(id);
+      showToast("査定を削除しました");
+    }
 
+    // 査定を端末から消し、サーバーにも「削除済み」として伝える
+    function removeCase(id) {
       delete cases[id];
+      delete undoStacks[id];
+      delete caseSignatures[id];
+      markCaseDeleted(id);
       if (activeCaseId === id) {
         activeCaseId = Object.keys(cases)[0] || "";
         if (!activeCaseId) {
@@ -3071,10 +3619,31 @@
           loadCase(activeCaseId);
         }
       } else {
-        persistCases();
         updateCaseListUI();
       }
-      showToast("査定を削除しました");
+      persistCases();
+    }
+
+    function loadPendingDeletions() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(DELETED_CASES_KEY) || "[]");
+        pendingDeletedIds = Array.isArray(saved) ? saved.filter(id => typeof id === "string").slice(-500) : [];
+      } catch (error) {
+        pendingDeletedIds = [];
+      }
+    }
+
+    function persistPendingDeletions() {
+      try {
+        localStorage.setItem(DELETED_CASES_KEY, JSON.stringify(pendingDeletedIds.slice(-500)));
+      } catch (error) {
+        console.warn("削除記録の保存に失敗しました。", error);
+      }
+    }
+
+    function markCaseDeleted(id) {
+      if (!pendingDeletedIds.includes(id)) pendingDeletedIds.push(id);
+      persistPendingDeletions();
     }
 
     function switchMode(mode) {
@@ -3087,28 +3656,59 @@
       document.getElementById("btn-mode-main").setAttribute("aria-pressed", String(isMain));
       document.getElementById("btn-mode-logs").setAttribute("aria-pressed", String(!isMain));
       document.body.classList.toggle("history-open", !isMain);
-      if (!isMain) loadTradeLogs();
+      if (!isMain) reloadHistory();
       window.scrollTo({ top: 0, behavior: "auto" });
     }
 
+    function setHistoryTab(tab) {
+      historyTab = tab === "temp" ? "temp" : "trades";
+      ["trades", "temp"].forEach(name => {
+        const button = document.getElementById(`history-tab-${name}`);
+        button.classList.toggle("active", historyTab === name);
+        button.setAttribute("aria-selected", String(historyTab === name));
+      });
+      document.getElementById("history-caption").textContent = historyTab === "temp"
+        ? "一時保存した査定を、査定画面に読み込んで再開できます"
+        : "確定済みの査定内容を明細形式で確認できます";
+      reloadHistory();
+    }
+
+    function reloadHistory() {
+      if (historyTab === "temp") loadTempSaves();
+      else loadTradeLogs();
+    }
+
     async function finalizeTrade() {
-      const activeCase = cases[activeCaseId] || {};
+      const activeCase = cases[activeCaseId];
+      if (!activeCase) return;
       const summary = getInputSummary(inputs);
       if (!summary.quantity) {
         showToast("商品を1点以上追加してください", "error");
         return;
       }
-      if (!window.confirm(`買取を確定して保存しますか？\n合計 ${summary.quantity}枚 / ¥${formatNumber(summary.amount)}`)) return;
+      if (summary.amount < 0) {
+        showToast("控除後の合計がマイナスです。明細を確認してください", "error");
+        return;
+      }
+      const bankNote = activeCase.bankNum
+        ? `振込先：${activeCase.bankName || ""} ****${activeCase.bankNum.slice(-4)}（POSで入力）`
+        : activeCase.applicationId ? `振込先：受付時の口座 ${activeCase.bankNumMasked || ""}` : "振込先：未入力";
+      if (!window.confirm(`買取を確定して保存しますか？\n合計 ${summary.quantity}枚 / ${formatYen(summary.amount)}\n${bankNote}`)) return;
+
+      // 同じ査定には同じIDを使い続ける → タイムアウト後に押し直しても二重登録されない
+      if (!activeCase.tradeRequestId) {
+        activeCase.tradeRequestId = createRequestId("trade");
+        persistCases();
+      }
 
       const button = document.getElementById("btn-finalize");
       button.disabled = true;
       button.innerHTML = `<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>保存中`;
       const tradeData = {
-        action: "log_trade",
-        customerName: document.getElementById("cust-name").value.trim(),
+        requestId: activeCase.tradeRequestId,
+        applicationId: activeCase.applicationId || "",
+        customerName: document.getElementById("cust-name").value.trim() || activeCase.name || "",
         tel: activeCase.tel || "",
-        totalQty: summary.quantity,
-        totalAmount: summary.amount,
         items: Object.values(inputs).filter(item => Number(item.q) > 0),
         bankName: activeCase.bankName || "",
         bankBranch: activeCase.bankBranch || "",
@@ -3118,20 +3718,27 @@
       };
 
       try {
-        const result = await fetchJson(GAS_URL, { method: "POST", body: JSON.stringify(tradeData) }, 20000);
-        if (result?.result !== "SUCCESS") throw new Error(result?.message || "保存結果が不明です");
-        showToast("買取を確定・保存しました");
-        delete cases[activeCaseId];
-        activeCaseId = Object.keys(cases)[0] || "";
+        const result = await staffApi("log_trade", tradeData, 35000);
+        if (result.duplicate) {
+          showToast("この査定は確定済みでした（二重登録はしていません）");
+        } else {
+          showToast(`買取を確定しました（${formatYen(result.totalAmount)}）`);
+        }
+        if (Number(result.totalAmount) !== summary.amount) {
+          showToast(`サーバー集計 ${formatYen(result.totalAmount)} と画面の合計が違います。履歴を確認してください`, "error");
+        }
+        const finishedId = activeCaseId;
         document.getElementById("receipt").style.display = "none";
         document.getElementById("main-ui").style.display = "block";
         document.body.classList.remove("receipt-open");
-        if (!activeCaseId) createNewCase({ focusName: false, notify: false });
-        else loadCase(activeCaseId);
-        persistCases();
+        removeCase(finishedId);
+        refreshWaiting();
       } catch (error) {
         console.error("買取確定に失敗しました。", error);
-        showToast("保存に失敗しました。通信状況を確認してください", "error");
+        const timeout = error.name === "AbortError";
+        showToast(timeout
+          ? "通信がタイムアウトしました。もう一度押しても二重には登録されません"
+          : `保存できませんでした：${describeError(error)}`, "error");
       } finally {
         button.disabled = false;
         button.innerHTML = `<i class="bi bi-cloud-check me-1" aria-hidden="true"></i>買取確定・保存`;
@@ -3159,22 +3766,16 @@
       button.innerHTML = `<span class="spinner-border spinner-border-sm" aria-hidden="true"></span><span>保存中</span>`;
 
       try {
-        const result = await fetchJson(GAS_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "save_temp",
-            customerName: name,
-            tel: activeCase.tel || "",
-            items: inputs,
-            totalQty: summary.quantity,
-            totalAmount: summary.amount
-          })
+        await staffApi("save_temp", {
+          customerName: name,
+          tel: activeCase.tel || "",
+          applicationId: activeCase.applicationId || "",
+          items: inputs
         }, 20000);
-        if (result?.result && result.result !== "SUCCESS") throw new Error(result.message || "一時保存に失敗しました");
-        showToast("一時保存しました");
+        showToast("一時保存しました（履歴の「一時保存」から再開できます）");
       } catch (error) {
         console.error("一時保存に失敗しました。", error);
-        showToast("一時保存に失敗しました", "error");
+        showToast(`一時保存に失敗しました：${describeError(error)}`, "error");
       } finally {
         button.disabled = false;
         button.innerHTML = original;
@@ -3185,8 +3786,9 @@
       const container = document.getElementById("logs-container");
       container.innerHTML = statePanel("bi-arrow-repeat", "履歴を読み込んでいます", "しばらくお待ちください。");
       try {
-        const response = await fetchJson(`${GAS_URL}?action=getTradeLogs`, {}, 20000);
-        tradeLogs = Array.isArray(response) ? response : [];
+        const response = await staffApi("get_trade_logs", {}, 20000);
+        tradeLogs = Array.isArray(response.data) ? response.data : [];
+        if (historyTab !== "trades") return;
         if (!tradeLogs.length) {
           container.innerHTML = statePanel("bi-clock-history", "買取履歴はありません", "買取を確定すると、ここに履歴が表示されます。");
           return;
@@ -3195,17 +3797,88 @@
           <article class="log-item">
             <div>
               <div class="log-name">${escapeHtml(log.name || "氏名未設定")} 様</div>
-              <div class="log-meta">${escapeHtml(log.date || "日時不明")}・${toNonNegativeNumber(log.totalQty)}枚 買取完了</div>
+              <div class="log-meta">${escapeHtml(log.date || "日時不明")}・${toNonNegativeNumber(log.totalQty)}枚 買取完了${log.applicationId ? `・${escapeHtml(log.applicationId)}` : ""}</div>
             </div>
             <div class="log-side">
-              <div class="log-amount">¥${formatNumber(log.totalAmount)}</div>
+              <div class="log-amount">${formatYen(log.totalAmount)}</div>
               <button class="log-detail-btn" type="button" data-log-index="${index}">明細を表示</button>
             </div>
           </article>`).join("");
       } catch (error) {
         console.error("履歴の取得に失敗しました。", error);
-        container.innerHTML = statePanel("bi-cloud-slash", "履歴を取得できませんでした", "通信状況を確認して再読み込みしてください。", "再読み込み", "loadTradeLogs()");
+        if (historyTab !== "trades") return;
+        container.innerHTML = historyErrorPanel(error, "loadTradeLogs()");
       }
+    }
+
+    async function loadTempSaves() {
+      const container = document.getElementById("logs-container");
+      container.innerHTML = statePanel("bi-arrow-repeat", "一時保存を読み込んでいます", "しばらくお待ちください。");
+      try {
+        const response = await staffApi("list_temp", {}, 20000);
+        tempSaves = Array.isArray(response.data) ? response.data : [];
+        if (historyTab !== "temp") return;
+        if (!tempSaves.length) {
+          container.innerHTML = statePanel("bi-cloud", "一時保存はありません", "査定画面の「一時保存」で保存すると、ここから再開できます。");
+          return;
+        }
+        container.innerHTML = tempSaves.map((item, index) => `
+          <article class="log-item">
+            <div>
+              <div class="log-name">${escapeHtml(item.name || "氏名未設定")} 様</div>
+              <div class="log-meta">${escapeHtml(item.savedAt || "日時不明")} 保存・${toNonNegativeNumber(item.totalQty)}枚${item.applicationId ? `・${escapeHtml(item.applicationId)}` : ""}</div>
+            </div>
+            <div class="log-side">
+              <div class="log-amount">${formatYen(item.totalAmount)}</div>
+              <button class="log-detail-btn" type="button" data-temp-index="${index}">査定に読み込む</button>
+            </div>
+          </article>`).join("");
+      } catch (error) {
+        console.error("一時保存の取得に失敗しました。", error);
+        if (historyTab !== "temp") return;
+        container.innerHTML = historyErrorPanel(error, "loadTempSaves()");
+      }
+    }
+
+    function historyErrorPanel(error, retry) {
+      if (AUTH_ERROR_CODES.includes(error.code)) {
+        return statePanel("bi-shield-lock", "スタッフキーを確認してください", describeError(error), "設定を開く", "openSettings()");
+      }
+      return statePanel("bi-cloud-slash", "読み込めませんでした", `${describeError(error)}。通信状況を確認して再読み込みしてください。`, "再読み込み", retry);
+    }
+
+    function loadTempSave(index) {
+      const saved = tempSaves[index];
+      if (!saved) return;
+      const existing = Object.keys(cases).find(id => saved.applicationId && cases[id].applicationId === saved.applicationId);
+      const message = existing
+        ? `${saved.name} 様の査定はすでに開いています。一時保存の内容で新しいタブを作りますか？`
+        : `${saved.name} 様の一時保存（${saved.savedAt}）を査定に読み込みますか？`;
+      if (!window.confirm(message)) return;
+
+      const data = {};
+      (saved.items || []).forEach(item => {
+        if (!item || !item.n || !item.t) return;
+        data[`${item.n}-${item.t}`] = {
+          n: String(item.n),
+          t: String(item.t),
+          p: toSignedNumber(item.p),
+          q: toNonNegativeNumber(item.q),
+          memo: String(item.memo || "")
+        };
+      });
+      if (activeCaseId && cases[activeCaseId]) saveCurrentCase();
+      const id = createCaseId();
+      const waiting = waitingList.find(customer => saved.applicationId && customer.applicationId === saved.applicationId);
+      cases[id] = Object.assign(
+        { name: saved.name || "氏名未設定", tel: saved.tel || "", cancelIfSubMax: "希望しない" },
+        waiting ? caseFieldsFromWaiting(waiting) : {},
+        { applicationId: saved.applicationId || "", data, updatedAt: new Date().toISOString() }
+      );
+      persistCases();
+      loadCase(id);
+      switchMode("main");
+      showToast(`${saved.name} 様の一時保存を読み込みました`);
     }
 
     function showLogDetail(index) {
@@ -3219,13 +3892,13 @@
           logInputs[`${item.n}-${item.t}`] = {
             n: String(item.n),
             t: String(item.t),
-            p: toNonNegativeNumber(item.p),
+            p: toSignedNumber(item.p),
             q: toNonNegativeNumber(item.q),
             memo: String(item.memo || "")
           };
         });
         isViewingLog = true;
-        tempLogMeta = { name: String(logData.name || "氏名未設定") };
+        tempLogMeta = { name: String(logData.name || "氏名未設定"), applicationId: String(logData.applicationId || "") };
         inputs = logInputs;
         showReceipt();
       } catch (error) {
@@ -3236,78 +3909,113 @@
 
     async function refreshWaiting() {
       const select = document.getElementById("waiting-select");
+      if (!select || select.matches(":focus")) return;
       const previousValue = select.value;
-      try {
-        const response = await fetchJson(`${GAS_URL}?action=getWaiting`, {}, 12000);
-        waitingList = Array.isArray(response) ? response : [];
+      const setPlaceholder = (text, state) => {
         select.innerHTML = "";
-        const placeholder = document.createElement("option");
-        placeholder.value = "";
-        placeholder.textContent = waitingList.length ? `待機中 ${waitingList.length}名` : "待機中 0名";
-        select.appendChild(placeholder);
-        waitingList.forEach((customer, index) => {
-          const option = document.createElement("option");
-          option.value = String(index);
-          option.textContent = `${customer.name || "氏名未設定"} 様`;
-          select.appendChild(option);
-        });
-        if ([...select.options].some(option => option.value === previousValue)) select.value = previousValue;
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = text;
+        select.appendChild(option);
+        select.dataset.state = state;
+      };
+
+      if (!getStaffKey()) {
+        waitingList = [];
+        setPlaceholder("待機 キー未設定", "error");
+        return;
+      }
+
+      try {
+        const response = await staffApi("get_waiting", {}, 15000);
+        waitingList = Array.isArray(response.data) ? response.data : [];
+        waitingLoadState = "ok";
+        const label = window.innerWidth < 520 ? "待機" : "待機中";
+        setPlaceholder(`${label} ${waitingList.length}名`, waitingList.length ? "waiting" : "empty");
       } catch (error) {
         console.warn("待機中リストの取得に失敗しました。", error);
-        if (!waitingList.length) {
-          select.innerHTML = `<option value="">待機中 取得失敗</option>`;
+        waitingLoadState = "error";
+        if (AUTH_ERROR_CODES.includes(error.code)) {
+          waitingList = [];
+          setPlaceholder("待機 認証エラー", "error");
+          return;
         }
+        // 通信エラー時は前回の一覧を残し、失敗したことだけ表示する
+        setPlaceholder(waitingList.length ? `待機中 ${waitingList.length}名（更新失敗）` : "待機 取得失敗", "error");
       }
+
+      waitingList.forEach((customer, index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        const flags = Array.isArray(customer.flags) && customer.flags.length ? " ⚠" : "";
+        const opened = Object.values(cases).some(item => customer.applicationId && item.applicationId === customer.applicationId);
+        option.textContent = `${customer.name || "氏名未設定"} 様${flags}${opened ? "（査定中）" : ""}`;
+        select.appendChild(option);
+      });
+      if ([...select.options].some(option => option.value === previousValue)) select.value = previousValue;
+    }
+
+    function caseFieldsFromWaiting(customer) {
+      return {
+        name: customer.name || "氏名未設定",
+        tel: customer.tel || "",
+        cancelIfSubMax: customer.cancelStatus || "希望しない",
+        applicationId: customer.applicationId || "",
+        createdAt: customer.createdAt || "",
+        bankName: customer.bankName || "",
+        bankBranch: customer.bankBranch || "",
+        bankType: customer.bankType || "",
+        bankNum: "",
+        bankNumMasked: customer.bankNumMasked || "",
+        bankHolder: customer.bankHolder || "",
+        flags: Array.isArray(customer.flags) ? customer.flags : []
+      };
     }
 
     async function handleWaitingSelect(selectObject) {
       const index = Number(selectObject.value);
       if (selectObject.value === "" || !waitingList[index]) return;
       const customer = waitingList[index];
-      if (!window.confirm(`${customer.name || "氏名未設定"} 様の査定を開始しますか？`)) {
-        selectObject.value = "";
+      selectObject.value = "";
+      selectObject.blur();
+
+      // 同じ受付のタブがすでにあれば、そこへ切り替える（二重に開かない）
+      const openedId = Object.keys(cases).find(id => customer.applicationId && cases[id].applicationId === customer.applicationId);
+      if (openedId) {
+        selectCase(openedId);
+        showToast(`${customer.name || "お客様"} 様の査定に切り替えました`);
         return;
       }
 
+      const flagText = Array.isArray(customer.flags) && customer.flags.length ? `\n\n確認事項：${customer.flags.join("、")}` : "";
+      if (!window.confirm(`${customer.name || "氏名未設定"} 様の査定を開始しますか？${flagText}`)) return;
+
       if (activeCaseId && cases[activeCaseId]) saveCurrentCase();
-      const id = `c_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
-      cases[id] = {
-        name: customer.name || "氏名未設定",
-        tel: customer.tel || "",
-        cancelIfSubMax: customer.cancelStatus || "希望しない",
-        bankName: customer.bankName || "",
-        bankBranch: customer.bankBranch || "",
-        bankType: customer.bankType || "",
-        bankNum: customer.bankNum || "",
-        bankHolder: customer.bankHolder || "",
-        data: {}
-      };
+      const id = createCaseId();
+      cases[id] = Object.assign(caseFieldsFromWaiting(customer), { data: {}, updatedAt: new Date().toISOString() });
       activeCaseId = id;
       inputs = {};
       persistCases();
       loadCase(id);
 
       try {
-        await fetchJson(GAS_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "update_status",
-            customerName: customer.name || "",
-            newStatus: "査定中"
-          })
+        await staffApi("update_status", {
+          applicationId: customer.applicationId || "",
+          customerName: customer.name || "",
+          tel: customer.tel || "",
+          newStatus: "査定中"
         }, 15000);
         showToast(`${customer.name || "お客様"} 様の査定を開始しました`);
       } catch (error) {
         console.warn("待機ステータスの更新に失敗しました。", error);
-        showToast("査定は開始しましたが、待機ステータスの更新に失敗しました", "error");
+        showToast(`査定は開始しましたが、受付ステータスを更新できませんでした：${describeError(error)}`, "error");
       } finally {
         refreshWaiting();
-        selectObject.value = "";
       }
     }
 
     function scheduleServerBackup() {
-      if (syncSupported === false) return;
+      if (!getStaffKey() || AUTH_ERROR_CODES.includes(staffAuthState)) return;
       window.clearTimeout(backupTimer);
       backupTimer = window.setTimeout(() => backupCasesToServer(false), 2500);
     }
@@ -3316,106 +4024,285 @@
       const status = document.getElementById("sync-status");
       status.textContent = text;
       status.className = `sync-status ${state}`.trim();
+      const indicator = document.getElementById("save-indicator");
+      if (indicator && !indicator.classList.contains("saved")) {
+        indicator.dataset.sync = state;
+      }
     }
 
     async function backupCasesToServer(manual = false) {
-      if (manual) syncSupported = null;
+      if (!getStaffKey()) {
+        setSyncStatus("スタッフキー未設定のため、サーバー同期は停止しています", "error");
+        if (manual) showToast("先にスタッフキーを設定してください", "error");
+        return;
+      }
       setSyncStatus("サーバーへ保存中", "syncing");
-      const updatedAt = new Date().toISOString();
-      const payload = {
-        action: "backup_cases",
-        scope: SERVER_BACKUP_SCOPE,
-        updatedAt,
-        cases,
-        activeCaseId
-      };
+      const sentDeletedIds = pendingDeletedIds.slice();
       try {
-        const result = await fetchJson(GAS_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
+        const result = await staffApi("backup_cases", {
+          scope: SERVER_BACKUP_SCOPE,
+          cases,
+          deletedCaseIds: sentDeletedIds,
+          activeCaseId
         }, 20000);
-        if (result?.result !== "SUCCESS" || result?.action !== "backup_cases") {
-          throw new Error("GAS_BACKUP_ACTION_NOT_INSTALLED");
-        }
-        syncSupported = true;
+        pendingDeletedIds = pendingDeletedIds.filter(id => !sentDeletedIds.includes(id));
+        persistPendingDeletions();
         const time = new Intl.DateTimeFormat("ja-JP", { hour: "2-digit", minute: "2-digit" }).format(new Date());
-        setSyncStatus(`サーバー保存済み ${time}`, "synced");
+        setSyncStatus(`サーバー保存済み ${time}（サーバー上の査定 ${result.caseCount ?? "-"}件）`, "synced");
         if (manual) showToast("査定中データをサーバーへ保存しました");
       } catch (error) {
-        syncSupported = false;
-        setSyncStatus("GAS側のバックアップ機能が未設定です", "error");
-        if (manual) showToast("サーバー保存にはGAS追加コードの反映が必要です", "error");
+        setSyncStatus(`サーバー保存に失敗：${describeError(error)}`, "error");
+        if (manual) showToast(`サーバー保存に失敗しました：${describeError(error)}`, "error");
       }
     }
 
     async function restoreServerBackup(manual = false) {
-      if (manual) syncSupported = null;
+      if (!getStaffKey()) {
+        setSyncStatus("スタッフキー未設定のため、サーバー同期は停止しています", "error");
+        if (manual) showToast("先にスタッフキーを設定してください", "error");
+        return;
+      }
       setSyncStatus("サーバーバックアップを確認中", "syncing");
       try {
-        const result = await fetchJson(
-          `${GAS_URL}?action=get_case_backup&scope=${encodeURIComponent(SERVER_BACKUP_SCOPE)}`,
-          {},
-          15000
-        );
-        if (result?.result !== "SUCCESS" || result?.action !== "get_case_backup") {
-          throw new Error("GAS_BACKUP_ACTION_NOT_INSTALLED");
-        }
-        syncSupported = true;
+        const result = await staffApi("get_case_backup", { scope: SERVER_BACKUP_SCOPE }, 15000);
         const serverPayload = result.payload;
         if (!serverPayload?.cases || typeof serverPayload.cases !== "object") {
-          setSyncStatus("サーバー保存を利用できます", "synced");
-          if (manual) showToast("復元できるバックアップはありません", "error");
+          setSyncStatus("サーバー同期を利用できます", "synced");
+          if (manual) showToast("サーバーに保存された査定はありません", "error");
           return;
         }
 
-        const localUpdatedAt = Date.parse(localStorage.getItem(LOCAL_UPDATED_KEY) || "") || 0;
-        const serverUpdatedAt = Date.parse(serverPayload.updatedAt || "") || 0;
+        const serverDeleted = new Set(serverPayload.deletedCaseIds || []);
+        const serverCases = Object.fromEntries(
+          Object.entries(serverPayload.cases).filter(([id, item]) => item && typeof item === "object" && !serverDeleted.has(id) && !pendingDeletedIds.includes(id))
+        );
+        const toAdd = Object.keys(serverCases).filter(id => !cases[id]);
+        const toUpdate = Object.keys(serverCases).filter(id => cases[id] && (Date.parse(serverCases[id].updatedAt || "") || 0) > (Date.parse(cases[id].updatedAt || "") || 0));
         const localHasData = Object.values(cases).some(caseItem => getInputSummary(caseItem.data || {}).quantity > 0 || (caseItem.name && caseItem.name !== "新規"));
-        const shouldRestore = manual
-          ? window.confirm("サーバーに保存された査定中データで、この端末の査定中データを置き換えますか？")
-          : (!localHasData && serverUpdatedAt > localUpdatedAt);
 
-        if (shouldRestore) {
-          cases = serverPayload.cases;
-          activeCaseId = serverPayload.activeCaseId && cases[serverPayload.activeCaseId]
-            ? serverPayload.activeCaseId
-            : Object.keys(cases)[0] || "";
-          if (!activeCaseId) createNewCase({ focusName: false, notify: false });
-          else loadCase(activeCaseId);
+        let shouldMerge;
+        if (manual) {
+          if (!toAdd.length && !toUpdate.length) {
+            setSyncStatus("この端末は最新です", "synced");
+            showToast("取り込める新しい査定はありません");
+            return;
+          }
+          shouldMerge = window.confirm(`サーバーの査定を取り込みますか？\n追加 ${toAdd.length}件・更新 ${toUpdate.length}件\n（この端末にだけある査定はそのまま残ります）`);
+        } else {
+          // 起動時は、この端末が空のときだけ自動で取り込む
+          shouldMerge = !localHasData && toAdd.length > 0;
+        }
+
+        if (shouldMerge) {
+          if (!localHasData) {
+            Object.keys(cases).forEach(id => { if (!serverCases[id]) delete cases[id]; });
+          }
+          [...toAdd, ...toUpdate].forEach(id => { cases[id] = serverCases[id]; });
+          const nextActive = cases[activeCaseId] ? activeCaseId : (serverPayload.activeCaseId && cases[serverPayload.activeCaseId] ? serverPayload.activeCaseId : Object.keys(cases)[0]);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
-          localStorage.setItem(ACTIVE_CASE_KEY, activeCaseId);
-          localStorage.setItem(LOCAL_UPDATED_KEY, serverPayload.updatedAt || new Date().toISOString());
-          setSyncStatus("サーバーバックアップを復元済み", "synced");
-          if (manual) showToast("サーバーバックアップを復元しました");
-        } else if (!manual && serverUpdatedAt > localUpdatedAt) {
-          setSyncStatus("サーバーに新しいバックアップがあります・復元で確認", "synced");
+          localStorage.setItem(LOCAL_UPDATED_KEY, new Date().toISOString());
+          if (!nextActive) createNewCase({ focusName: false, notify: false });
+          else loadCase(nextActive);
+          setSyncStatus(`サーバーから ${toAdd.length + toUpdate.length}件を取り込みました`, "synced");
+          if (manual) showToast("サーバーの査定を取り込みました");
+        } else if (toAdd.length || toUpdate.length) {
+          setSyncStatus(`サーバーに未取り込みの査定が ${toAdd.length + toUpdate.length}件あります（設定から取り込めます）`, "synced");
         } else {
           setSyncStatus("サーバー同期を利用できます", "synced");
           if (manual) showToast("端末の査定中データを維持しました");
         }
       } catch (error) {
-        syncSupported = false;
-        setSyncStatus("GAS側のバックアップ機能が未設定です", "error");
-        if (manual) showToast("サーバー復元にはGAS追加コードの反映が必要です", "error");
+        setSyncStatus(`サーバー同期を確認できません：${describeError(error)}`, "error");
+        if (manual) showToast(`サーバーから取り込めませんでした：${describeError(error)}`, "error");
       }
     }
 
-    async function copyGasBackupCode() {
-      const code = document.getElementById("gas-backup-code")?.textContent.trim() || "";
-      if (!code) return;
-      try {
-        await navigator.clipboard.writeText(code);
-      } catch (error) {
-        const textarea = document.createElement("textarea");
-        textarea.value = code;
-        textarea.style.position = "fixed";
-        textarea.style.opacity = "0";
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        textarea.remove();
+    // ===== スタッフ用API =====
+    class ApiError extends Error {
+      constructor(message, code) {
+        super(message);
+        this.name = "ApiError";
+        this.code = code;
       }
-      showToast("GAS追加コードをコピーしました");
+    }
+
+    function getStaffKey() {
+      try {
+        return localStorage.getItem(STAFF_KEY_STORAGE) || "";
+      } catch (error) {
+        return "";
+      }
+    }
+
+    async function staffApi(action, data = {}, timeoutMs = 20000) {
+      const apiKey = getStaffKey();
+      if (!apiKey) {
+        setStaffAuthState("missing");
+        throw new ApiError("スタッフキーが未設定です", "NO_STAFF_KEY");
+      }
+      // 本文に入れて送る（URLにキーを載せない）。Content-Typeは付けずにCORSの事前確認を避ける
+      const result = await fetchJson(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({ ...data, action, apiKey })
+      }, timeoutMs);
+      if (!result || result.result !== "SUCCESS") {
+        const code = result?.code || "UNKNOWN";
+        const message = result?.message || "サーバーでエラーが発生しました";
+        if (AUTH_ERROR_CODES.includes(code)) setStaffAuthState(code, message);
+        throw new ApiError(message, code);
+      }
+      if (staffAuthState !== "ok") setStaffAuthState("ok");
+      return result;
+    }
+
+    function describeError(error) {
+      if (!error) return "不明なエラー";
+      if (error.name === "AbortError") return "通信がタイムアウトしました";
+      if (error instanceof ApiError) return error.message;
+      return "通信できませんでした";
+    }
+
+    function setStaffAuthState(state, message = "") {
+      staffAuthState = state;
+      staffAuthMessage = message;
+      const banner = document.getElementById("auth-banner");
+      const text = document.getElementById("auth-banner-text");
+      const status = document.getElementById("staff-key-status");
+      const needsAction = state !== "ok" && state !== "unknown";
+      const messages = {
+        missing: "スタッフキーが未設定です。待機一覧・買取確定・履歴を使うには設定してください。",
+        NO_STAFF_KEY: "スタッフキーが未設定です。待機一覧・買取確定・履歴を使うには設定してください。",
+        UNAUTHORIZED: "スタッフキーが正しくありません。設定画面でキーを入力し直してください。",
+        STAFF_AUTH_NOT_CONFIGURED: "サーバー側にスタッフキーが設定されていません（Apps Scriptで setupPosApiKey を実行）。",
+        STAFF_KEY_TOO_SHORT: "サーバーのスタッフキーが短すぎます。setupPosApiKey で作り直してください。"
+      };
+      banner.classList.toggle("visible", needsAction);
+      if (needsAction) text.textContent = messages[state] || message || "スタッフ認証を確認してください。";
+      document.getElementById("settings-btn").classList.toggle("needs-attention", needsAction);
+      if (status) {
+        status.className = `settings-status ${state === "ok" ? "ok" : needsAction ? "error" : ""}`;
+        status.textContent = state === "ok" ? "接続できています" : needsAction ? (messages[state] || message) : (getStaffKey() ? "保存済み（未確認）" : "未設定");
+      }
+    }
+
+    // ===== 設定・テーマ =====
+    function openSettings() {
+      const input = document.getElementById("staff-key-input");
+      input.value = getStaffKey();
+      input.type = "password";
+      document.getElementById("staff-key-visibility").textContent = "表示";
+      setStaffAuthState(staffAuthState, staffAuthMessage);
+      renderThemeOptions();
+      document.getElementById("settings-backdrop").classList.add("open");
+      window.setTimeout(() => (getStaffKey() ? document.querySelector("#settings-backdrop .product-modal-close") : input).focus(), 0);
+    }
+
+    function closeSettings() {
+      document.getElementById("settings-backdrop").classList.remove("open");
+    }
+
+    function toggleStaffKeyVisibility() {
+      const input = document.getElementById("staff-key-input");
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      document.getElementById("staff-key-visibility").textContent = show ? "隠す" : "表示";
+    }
+
+    async function saveStaffKey(event) {
+      event?.preventDefault();
+      const value = document.getElementById("staff-key-input").value.trim();
+      if (!value) {
+        showToast("スタッフキーを入力してください", "error");
+        return;
+      }
+      try {
+        localStorage.setItem(STAFF_KEY_STORAGE, value);
+      } catch (error) {
+        showToast("この端末にキーを保存できませんでした", "error");
+        return;
+      }
+      const status = document.getElementById("staff-key-status");
+      status.className = "settings-status";
+      status.textContent = "接続を確認しています…";
+      try {
+        await staffApi("verify_staff", {}, 15000);
+        showToast("スタッフキーを保存しました");
+        refreshWaiting();
+        restoreServerBackup(false);
+      } catch (error) {
+        if (!AUTH_ERROR_CODES.includes(error.code)) {
+          status.className = "settings-status error";
+          status.textContent = `保存しましたが接続を確認できません：${describeError(error)}`;
+        }
+      }
+    }
+
+    function clearStaffKey() {
+      if (!window.confirm("この端末からスタッフキーを削除しますか？")) return;
+      try { localStorage.removeItem(STAFF_KEY_STORAGE); } catch (error) { /* noop */ }
+      document.getElementById("staff-key-input").value = "";
+      setStaffAuthState("missing");
+      refreshWaiting();
+    }
+
+    function getThemePreference() {
+      try {
+        const value = localStorage.getItem(THEME_KEY);
+        return ["light", "dark"].includes(value) ? value : "auto";
+      } catch (error) {
+        return "auto";
+      }
+    }
+
+    function applyTheme(preference) {
+      const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+      const dark = preference === "dark" || (preference === "auto" && prefersDark);
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#0c101b" : "#11194d");
+      const toggle = document.getElementById("theme-toggle");
+      if (toggle) {
+        toggle.innerHTML = `<i class="bi ${dark ? "bi-sun" : "bi-moon-stars"}" aria-hidden="true"></i>`;
+        toggle.setAttribute("aria-label", dark ? "ライトテーマに切り替え" : "ダークテーマに切り替え");
+      }
+      renderThemeOptions();
+    }
+
+    function setThemePreference(preference) {
+      try { localStorage.setItem(THEME_KEY, preference); } catch (error) { /* noop */ }
+      applyTheme(preference);
+    }
+
+    function toggleTheme() {
+      setThemePreference(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+    }
+
+    function renderThemeOptions() {
+      const preference = getThemePreference();
+      document.querySelectorAll("[data-theme-option]").forEach(button => {
+        const active = button.dataset.themeOption === preference;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-checked", String(active));
+      });
+    }
+
+    // ===== 絞り込みパネル =====
+    function initFilterPanel() {
+      const panel = document.getElementById("filter-panel");
+      if (!panel) return;
+      // 広い画面では最初から開き、スマホでは閉じておく
+      panel.open = window.matchMedia("(min-width: 761px)").matches;
+      updateFilterSummary();
+    }
+
+    function updateFilterSummary() {
+      const summary = document.getElementById("filter-summary");
+      if (!summary) return;
+      const parts = [];
+      if (currentKana) parts.push(`${currentKana}行`);
+      if (currentRarity !== "ALL") parts.push(currentRarity);
+      if (selectedOnly) parts.push("選択中のみ");
+      summary.textContent = parts.length ? parts.join("・") : "すべて表示";
+      summary.classList.toggle("active", parts.length > 0);
     }
 
     function statePanel(icon, title, text, actionLabel = "", action = "") {
@@ -3563,72 +4450,12 @@
     function formatNumber(value) {
       return toSignedNumber(value).toLocaleString("ja-JP");
     }
+
+    function formatYen(value) {
+      const number = toSignedNumber(value);
+      return number < 0 ? `−¥${Math.abs(number).toLocaleString("ja-JP")}` : `¥${number.toLocaleString("ja-JP")}`;
+    }
   </script>
 
-  <script type="text/plain" id="gas-backup-code">
-// 既存の doGet(e) の先頭に追加：
-// const backupResponse = handlePosBackupGet_(e);
-// if (backupResponse) return backupResponse;
-
-// 既存の doPost(e) でJSONを解析した直後に追加：
-// const backupResponse = handlePosBackupPost_(data);
-// if (backupResponse) return backupResponse;
-
-function handlePosBackupGet_(e) {
-      if (!e || e.parameter.action !== 'get_case_backup') return null;
-      const scope = String(e.parameter.scope || 'pklab-pos-shared');
-      const file = getPosBackupFile_(scope);
-      const payload = file ? JSON.parse(file.getBlob().getDataAsString('UTF-8')) : null;
-      return posJson_({
-        result: 'SUCCESS',
-        action: 'get_case_backup',
-        payload: payload
-      });
-}
-
-function handlePosBackupPost_(data) {
-      if (!data || data.action !== 'backup_cases') return null;
-      const scope = String(data.scope || 'pklab-pos-shared');
-      const lock = LockService.getScriptLock();
-      lock.waitLock(10000);
-      try {
-        const payload = {
-          updatedAt: data.updatedAt || new Date().toISOString(),
-          activeCaseId: data.activeCaseId || '',
-          cases: data.cases || {}
-        };
-        const content = JSON.stringify(payload);
-        const file = getPosBackupFile_(scope);
-        if (file) {
-          file.setContent(content);
-        } else {
-          DriveApp.createFile(posBackupFileName_(scope), content, MimeType.PLAIN_TEXT);
-        }
-        return posJson_({
-          result: 'SUCCESS',
-          action: 'backup_cases',
-          updatedAt: payload.updatedAt
-        });
-      } finally {
-        lock.releaseLock();
-      }
-}
-
-function getPosBackupFile_(scope) {
-      const files = DriveApp.getFilesByName(posBackupFileName_(scope));
-      return files.hasNext() ? files.next() : null;
-}
-
-function posBackupFileName_(scope) {
-      const safeScope = String(scope).replace(/[^a-zA-Z0-9_-]/g, '_');
-      return 'PKLAB_POS_BACKUP_' + safeScope + '.json';
-}
-
-function posJson_(value) {
-      return ContentService
-        .createTextOutput(JSON.stringify(value))
-        .setMimeType(ContentService.MimeType.JSON);
-}
-  </script>
 </body>
 </html>
