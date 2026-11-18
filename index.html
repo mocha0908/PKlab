@@ -945,7 +945,7 @@
     .rank-control-cell { text-align: right; }
     .qty-ctrl {
       display: inline-grid;
-      grid-template-columns: 28px 38px 28px;
+      grid-template-columns: 28px 54px 28px;
       align-items: center;
       overflow: hidden;
       border: 1px solid var(--line-strong);
@@ -975,7 +975,7 @@
     .qty-btn:hover { background: var(--main-soft); }
     .qty-ctrl.has-value .qty-btn:hover { background: rgba(255, 255, 255, .13); }
     .qty-num {
-      width: 38px;
+      width: 54px;
       height: 29px;
       border: 0;
       border-inline: 1px solid var(--line);
@@ -1495,9 +1495,9 @@
       .product-name { font-size: .7rem; }
       .rank-table { font-size: .66rem; }
       .rank-label { width: 18px; font-size: .64rem; }
-      .qty-ctrl { grid-template-columns: 25px 34px 25px; }
+      .qty-ctrl { grid-template-columns: 25px 48px 25px; }
       .qty-btn { width: 25px; height: 28px; }
-      .qty-num { width: 34px; height: 28px; }
+      .qty-num { width: 48px; height: 28px; }
       .list-view .product-card { grid-template-columns: 86px minmax(0, 1fr); min-height: 136px; }
       .list-view .product-image-wrap { min-height: 136px; }
       .list-view .product-body { display: block; padding: 8px 9px; }
@@ -1792,9 +1792,9 @@
 
     /* ===== 追加：タッチ操作の端末ではボタンを大きく ===== */
     @media (pointer: coarse) {
-      .qty-ctrl { grid-template-columns: 34px 40px 34px; }
+      .qty-ctrl { grid-template-columns: 34px 54px 34px; }
       .qty-btn { width: 34px; height: 34px; font-size: 1.1rem; }
-      .qty-num { width: 40px; height: 34px; font-size: .82rem; }
+      .qty-num { width: 54px; height: 34px; font-size: .82rem; }
       .case-delete { width: 32px; height: 32px; }
     }
     @media (max-width: 760px) {
@@ -1879,6 +1879,17 @@
     .offer-url-row .product-save-btn { border-radius: 10px; padding: 0 14px; font-size: .76rem; font-weight: 700; white-space: nowrap; }
     .offer-share-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
     .offer-share-actions .sync-btn { padding: 8px 12px; font-size: .74rem; text-decoration: none; }
+    .offer-message-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 12px; }
+    .offer-message-head .settings-link-btn { margin: 0; }
+    .offer-message { min-height: 0; resize: vertical; font-size: .78rem; line-height: 1.6; white-space: pre-wrap; }
+    .template-fields { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .template-field { border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px 10px; background: var(--surface-soft); color: var(--ink); font-size: .72rem; font-weight: 700; }
+    .template-field:hover { border-color: var(--main); }
+    .template-field small { margin-left: 4px; color: var(--muted); font-weight: 400; }
+    .template-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; color: var(--muted); font-size: .68rem; }
+    .template-meta .error { color: var(--danger); font-weight: 700; }
+    .template-preview { max-height: 220px; overflow: auto; margin: 0 0 10px; border: 1px dashed var(--line-strong); border-radius: 10px; padding: 10px 12px; background: var(--surface-soft); color: var(--ink); font-family: inherit; font-size: .76rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
+    .template-save { border-radius: 8px; padding: 8px 14px; font-size: .74rem; font-weight: 700; }
     .offer-line-btn { border-color: #06c755 !important; background: #06c755 !important; color: #fff !important; }
 
     #offer-result {
@@ -2507,6 +2518,20 @@
           <button class="settings-link-btn" type="button" onclick="clearStaffKey()">この端末からキーを削除</button>
         </section>
 
+        <section class="settings-section" id="settings-template">
+          <h3 class="settings-heading">案内文テンプレート</h3>
+          <p class="settings-help">お客様にURLを送るときの案内文です。全端末で共通です。下の項目を押すと、カーソルの位置に差し込めます。</p>
+          <div class="template-fields" id="template-fields"></div>
+          <textarea id="offer-template-input" class="control-input offer-message" rows="9" maxlength="1000" spellcheck="false"></textarea>
+          <div class="template-meta"><span id="offer-template-count">0 / 1000</span><span id="offer-template-status"></span></div>
+          <div class="field-label" style="margin-top:10px">プレビュー（見本のお客様）</div>
+          <pre id="offer-template-preview" class="template-preview"></pre>
+          <div class="sync-actions">
+            <button class="product-save-btn template-save" type="button" onclick="saveOfferTemplate()">保存する</button>
+            <button class="sync-btn" type="button" onclick="restoreDefaultOfferTemplate()">初期の案内文に戻す</button>
+          </div>
+        </section>
+
         <section class="settings-section">
           <h3 class="settings-heading">テーマ</h3>
           <div class="segmented" role="radiogroup" aria-label="テーマ">
@@ -2564,9 +2589,15 @@
               <input id="offer-share-url" class="control-input" type="text" readonly>
               <button class="product-save-btn" type="button" onclick="copyOfferUrl()"><i class="bi bi-clipboard me-1" aria-hidden="true"></i>コピー</button>
             </div>
+            <div class="offer-message-head">
+              <label class="field-label" for="offer-share-message">案内文（このお客様用に直せます）</label>
+              <button class="settings-link-btn" type="button" onclick="resetOfferMessage()">テンプレートに戻す</button>
+            </div>
+            <textarea id="offer-share-message" class="control-input offer-message" rows="8" spellcheck="false"></textarea>
             <div class="offer-share-actions">
               <a id="offer-share-line" class="sync-btn offer-line-btn" href="#" target="_blank" rel="noopener noreferrer">LINEで送る</a>
-              <button class="sync-btn" type="button" onclick="copyOfferMessage()">案内文ごとコピー</button>
+              <button class="sync-btn" type="button" onclick="copyOfferMessage()">案内文をコピー</button>
+              <button class="sync-btn" type="button" onclick="closeOfferShare(); openSettings('template')">テンプレートを編集</button>
             </div>
             <p class="settings-help">お客様はURLを開いたあと、<b>電話番号の下4桁</b>で本人確認をします。5回間違えるとURLはロックされます。金額を変えた場合は再発行してください（古いURLは無効になります）。</p>
           </div>
@@ -2589,6 +2620,7 @@
     const LOCAL_UPDATED_KEY = "pk_pos_local_updated_at";
     const CUSTOM_PRODUCTS_KEY = "pk_pos_custom_products_v1";
     const SERVER_BACKUP_SCOPE = "pklab-pos-shared";
+    const MAX_QUANTITY = 99999;
     const DATA_REFRESH_INTERVAL = 5 * 60 * 1000;
     const STAFF_KEY_STORAGE = "pk_pos_staff_key";
     const THEME_KEY = "pk_pos_theme";
@@ -2597,6 +2629,27 @@
     // お客様用ページのURL。空欄なら、このPOSと同じ場所の offer.html を使います
     const OFFER_PAGE_URL = "";
     const OFFER_QR_LIBRARY_URL = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js";
+    // 案内文テンプレート（設定画面で編集。サーバーに保存され全端末で共通）
+    const OFFER_TEMPLATE_CACHE_KEY = "pk_pos_offer_template";
+    const OFFER_TEMPLATE_FIELDS = [
+      ["{お客様名}", "お客様の名前（「様」は付きません）"],
+      ["{URL}", "お客様用ページのURL（必須）"],
+      ["{回答期限}", "例：11/13(金) 14:00"],
+      ["{合計金額}", "提示した査定額（全品）"],
+      ["{枚数}", "提示したカードの枚数"]
+    ];
+    const DEFAULT_OFFER_TEMPLATE = [
+      "{お客様名} 様",
+      "",
+      "ポケカ買取ラボです。査定が完了しました。",
+      "下記のURLから、カードごとに「買取」か「キャンセル」をお選びいただき、振込先のご確認とサインをお願いいたします。",
+      "（ページを開くときに、お申込み時の電話番号の下4桁を入力します）",
+      "",
+      "査定額：{合計金額}（{枚数}枚）",
+      "回答期限：{回答期限}",
+      "",
+      "{URL}"
+    ].join("\n");
     const AUTH_ERROR_CODES = ["UNAUTHORIZED", "STAFF_AUTH_NOT_CONFIGURED", "STAFF_KEY_TOO_SHORT", "NO_STAFF_KEY"];
 
     let cards = [];
@@ -2660,6 +2713,7 @@
       if (!getStaffKey()) setStaffAuthState("missing");
       await loadCardData();
       if (getStaffKey()) {
+        loadPosSettings();
         await restoreServerBackup(false);
       } else {
         setSyncStatus("スタッフキー未設定のため、サーバー同期は停止しています", "error");
@@ -3175,7 +3229,7 @@
             <td class="rank-control-cell">
               <div class="qty-ctrl ${quantity > 0 ? "has-value" : ""}">
                 <button class="qty-btn" type="button" data-qty-action="decrease" data-card-index="${card._index}" data-rank="${rank}" data-price="${price}" aria-label="${escapeHtml(card.name)} ランク${rank}を1枚減らす">−</button>
-                <input class="qty-num" type="number" min="0" max="999" inputmode="numeric" value="${quantity || ""}" placeholder="0" data-card-qty data-card-index="${card._index}" data-rank="${rank}" data-price="${price}" aria-label="${escapeHtml(card.name)} ランク${rank}の枚数">
+                <input class="qty-num" type="number" min="0" max="99999" inputmode="numeric" value="${quantity || ""}" placeholder="0" data-card-qty data-card-index="${card._index}" data-rank="${rank}" data-price="${price}" aria-label="${escapeHtml(card.name)} ランク${rank}の枚数">
                 <button class="qty-btn" type="button" data-qty-action="increase" data-card-index="${card._index}" data-rank="${rank}" data-price="${price}" aria-label="${escapeHtml(card.name)} ランク${rank}を1枚増やす">＋</button>
               </div>
             </td>
@@ -3310,7 +3364,7 @@
           n: name,
           t: type,
           p: previous ? Number(previous.p) || 0 : Number(price) || 0,
-          q: Math.min(quantity, 999),
+          q: Math.min(quantity, MAX_QUANTITY),
           memo: previous?.memo || ""
         };
       }
@@ -3320,7 +3374,7 @@
     function updateQtyManually(name, type, price, value) {
       if (isViewingLog) return;
       const key = `${name}-${type}`;
-      const quantity = Math.min(Math.max(parseInt(value, 10) || 0, 0), 999);
+      const quantity = Math.min(Math.max(parseInt(value, 10) || 0, 0), MAX_QUANTITY);
       const previous = inputs[key];
       if (quantity === (Number(previous?.q) || 0)) return;
       pushUndo("数量直接入力");
@@ -3526,7 +3580,7 @@
             <div class="drawer-item-actions">
               <div class="qty-ctrl has-value">
                 <button class="qty-btn" type="button" data-drawer-action="decrease" data-key="${encodedKey}" aria-label="1枚減らす">−</button>
-                <input class="qty-num" type="number" min="0" max="999" inputmode="numeric" value="${Number(item.q)}" data-drawer-qty data-key="${encodedKey}" aria-label="数量">
+                <input class="qty-num" type="number" min="0" max="99999" inputmode="numeric" value="${Number(item.q)}" data-drawer-qty data-key="${encodedKey}" aria-label="数量">
                 <button class="qty-btn" type="button" data-drawer-action="increase" data-key="${encodedKey}" aria-label="1枚増やす">＋</button>
               </div>
             </div>
@@ -3582,7 +3636,7 @@
                 ${readonly ? `<b>${Number(item.q)}</b>` : `
                   <div class="qty-ctrl has-value no-print" style="margin:auto;">
                     <button class="qty-btn" type="button" data-receipt-action="decrease" data-key="${encodedKey}" aria-label="1枚減らす">−</button>
-                    <input class="qty-num" type="number" min="0" max="999" inputmode="numeric" value="${Number(item.q)}" data-receipt-qty data-key="${encodedKey}" aria-label="数量">
+                    <input class="qty-num" type="number" min="0" max="99999" inputmode="numeric" value="${Number(item.q)}" data-receipt-qty data-key="${encodedKey}" aria-label="数量">
                     <button class="qty-btn" type="button" data-receipt-action="increase" data-key="${encodedKey}" aria-label="1枚増やす">＋</button>
                   </div>
                   <span class="print-only"><b>${Number(item.q)}</b></span>`}
@@ -4408,6 +4462,129 @@
       return JSON.stringify(Object.values(inputs).filter(item => Number(item.q) > 0).map(item => [item.n, item.t, Number(item.p), Number(item.q)]));
     }
 
+    // ===== 案内文テンプレート =====
+    function getOfferTemplate() {
+      try {
+        return localStorage.getItem(OFFER_TEMPLATE_CACHE_KEY) || DEFAULT_OFFER_TEMPLATE;
+      } catch (error) {
+        return DEFAULT_OFFER_TEMPLATE;
+      }
+    }
+
+    function cacheOfferTemplate(template) {
+      try {
+        if (template) localStorage.setItem(OFFER_TEMPLATE_CACHE_KEY, template);
+        else localStorage.removeItem(OFFER_TEMPLATE_CACHE_KEY);
+      } catch (error) { /* noop */ }
+    }
+
+    // サーバーに保存された共通の設定を読み込む（起動時・キー保存時）
+    async function loadPosSettings() {
+      if (!getStaffKey()) return;
+      try {
+        const response = await staffApi("get_settings", {}, 15000);
+        cacheOfferTemplate(response.settings?.offerMessageTemplate || "");
+      } catch (error) {
+        console.warn("共通設定を読み込めませんでした。端末に保存されている案内文を使います。", error);
+      }
+    }
+
+    function renderOfferTemplate(template, values) {
+      return String(template || "").replace(/\{(お客様名|URL|回答期限|合計金額|枚数)\}/g, (match, key) => (key in values ? values[key] : match));
+    }
+
+    function offerTemplateValues(offer, name) {
+      return {
+        "お客様名": name || "お客様",
+        "URL": offer.url,
+        "回答期限": formatOfferDate(offer.expiresAt),
+        "合計金額": formatYen(offer.totalAmount),
+        "枚数": String(offer.totalQty ?? "")
+      };
+    }
+
+    function sampleOfferValues() {
+      return {
+        "お客様名": "山田 太郎",
+        "URL": `${offerPageUrl()}#t=（お客様ごとのURL）`,
+        "回答期限": formatOfferDate(new Date(Date.now() + 72 * 3600 * 1000).toISOString()),
+        "合計金額": formatYen(12800),
+        "枚数": "15"
+      };
+    }
+
+    function renderTemplateEditor() {
+      const fields = document.getElementById("template-fields");
+      if (!fields.childElementCount) {
+        fields.innerHTML = OFFER_TEMPLATE_FIELDS.map(([token, help]) =>
+          `<button type="button" class="template-field" data-token="${escapeHtml(token)}" title="${escapeHtml(help)}">${escapeHtml(token)}<small>${escapeHtml(help)}</small></button>`).join("");
+        fields.addEventListener("click", event => {
+          const button = event.target.closest("[data-token]");
+          if (button) insertTemplateToken(button.dataset.token);
+        });
+        document.getElementById("offer-template-input").addEventListener("input", updateTemplatePreview);
+      }
+      document.getElementById("offer-template-input").value = getOfferTemplate();
+      document.getElementById("offer-template-status").textContent = "";
+      updateTemplatePreview();
+    }
+
+    function insertTemplateToken(token) {
+      const input = document.getElementById("offer-template-input");
+      const start = input.selectionStart ?? input.value.length;
+      const end = input.selectionEnd ?? input.value.length;
+      input.value = input.value.slice(0, start) + token + input.value.slice(end);
+      input.focus();
+      input.setSelectionRange(start + token.length, start + token.length);
+      updateTemplatePreview();
+    }
+
+    function validateOfferTemplate(template) {
+      if (!template.trim()) return "案内文が空です。";
+      if (!template.includes("{URL}")) return "{URL} を必ず入れてください（お客様用のURLが入る場所です）。";
+      if (template.length > 1000) return "1000文字以内にしてください。";
+      return "";
+    }
+
+    function updateTemplatePreview() {
+      const template = document.getElementById("offer-template-input").value;
+      document.getElementById("offer-template-count").textContent = `${template.length} / 1000`;
+      document.getElementById("offer-template-preview").textContent = renderOfferTemplate(template, sampleOfferValues());
+      const status = document.getElementById("offer-template-status");
+      const problem = validateOfferTemplate(template);
+      status.textContent = problem;
+      status.className = problem ? "error" : "";
+    }
+
+    async function saveOfferTemplate() {
+      const template = document.getElementById("offer-template-input").value.replace(/\r\n?/g, "\n").trim();
+      const problem = validateOfferTemplate(template);
+      if (problem) {
+        showToast(problem, "error");
+        return;
+      }
+      const status = document.getElementById("offer-template-status");
+      status.className = "";
+      status.textContent = "保存しています…";
+      try {
+        // 初期の案内文と同じなら、サーバーには「初期値を使う」として保存
+        const value = template === DEFAULT_OFFER_TEMPLATE ? "" : template;
+        const response = await staffApi("save_settings", { offerMessageTemplate: value }, 15000);
+        cacheOfferTemplate(response.settings?.offerMessageTemplate || "");
+        status.textContent = "保存しました（全端末に反映されます）";
+        showToast("案内文テンプレートを保存しました");
+      } catch (error) {
+        status.className = "error";
+        status.textContent = `保存できませんでした：${describeError(error)}`;
+      }
+    }
+
+    function restoreDefaultOfferTemplate() {
+      if (!window.confirm("初期の案内文に戻しますか？（「保存する」を押すまでは反映されません）")) return;
+      document.getElementById("offer-template-input").value = DEFAULT_OFFER_TEMPLATE;
+      updateTemplatePreview();
+    }
+
     async function issueOffer() {
       const activeCase = cases[activeCaseId];
       if (!activeCase || isViewingLog) return;
@@ -4479,7 +4656,7 @@
     }
 
     function offerShareMessage(offer, name) {
-      return `${name || "お客様"} 様\nポケカ買取ラボです。査定が完了しました。\n下記URLから、カードごとに買取・キャンセルをお選びいただき、振込先の確認とサインをお願いいたします。\n（開くときに、お申込み時の電話番号の下4桁を入力します）\n回答期限：${formatOfferDate(offer.expiresAt)}\n${offer.url}`;
+      return renderOfferTemplate(getOfferTemplate(), offerTemplateValues(offer, name));
     }
 
     function openOfferShare() {
@@ -4489,9 +4666,27 @@
       document.getElementById("offer-share-name").textContent = `${name} 様`;
       document.getElementById("offer-share-meta").textContent = `${offer.offerId}・${offer.totalQty}枚 ${formatYen(offer.totalAmount)}・回答期限 ${formatOfferDate(offer.expiresAt)}`;
       document.getElementById("offer-share-url").value = offer.url;
-      document.getElementById("offer-share-line").href = `https://line.me/R/share?text=${encodeURIComponent(offerShareMessage(offer, name))}`;
+      const message = document.getElementById("offer-share-message");
+      message.value = offerShareMessage(offer, name);
+      if (!message.dataset.bound) {
+        message.addEventListener("input", updateOfferLineLink);
+        message.dataset.bound = "1";
+      }
+      updateOfferLineLink();
       document.getElementById("offer-share-backdrop").classList.add("open");
       drawOfferQr(offer.url);
+    }
+
+    function updateOfferLineLink() {
+      const text = document.getElementById("offer-share-message").value;
+      document.getElementById("offer-share-line").href = `https://line.me/R/share?text=${encodeURIComponent(text)}`;
+    }
+
+    function resetOfferMessage() {
+      const offer = currentOffer();
+      if (!offer) return;
+      document.getElementById("offer-share-message").value = offerShareMessage(offer, cases[activeCaseId]?.name || "");
+      updateOfferLineLink();
     }
 
     function closeOfferShare() {
@@ -4521,9 +4716,12 @@
     }
 
     async function copyOfferMessage() {
-      const offer = currentOffer();
-      if (!offer?.url) return;
-      await copyText(offerShareMessage(offer, cases[activeCaseId]?.name));
+      const text = document.getElementById("offer-share-message").value.trim();
+      if (!text) return;
+      if (!currentOffer()?.url || !text.includes(currentOffer().url)) {
+        if (!window.confirm("案内文にお客様用のURLが入っていません。このままコピーしますか？")) return;
+      }
+      await copyText(text);
       showToast("案内文をコピーしました");
     }
 
@@ -4878,15 +5076,27 @@
     }
 
     // ===== 設定・テーマ =====
-    function openSettings() {
+    function openSettings(section = "") {
+      // ほかのダイアログが開いていたら閉じる（重なって操作できなくなるのを防ぐ）
+      document.querySelectorAll(".product-modal-backdrop.open").forEach(backdrop => {
+        if (backdrop.id !== "settings-backdrop") backdrop.classList.remove("open");
+      });
       const input = document.getElementById("staff-key-input");
       input.value = getStaffKey();
       input.type = "password";
       document.getElementById("staff-key-visibility").textContent = "表示";
       setStaffAuthState(staffAuthState, staffAuthMessage);
       renderThemeOptions();
+      renderTemplateEditor();
       document.getElementById("settings-backdrop").classList.add("open");
-      window.setTimeout(() => (getStaffKey() ? document.querySelector("#settings-backdrop .product-modal-close") : input).focus(), 0);
+      window.setTimeout(() => {
+        if (section === "template") {
+          document.getElementById("settings-template").scrollIntoView({ block: "start" });
+          document.getElementById("offer-template-input").focus({ preventScroll: true });
+          return;
+        }
+        (getStaffKey() ? document.querySelector("#settings-backdrop .product-modal-close") : input).focus();
+      }, 0);
     }
 
     function closeSettings() {
@@ -4919,6 +5129,7 @@
       try {
         await staffApi("verify_staff", {}, 15000);
         showToast("スタッフキーを保存しました");
+        loadPosSettings();
         refreshWaiting();
         restoreServerBackup(false);
       } catch (error) {
